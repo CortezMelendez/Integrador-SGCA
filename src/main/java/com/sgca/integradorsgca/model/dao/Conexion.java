@@ -5,7 +5,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-public class conexion {
+public class Conexion {
 
     public static Connection getConexion() {
         // Ruta absoluta formateada para la Wallet
