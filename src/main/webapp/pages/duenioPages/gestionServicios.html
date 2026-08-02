@@ -4,14 +4,15 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Gestión de Servicios — Concesionaria Automotriz</title>
- 
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:wght@100..900&family=Google+Sans+Code:wght@300..800&family=Google+Sans+Code:ital,wght@1,300..800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="content/styless/styles.css">
-  <link rel="stylesheet" href="content/styless/gestiones.css" />
-  <link rel="stylesheet" href="content/styless/gestiones-extra.css" />
-  <link rel="stylesheet" href="content/styless/responsive.css" />
+
+    <link rel="stylesheet" href="../../css/duenioStyles/styles.css">
+  <link rel="stylesheet" href="../../css/duenioStyles/gestiones.css" />
+  <link rel="stylesheet" href="../../css/duenioStyles/gestiones-extra.css" />
+  <link rel="stylesheet" href="../../css/duenioStyles/responsive.css" />
 </head>
 <body>
 
@@ -19,13 +20,13 @@
   <header class="dash-navbar">
     <div class="dash-navbar-left">
       <div class="dash-logo-placeholder" aria-hidden="true">
-        <img src="content/images/logo2-SGCA.svg" class="logo-img" width="108" />
+        <img src="../../Images/logo2-SGCA.svg" class="logo-img" width="108" />
       </div>
       <span class="dash-brand">Concesionaria Automotriz</span>
     </div>
     <nav class="dash-nav-center">
       <a href="index.html" class="dash-nav-link">Inicio</a>
-      <a href="dashboard.html" class="dash-nav-link">Dashboard</a>
+      <a href="/pages/duenioPages/dashboard.html" class="dash-nav-link">Dashboard</a>
       <a href="" class="dash-nav-link">Servicios</a>
       <a href="" class="dash-nav-link ">Perfil</a>
     </nav>
@@ -43,15 +44,15 @@
   <main class="dash-main">
 
     <div class="gest-header">
-      
+
       <div class="gest-header-left">
         <h1>Gestión de servicios</h1>
         <p>Administra el inventario de servicios registrados.</p>
       </div>
-      
+
       <!-- Buscador -->
-     
-      
+
+
       <button class="btn-agregar" id="btn-abrir-agregar">+ Agregar servicio</button>
     </div>
  <div class="gest-search-inline">
@@ -60,7 +61,7 @@
           <circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line>
         </svg>
       </div>
-      
+
     <!-- TABLA DE DATOS-->
     <div class="table-card">
       <div class="table-wrapper">
@@ -88,8 +89,8 @@
   <!--  FOOTER-->
   <footer class="footer" style="display: flex; justify-content: space-between; align-items: center; padding: 20px; background-color: #000;">
     <span style="color: rgb(8, 8, 8); font-size: 0.85rem;">© 2026 SGCA · Todos los derechos reservados</span>
-    <a href="dashboard.html" class="btn-atras" style="color: black; text-decoration: none; display: flex; align-items: center; gap: 8px; background: #CCCCCC; padding: 8px 16px; border-radius: 20px;">
-      <img src="content/images/back.svg" alt="">
+    <a href="../../pages/duenioPages/dashboard.html" class="btn-atras" style="color: black; text-decoration: none; display: flex; align-items: center; gap: 8px; background: #CCCCCC; padding: 8px 16px; border-radius: 20px;">
+      <img src="../../Images/back.svg" alt="">
       Atrás
     </a>
   </footer>
@@ -176,7 +177,7 @@
             <option>Inactivo</option>
           </select>
         </div>
-        
+
       </div>
       <div class="modal-actions">
         <button class="btn-modal-cancel" id="btn-cancelar-editar">Cancelar</button>
@@ -186,6 +187,6 @@
   </div>
 
   <!-- VÍNCULO AL SCRIPT EXTERNO -->
-  <script src="js/gestionServicios.js"></script>
+  <script src="../../js/duenioJS/gestionServicios.js"></script>
 </body>
 </html>

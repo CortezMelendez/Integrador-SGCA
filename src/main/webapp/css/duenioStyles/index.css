@@ -166,7 +166,7 @@ body {
    FOOTER
 ============================================= */
 .footer {
-  background: var(--color-white);
+  background: var(--color-bg);
   padding: 16px 32px;
   border-top: 1px solid var(--color-gray-100);
 }

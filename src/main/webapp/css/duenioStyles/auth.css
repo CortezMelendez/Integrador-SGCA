@@ -68,6 +68,7 @@
   font-weight: 700;
   color: var(--color-white);
   letter-spacing: 0.01em;
+    margin-top: 20px;
 }
 
 .input-wrapper {
@@ -116,6 +117,7 @@
   text-decoration: none;
   display: block;
   transition: opacity 0.2s;
+    margin-top: 10px;
 }
 
 .forgot-link:hover {
@@ -136,6 +138,7 @@
   cursor: pointer;
   transition: background 0.18s ease, transform 0.1s ease;
   letter-spacing: 0.01em;
+    margin-top: 20px;
 }
 
 a.btn-primary {
@@ -157,6 +160,7 @@ a.btn-primary {
   border: none;
   border-top: 1px solid var(--color-gray-750);
   width: 100%;
+    margin-top: 20px;
 }
 
 .login-footer {
