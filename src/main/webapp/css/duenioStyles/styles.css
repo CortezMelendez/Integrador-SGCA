@@ -1,12 +1,3 @@
-/* =============================================
-   styles.css — BASE GENERAL
-   Compartido por TODAS las páginas.
-   Contiene: tokens, reset, tipografías, HEADER,
-   FOOTER y botón "Atrás".
-   Cada página agrega su propio archivo para lo
-   demás (formularios, dashboard, etc).
-============================================= */
-
 
 /* =============================================
    TOKENS DE DISEÑO
@@ -87,9 +78,6 @@
   --radius-btn:    999px;
 }
 
-/* =============================================
-   RESET Y BASE
-============================================= */
 *, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
@@ -109,11 +97,7 @@ body {
   flex-direction: column;
 }
 
-/* =============================================
-   HEADER / NAVBAR (uso general en páginas internas:
-   dashboard, servicios, perfil, etc. Las opciones
-   del nav cambian según el rol del usuario)
-============================================= */
+
 .dash-navbar {
   display: flex;
   align-items: center;

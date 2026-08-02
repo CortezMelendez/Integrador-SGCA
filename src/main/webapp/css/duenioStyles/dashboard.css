@@ -1,7 +1,4 @@
-/* =============================================
-   dashboard.css — SOLO coftenido del dashboard
-   Requiere styles.css cargado antes (header/footer/tokens)
-============================================= */
+
 
 body {
   background: var(--color-gray-50);
@@ -40,7 +37,7 @@ body {
   margin-top: 2px;
 }
 
-/* Botón Gestión + su menú desplegable */
+
 .dash-gestion {
   position: relative;
 }

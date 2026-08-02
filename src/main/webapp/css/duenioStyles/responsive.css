@@ -1,16 +1,3 @@
-/* =============================================================
-   responsive.css
-   Hoja de estilos responsiva para todo el proyecto SGCA.
-   Agrega este archivo DESPUÉS de tus demás CSS en el <head>:
-
-   <link rel="stylesheet" href="content/styless/styles.css">
-   <link rel="stylesheet" href="content/styless/gestiones.css">
-   <link rel="stylesheet" href="content/styless/responsive.css">
-
-   Cubre: navbar, headers de sección, tablas, modales,
-   formularios, footer y paginación en distintos tamaños
-   de pantalla (escritorio, tablet, celular).
-============================================================= */
 
 /* -------------------------------------------------------
    Base: que nada se desborde horizontalmente

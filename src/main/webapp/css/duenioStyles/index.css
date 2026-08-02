@@ -1,12 +1,4 @@
-/* =============================================
-   index.css — Pantalla principal / Landing
-   Requiere styles.css cargado antes que este.
-============================================= */
 
-/* =============================================
-   RESET GLOBAL PARA ESTA PAGINA
-   El body aqui es claro, no negro como en login
-============================================= */
 body {
   background: var(--color-white);
   color: var(--color-text-body);
@@ -162,10 +154,9 @@ body {
   margin: 100px;
 }
 
-/* Imagen real del logo cuando la subas */
 
 
-/* Placeholder SVG mientras llega el logo */
+
 .logo-placeholder svg {
   width: clamp(180px, 28vw, 280px);
   height: auto;

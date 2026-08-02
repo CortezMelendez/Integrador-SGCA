@@ -1,15 +1,3 @@
-/* =============================================
-   auth.css — Base COMPARTIDA por login.css y register.css
-   Requiere styles.css cargado antes (tokens/header/footer).
-   Carga este archivo ANTES de login.css o register.css:
-
-   <link rel="stylesheet" href="styles.css">
-   <link rel="stylesheet" href="auth.css">
-   <link rel="stylesheet" href="login.css">      <!-- o register.css -->
-
-   login.css y register.css ya NO deben repetir estas reglas,
-   solo las diferencias puntuales de cada pantalla.
-============================================= */
 
 .page {
   display: grid;
@@ -54,8 +42,6 @@
   color: var(--color-white);
 }
 
-/* Base del título; margin-bottom se ajusta por pantalla
-   (ver login.css / register.css) */
 .form-title {
   font-size: clamp(2rem, 4vw, 2.8rem);
   font-weight: 700;
@@ -64,8 +50,6 @@
   color: var(--color-white);
 }
 
-/* Base del formulario; gap se ajusta por pantalla
-   (ver login.css / register.css) */
 .login-form {
   width: 100%;
   max-width: 420px;
@@ -175,8 +159,6 @@ a.btn-primary {
   width: 100%;
 }
 
-/* Footer dentro del panel (login o registro); fondo transparente,
-   el btn-back ya viene estilizado desde styles.css */
 .login-footer {
   width: 100%;
   max-width: 420px;

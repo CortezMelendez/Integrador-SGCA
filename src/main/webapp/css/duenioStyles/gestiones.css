@@ -1,7 +1,3 @@
-/* =========================================================
-   1. TIPOGRAFÍA Y ESTILOS BASE
-========================================================= */
-/* IMPORTANTE: Asegúrate de tener importada la fuente Google Sans en tu HTML */
 
 * {
   box-sizing: border-box;
@@ -273,9 +269,7 @@ p {
 /* =========================================================
    7. FOOTER (PIE DE PÁGINA)
 ========================================================= */
-/* Ajustes puntuales sobre el .footer base definido en styles.css:
-   aquí necesita repartir el texto y el botón "Atrás" a los extremos,
-   con más padding lateral. Color, fondo y altura ya vienen de styles.css */
+
 .footer {
   justify-content: space-between;
   padding: 20px 40px;

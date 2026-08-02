@@ -1,7 +1,4 @@
-/* =============================================
-   login.css — SOLO lo que es DISTINTO al registro
-   Requiere styles.css y auth.css cargados antes.
-============================================= */
+
 
 .form-title {
   margin-bottom: var(--gap-xl);

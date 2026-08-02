@@ -1,8 +1,4 @@
-/* -------------------------------------------------------
-   NAVBAR — enlaces adicionales
-   (.navbar y .navbar-brand ya están definidos en index.css;
-   aquí solo se agrega lo nuevo: los links del navbar)
-------------------------------------------------------- */
+
 .navbar-links {
   display: flex;
   gap: 28px;
@@ -24,7 +20,7 @@
 }
 
 /* -------------------------------------------------------
-   HERO — descripción bajo el título
+   descripción bajo el título
 ------------------------------------------------------- */
 .hero-description {
   color: var(--color-text-body);
@@ -82,7 +78,7 @@
   transform: scale(0.92);
 }
 
-/* Pista deslizable con scroll horizontal nativo */
+
 .carrusel-track {
   display: flex;
   gap: 20px;
@@ -90,7 +86,7 @@
   scroll-behavior: smooth;
   scroll-snap-type: x mandatory;
   padding-bottom: 8px;
-  /* Oculta la barra nativa del navegador; usamos la nuestra abajo */
+
   scrollbar-width: none;
 }
 
@@ -145,7 +141,6 @@
   font-weight: 600;
 }
 
-/* BARRA DE DESPLAZAMIENTO PERSONALIZADA  */
 .carrusel-scrollbar {
   height: 6px;
   background: var(--color-gray-100);
