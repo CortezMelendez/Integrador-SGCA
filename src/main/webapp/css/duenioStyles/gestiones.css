@@ -1,0 +1,460 @@
+/* =========================================================
+   1. TIPOGRAFÍA Y ESTILOS BASE
+========================================================= */
+/* IMPORTANTE: Asegúrate de tener importada la fuente Google Sans en tu HTML */
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+.precio{
+  font-family: 'Google Sans Code', monospace;
+}
+body {
+  /* Fuente principal (Google Sans Flex) */
+  font-family: 'Google Sans Flex', system-ui, -apple-system, sans-serif;
+  color: var(--color-text-strong);
+  background-color: var(--color-white);
+  
+}
+
+/* Clase de utilidad para Google Sans Code (IDs, códigos, etc.) */
+.font-code {
+  font-family: 'Google Sans Code', ui-monospace, monospace;
+}
+
+h1, h2, h3 {
+  font-weight: 700;
+  color: var(--color-text-body);
+}
+
+p {
+  line-height: 1.5;
+}
+
+/* =========================================================
+   3. CONTENEDOR PRINCIPAL Y CABECERA DE GESTIÓN
+========================================================= */
+.dash-main {
+  padding: 32px 40px;
+  flex: 1; /* Ocupa el espacio restante en la pantalla */
+}
+
+.gest-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.gest-header-left h1 {
+  font-size: 2rem;
+  margin: 0 34px;
+}
+
+.gest-header-left p {
+  font-size: 0.95rem;
+  color: var(--color-gray-650);
+  margin-top: 4px;
+  font-weight: 400;
+  margin-left: 34px;
+  margin-bottom: 0px;
+}
+
+/* Buscador */
+.gest-search-inline {
+  position: relative;
+  display: flex;
+  align-items: center;
+  margin: 5px 32px 20px;
+}
+
+.gest-input {
+  padding: 10px 16px 10px 40px;
+  border: 1px solid var(--color-gray-700);
+  border-radius: 8px;
+  background-color: var(--color-gray-100);
+  font-size: 0.95rem;
+  font-family: inherit;
+  width: 540px;
+  outline: none;
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.gest-input:focus {
+  border-color: var(--color-navy-dark);
+  background-color: var(--color-white);
+}
+
+.gest-search-inline .search-icon {
+  position: absolute;
+  left: 12px;
+  color: var(--color-gray-700);
+}
+
+/* Botón Agregar */
+.btn-agregar {
+  background-color: var(--color-navy-dark);
+  color: var(--color-white);
+  border: none;
+  border-radius: 8px;
+  padding: 10px 20px;
+  font-weight: 600;
+  font-size: 1rem;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.btn-agregar:hover {
+  background-color: var(--color-navy-light);
+}
+
+.btn-agregar:active {
+  transform: scale(0.97);
+}
+
+/* =========================================================
+   4. DISEÑO DE LA TABLA GLOBAL
+========================================================= */
+.table-card {
+  width: 100%;
+  padding: 0 24px;
+}
+
+.table-wrapper {
+  overflow-x: auto;
+  padding: 8px 8px 16px;
+}
+
+.gest-table {
+  width: 100%;
+  text-align: center;
+  border-collapse: separate;
+  border-spacing: 0;
+  border: 1px solid var(--color-gray-700);
+  border-radius: 8px;
+  overflow: hidden;
+  font-family: inherit;
+}
+
+/* Celdas espaciosas */
+.gest-table td {
+  border-right: 1px solid var(--color-gray-700);
+  border-bottom: 1px solid var(--color-gray-700);
+  padding: 24px 20px; 
+  vertical-align: middle;
+  color: var(--color-text-strong);
+  font-size: 14px; 
+  font-weight: 600;
+}
+.gest-table th{
+ border-right: 1px solid var(--color-gray-700);
+  border-bottom: 1px solid var(--color-gray-700);
+  padding: 24px 20px; 
+  vertical-align: middle;
+  color: var(--color-text-strong);
+  font-size: 16px; 
+  font-weight: 600;
+}
+
+.gest-table th:last-child, 
+.gest-table td:last-child {
+  border-right: none;
+}
+
+.gest-table tr:last-child td {
+  border-bottom: none;
+}
+
+/* Colores de filas tipo Figma */
+.gest-table thead {
+  background-color: var(--color-gray-300);
+}
+.gest-table tbody tr:nth-child(odd) {
+  background-color: var(--color-gray-200); 
+}
+.gest-table tbody tr:nth-child(even) {
+  background-color: var(--color-gray-300); 
+}
+
+/* Contenedor de Fotografía */
+.foto-placeholder {
+  width: 48px; 
+  height: 48px; 
+  border: 1px solid var(--color-gray-700); 
+  margin: 0 auto;
+  background-color: transparent;
+}
+
+/* =========================================================
+   5. ESTADOS (BADGES INTERACTIVOS)
+========================================================= */
+.badge {
+  padding: 8px 24px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight:500;
+  font-family: 'Google sans code', monospace;
+  display: inline-block;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+  cursor: pointer; 
+  user-select: none;
+}
+
+.badge:active {
+  transform: scale(0.95);
+}
+
+.badge-inactive {
+  background-color: var(--color-gray-400);
+  color: var(--color-gray-750);
+}
+.badge-inactive:hover { 
+  background-color: var(--color-gray-450); 
+  border-style: solid;
+  border-width: 1.5px;
+  border-color: black;
+}
+
+.badge-active {
+  background-color: var(--color-success-bg);
+  color: var(--color-success-text);
+}
+.badge-active:hover { 
+  background-color: var(--color-success-bg-hover); 
+}
+
+/* =========================================================
+   6. BOTONES DE ACCIONES
+========================================================= */
+.action-group {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+}
+
+.btn-icon {
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.15s ease, transform 0.1s ease;
+}
+
+.btn-icon:active {
+  transform: scale(0.92);
+}
+
+/* Botón Editar */
+.btn-edit {
+  background-color: var(--color-info-bg);
+  color: var(--color-white);
+}
+.btn-edit:hover { background-color: var(--color-info-bg-hover); }
+.btn-edit:active { background-color: var(--color-info-bg-active); }
+
+/* Botón Eliminar */
+.btn-delete {
+  background-color: var(--color-danger-bg);
+  color: var(--color-text-strong);
+}
+.btn-delete:hover { background-color: var(--color-danger-bg-hover); }
+.btn-delete:active { background-color: var(--color-danger-bg-active); }
+
+/* =========================================================
+   7. FOOTER (PIE DE PÁGINA)
+========================================================= */
+/* Ajustes puntuales sobre el .footer base definido en styles.css:
+   aquí necesita repartir el texto y el botón "Atrás" a los extremos,
+   con más padding lateral. Color, fondo y altura ya vienen de styles.css */
+.footer {
+  justify-content: space-between;
+  padding: 20px 40px;
+}
+
+.footer span {
+  font-size: 0.85rem;
+}
+
+.btn-atras {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--color-white);
+  text-decoration: none;
+  background: var(--color-gray-750);
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  transition: background-color 0.2s ease;
+}
+
+.btn-atras:hover {
+  background: var(--color-gray-700);
+}
+
+/* =========================================================
+   8. VENTANAS MODALES
+========================================================= */
+.modal-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.6);
+  display: flex; 
+  align-items: center; 
+  justify-content: center;
+  opacity: 0; 
+  pointer-events: none; 
+  transition: opacity 0.2s ease;
+  z-index: 1000;
+}
+
+.modal-overlay.active {
+  opacity: 1; 
+  pointer-events: auto;
+}
+
+.modal-box {
+  background: var(--color-white); 
+  padding: 32px; 
+  border-radius: 12px; 
+  width: 100%;
+  max-width: 450px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+  transform: translateY(-20px);
+  transition: transform 0.2s ease;
+}
+
+.modal-overlay.active .modal-box {
+  transform: translateY(0);
+}
+
+.modal-title { 
+  margin-bottom: 24px; 
+  font-size: 1.5rem; 
+}
+
+.modal-field { 
+  display: flex; 
+  flex-direction: column; 
+  margin-bottom: 16px; 
+  width: 100%; 
+  min-width: 0; /* evita que el input empuje el contenedor y se desborde */
+}
+
+.modal-label { 
+  margin-bottom: 8px; 
+  font-weight: 600; 
+  font-size: 0.9rem; 
+}
+
+.modal-input, 
+.modal-select {
+  width: 100%;
+  box-sizing: border-box; /* el padding ya no se suma al ancho total */
+  padding: 12px; 
+  border: 1px solid var(--btn-back-bg); 
+  border-radius: 6px; 
+  font-size: 1rem; 
+  font-family: inherit;
+  outline: none;
+  background-color: var(--color-hero-bg);
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.modal-input:focus, 
+.modal-select:focus {
+  border-color: var(--color-navy-dark);
+  background-color: var(--color-white);
+}
+
+.modal-row { 
+  display: flex; 
+  gap: 16px; 
+}
+
+.modal-row .modal-field {
+  flex: 1; /* cada campo ocupa el mismo espacio dentro de la fila */
+  min-width: 0;
+}
+
+.modal-actions { 
+  display: flex; 
+  justify-content: flex-end; 
+  gap: 12px; 
+  margin-top: 24px; 
+}
+
+.btn-modal-cancel {
+  background: var(--color-danger-dark); 
+  color: var(--color-white);
+  border: none; 
+  padding: 10px 18px; 
+  border-radius: 6px; 
+  cursor: pointer; 
+  font-weight: 600;
+  font-family: inherit;
+  transition: background-color 0.2s ease;
+}
+
+.btn-modal-cancel:hover {
+  background: var(--color-danger-dark-hover); 
+}
+
+.btn-modal-save {
+  background: var(--btn-active); 
+  color: var(--color-white); 
+  border: none; 
+  padding: 10px 18px; 
+  border-radius: 6px; 
+  cursor: pointer; 
+  font-weight: 600;
+  font-family: inherit;
+  transition: background-color 0.2s ease;
+}
+
+.btn-modal-save:hover {
+  background: var(--btn-hover);
+}
+
+.paginacion {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  padding: 16px;
+}
+ 
+.btn-pagina {
+  border: 1px solid var(--btn-back-bg);
+  background: var(--color-white);
+  padding: 6px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+ 
+.btn-pagina:hover:not(:disabled) {
+  background: var(--color-gray-100);
+}
+ 
+.btn-pagina.activo {
+  background: var(--color-text-body);
+  color: var(--color-white);
+  border-color: var(--color-text-body);
+}
+ 
+.btn-pagina:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}

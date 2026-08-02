@@ -1,0 +1,14 @@
+/* =============================================
+   register.css — SOLO lo que es DISTINTO al login
+   Requiere styles.css y auth.css cargados antes.
+============================================= */
+
+.form-title {
+  margin-bottom: 20px;
+}
+
+/* El formulario de registro tiene un gap mas ajustado
+   para acomodar los 4 campos sin scroll en desktop */
+.login-form {
+  gap: 14px;
+}

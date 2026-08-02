@@ -1,0 +1,263 @@
+/* =============================================
+   styles.css — BASE GENERAL
+   Compartido por TODAS las páginas.
+   Contiene: tokens, reset, tipografías, HEADER,
+   FOOTER y botón "Atrás".
+   Cada página agrega su propio archivo para lo
+   demás (formularios, dashboard, etc).
+============================================= */
+
+
+/* =============================================
+   TOKENS DE DISEÑO
+============================================= */
+:root {
+  --color-bg:          #000000;
+  --color-surface:     #111111;
+  --color-input-bg:    #cccccc;
+  --color-input-text:  #444444;
+  --color-placeholder: #888888;
+  --color-white:       #ffffff;
+
+  /* Botón principal (Iniciar sesión, Gestión, etc.) */
+  --btn-active:        #0B2545;
+  --btn-hover:         #113C6E;
+  --btn-click:         #040D1B;
+
+  /* Botón Atrás */
+  --btn-back-bg:       #cccccc;
+  --btn-back-hover:    #E0E0E0;
+  --btn-back-click:    #ABABAB;
+
+  /* Paleta extendida (grises, navy, estados) usada en todo el proyecto */
+  --color-navy-dark:      #1a2433;
+  --color-navy-light:     #2b3a52;
+  --color-hero-bg:        #f9f9fa;
+  --color-hero-alt-bg:    #D9D9D9;
+  --color-black-soft:     #1a1a1a;
+  --color-gray-50:        #eef0f3;
+  --color-gray-100:       #e5e7eb;
+  --color-gray-150:       #E0E5EB;
+  --color-gray-200:       #D9D9D9;
+  --color-gray-300:       #BFBFBF;
+  --color-gray-350:       #c7cad0;
+  --color-gray-400:       #9e9e9e;
+  --color-gray-450:       #cfcfcf;
+  --color-gray-500:       #8a8a8a;
+  --color-gray-600:       #6b6b6b;
+  --color-gray-650:       #4a4a4a;
+  --color-gray-700:       #555555;
+  --color-gray-750:       #333333;
+  --color-gray-800:       #b7b7b7;
+  --color-text-strong:    #111111;
+  --color-text-body:      #000000;
+
+  /* Estados: éxito / activo */
+  --color-success-bg:     #b5e5a5;
+  --color-success-bg-hover: #d8f5ce;
+  --color-success-text:   #2b611e;
+  --color-success-alt:    #1a8f4c;
+
+  /* Estados: error / eliminar */
+  --color-danger-bg:      #ffbaba;
+  --color-danger-bg-hover:#ffd8d8;
+  --color-danger-bg-active:#df6666;
+  --color-danger-border:  #d64545;
+  --color-danger-text:    #ff9d9d;
+  --color-danger-dark:    #450B0C;
+  --color-danger-dark-hover:#761315;
+
+  /* Botón editar (azul) */
+  --color-info-bg:        #4a90e2;
+  --color-info-bg-hover:  #79aee6;
+  --color-info-bg-active: #1a5c9e;
+  --color-link-blue:      #1d63c4;
+
+  /* Tipografía */
+  --font-primary: 'Google Sans Flex', 'Product Sans', 'Inter', sans-serif;
+  --font-code:    'Google Sans Code', 'Roboto Mono', monospace;
+
+  /* Espaciados */
+  --gap-sm:   8px;
+  --gap-md:   16px;
+  --gap-lg:   24px;
+  --gap-xl:   40px;
+
+  --radius-input:  6px;
+  --radius-btn:    999px;
+}
+
+/* =============================================
+   RESET Y BASE
+============================================= */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  height: 100%;
+  font-family: var(--font-primary);
+  background: var(--color-bg);
+  color: var(--color-white);
+}
+
+body {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* =============================================
+   HEADER / NAVBAR (uso general en páginas internas:
+   dashboard, servicios, perfil, etc. Las opciones
+   del nav cambian según el rol del usuario)
+============================================= */
+.dash-navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--gap-lg);
+  background: var(--color-bg);
+  padding: 14px 32px;
+  flex-wrap: wrap;
+}
+
+.dash-navbar-left {
+  display: flex;
+  align-items: center;
+  gap: var(--gap-md);
+}
+
+.dash-logo-placeholder {
+  display: flex;
+  align-items: center;
+}
+
+.logo-img {
+  display: block;
+}
+
+.dash-brand {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--color-white);
+  white-space: nowrap;
+}
+
+.dash-nav-center {
+  display: flex;
+  align-items: center;
+  gap: var(--gap-lg);
+}
+
+.dash-nav-link {
+  color: #ffffff;
+  text-decoration: none;
+  font-size: 1.1rem;
+  font-weight: 500;
+  opacity: 0.85;
+  transition: color 0.2s ease, opacity 0.18s ease, text-decoration 0.2s ease;
+  text-underline-offset: 6px;
+}
+
+.dash-nav-link:hover {
+  opacity: 1;
+  text-decoration: underline;
+}
+
+.dash-nav-link.active {
+  opacity: 1;
+  font-weight: 700;
+  color: #8a8a8a;
+  text-decoration: underline;
+}
+
+.dash-navbar-right {
+  display: flex;
+  align-items: center;
+}
+
+.dash-user {
+  display: flex;
+  align-items: center;
+  gap: var(--gap-sm);
+}
+
+.dash-user-avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: var(--btn-active);
+  color: var(--color-white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.dash-user-info {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.25;
+}
+
+.dash-user-name {
+  color: var(--color-white);
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.dash-user-role {
+  color: #b7b7b7;
+  font-size: 0.75rem;
+}
+
+/* =============================================
+   FOOTER + BOTÓN ATRÁS (todas las páginas)
+============================================= */
+.footer {
+  background: var(--color-bg);
+  height: 75px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 0 24px;
+  flex-shrink: 0;
+}
+
+.btn-back {
+  position: static;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  width: fit-content;
+  background: var(--btn-back-bg);
+  color: #000000;
+  border: none;
+  border-radius: var(--radius-btn);
+  padding: 10px 18px;
+  font-family: var(--font-primary);
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.18s ease, transform 0.1s ease;
+  text-decoration: none;
+}
+
+.btn-back img,
+.btn-back svg {
+  width: 18px;
+  height: 18px;
+}
+
+.btn-back:hover {
+  background: var(--btn-back-hover);
+}
+
+.btn-back:active {
+  background: var(--btn-back-click);
+  transform: scale(0.97);
+}
