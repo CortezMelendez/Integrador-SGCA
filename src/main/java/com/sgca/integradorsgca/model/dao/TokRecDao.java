@@ -51,6 +51,31 @@ public class TokRecDao {
         return tokenBean;
     }
 
+    //Se valida si el token se encuentra activo
+    public TokRecBean validarTokenActivo(String token) {
+        String sql = "SELECT * FROM ADMIN.TOKENS_RECUPERACION WHERE TOKEN = ? AND USADO = 0 AND EXPIRACION > SYSDATE";
+        TokRecBean tokenBean = null;
+
+        try (Connection con = Conexion.getConexion();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+
+            ps.setString(1, token);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    tokenBean = new TokRecBean();
+                    tokenBean.setIdToken(rs.getInt("ID_TOKEN"));
+                    tokenBean.setIdUsuario(rs.getInt("ID_USUARIO"));
+                    tokenBean.setToken(rs.getString("TOKEN"));
+                    tokenBean.setExpiracion(rs.getTimestamp("EXPIRACION"));
+                    tokenBean.setUsado(rs.getInt("USADO"));
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return tokenBean;
+    }
+
     // Marcamos token como usado después de cambiar la contraseña
     public boolean marcarComoUsado(int idToken) {
         String sql = "UPDATE ADMIN.TOKENS_RECUPERACION SET USADO = 1 WHERE ID_TOKEN = ?";

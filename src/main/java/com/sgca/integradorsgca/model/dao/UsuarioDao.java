@@ -1,8 +1,8 @@
 package com.sgca.integradorsgca.model.dao;
 
-import com.sgca.integradorsgca.model.dao.Conexion;
 import com.sgca.integradorsgca.model.bean.rolBean;
 import com.sgca.integradorsgca.model.bean.UsuarioBean;
+import com.sgca.integradorsgca.utils.PasswordUtils;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -13,7 +13,7 @@ import java.util.List;
 public class UsuarioDao {
 
     public boolean registrar(UsuarioBean usuario) throws Exception {
-        String sql = "INSERT INTO usuarios (id_rol, nombre, apellido_paterno, apellido_materno, " +
+        String sql = "INSERT INTO ADMIN.USUARIOS (id_rol, nombre, apellido_paterno, apellido_materno, " +
                 "rfc, curp, correo, telefono, password, estado, fecha_registro) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, SYSDATE)";
 
@@ -40,8 +40,8 @@ public class UsuarioDao {
         String sql = "SELECT u.id_usuario, u.id_rol, r.nombre AS nombre_rol, u.nombre, " +
                 "u.apellido_paterno, u.apellido_materno, u.rfc, u.curp, u.correo, " +
                 "u.telefono, u.password, u.estado, u.fecha_registro " +
-                "FROM usuarios u " +
-                "INNER JOIN roles r ON u.id_rol = r.id_rol " +
+                "FROM ADMIN.USUARIOS u " +
+                "INNER JOIN ADMIN.ROLES r ON u.id_rol = r.id_rol " +
                 "ORDER BY u.id_usuario ASC";
 
         try (Connection con = Conexion.getConexion();
@@ -73,8 +73,8 @@ public class UsuarioDao {
     }
 
     public int contarUsuariosPorRol(String nombreRol) throws Exception {
-        String sql = "SELECT COUNT(*) FROM usuarios u " +
-                "INNER JOIN roles r ON u.id_rol = r.id_rol " +
+        String sql = "SELECT COUNT(*) FROM ADMIN.USUARIOS u " +
+                "INNER JOIN ADMIN.ROLES r ON u.id_rol = r.id_rol " +
                 "WHERE UPPER(r.nombre) = UPPER(?) AND u.estado = 1";
 
         try (Connection con = Conexion.getConexion();
@@ -91,11 +91,9 @@ public class UsuarioDao {
         return 0;
     }
 
-    /**
-     * Comprueba si el correo existe y si la cuenta está activa.
-     */
+    // Comprueba si el correo existe y si la cuenta está activa
     public boolean existeCorreo(String correo) throws Exception {
-        String sql = "SELECT COUNT(*) FROM usuarios WHERE LOWER(correo) = LOWER(?) AND estado = 1";
+        String sql = "SELECT COUNT(*) FROM ADMIN.USUARIOS WHERE LOWER(correo) = LOWER(?) AND estado = 1";
         try (Connection con = Conexion.getConexion();
              PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setString(1, correo);
@@ -108,15 +106,13 @@ public class UsuarioDao {
         return false;
     }
 
-    /**
-     * Retorna el objeto completo del usuario activo para obtener su ID y Nombre.
-     */
+    // Retorna el objeto completo del usuario activo para obtener su ID y Nombre
     public UsuarioBean obtenerPorCorreo(String correo) throws Exception {
         String sql = "SELECT u.id_usuario, u.id_rol, r.nombre AS nombre_rol, u.nombre, " +
                 "u.apellido_paterno, u.apellido_materno, u.rfc, u.curp, u.correo, " +
                 "u.telefono, u.password, u.estado, u.fecha_registro " +
-                "FROM usuarios u " +
-                "INNER JOIN roles r ON u.id_rol = r.id_rol " +
+                "FROM ADMIN.USUARIOS u " +
+                "INNER JOIN ADMIN.ROLES r ON u.id_rol = r.id_rol " +
                 "WHERE LOWER(u.correo) = LOWER(?) AND u.estado = 1";
 
         try (Connection con = Conexion.getConexion();
@@ -150,7 +146,7 @@ public class UsuarioDao {
     }
 
     public boolean actualizarPassword(int idUsuario, String nuevoPassword) throws Exception {
-        String sql = "UPDATE usuarios SET password = ? WHERE id_usuario = ?";
+        String sql = "UPDATE ADMIN.USUARIOS SET password = ? WHERE id_usuario = ?";
 
         try (Connection con = Conexion.getConexion();
              PreparedStatement ps = con.prepareStatement(sql)) {
@@ -160,5 +156,17 @@ public class UsuarioDao {
 
             return ps.executeUpdate() > 0;
         }
+    }
+
+    // Metodo para autenticacion segura
+    public UsuarioBean validarLogin(String correo, String passwordPlana) throws Exception {
+        UsuarioBean usuario = obtenerPorCorreo(correo);
+
+        // Si el usuario existe y la contraseña ingresada coincide con la contraseña hash guardada
+        if (usuario != null && PasswordUtils.checkPassword(passwordPlana, usuario.getPassword())) {
+            return usuario;
+        }
+
+        return null; // Credenciales inválidas o usuario inactivo
     }
 }

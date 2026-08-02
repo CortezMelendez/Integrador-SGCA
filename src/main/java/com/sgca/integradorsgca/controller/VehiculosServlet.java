@@ -1,8 +1,10 @@
 package com.sgca.integradorsgca.controller;
 
 import com.sgca.integradorsgca.model.bean.ModelosBean;
+import com.sgca.integradorsgca.model.bean.TiposVehiculoBean;
 import com.sgca.integradorsgca.model.bean.VehiculosBean;
 import com.sgca.integradorsgca.model.dao.ModelosDao;
+import com.sgca.integradorsgca.model.dao.TiposVehiculoDao;
 import com.sgca.integradorsgca.model.dao.VehiculosDao;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -18,7 +20,8 @@ import java.util.List;
 public class VehiculosServlet extends HttpServlet {
 
     private final VehiculosDao vehiculosDao = new VehiculosDao();
-    private final ModelosDao modelosDao = new ModelosDao(); // 1. Inyectamos el DAO de Modelos
+    private final ModelosDao modelosDao = new ModelosDao();
+    private final TiposVehiculoDao tiposVehiculoDao = new TiposVehiculoDao(); // Inyección Catálogo Tipos
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -37,17 +40,19 @@ public class VehiculosServlet extends HttpServlet {
             return;
         }
 
-
+        // Listas necesarias para tablas y selects del frontend
         List<VehiculosBean> listaVehiculos = vehiculosDao.listar();
         req.setAttribute("listaVehiculos", listaVehiculos);
 
         List<ModelosBean> listaModelos = modelosDao.listar();
         req.setAttribute("listaModelos", listaModelos);
 
+        List<TiposVehiculoBean> listaTipos = tiposVehiculoDao.listar();
+        req.setAttribute("listaTipos", listaTipos);
+
         req.getRequestDispatcher("vehiculos.jsp").forward(req, resp);
     }
 
-    // Acción de registrar o actualizar un vehículo
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         req.setCharacterEncoding("UTF-8");
