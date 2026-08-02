@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gestionaria Automotriz</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:wght@100..900&family=Google+Sans+Code:wght@300..800&family=Google+Sans+Code:ital,wght@1,300..800&display=swap" rel="stylesheet">
+ 
+<link rel="stylesheet" href="content/styless/styles.css">
+  <link rel="stylesheet" href="content/styless/index.css" />
+  <link rel="stylesheet" href="content/styless/carruselIndex.css" />
+  <link rel="stylesheet" href="content/styless/responsive.css" />
+</head>
+<body>
+
+  <!-- =============================================
+       NAVBAR
+  ============================================= -->
+  <header class="navbar">
+    <span class="navbar-brand">Gestionaria Automotriz</span>
+    <nav class="navbar-links">
+      <a href="dashboard.html" class="dash-nav-link">Dashboard</a>
+      <a href="#" class="dash-nav-link">Historial</a>
+      <a href="register.html" class="dash-nav-link">Perfil</a>
+    </nav>
+  </header>
+
+  <!-- =============================================
+       HERO
+  ============================================= -->
+  <main>
+    <section class="hero">
+
+      <!-- Columna izquierda: texto + botones -->
+      <div class="hero-content">
+        <h1 class="hero-heading">
+          El auto<br />
+          que <em class="hero-accent">mereces</em><br />
+          está aquí.
+        </h1>
+
+        <p class="hero-description">
+          Accede al catálogo más completo, gestiona tus servicios y encuentra el vehículo ideal con la asesoría de nuestros expertos.
+        </p>
+
+        <div class="hero-actions">
+          <!-- Botón Iniciar Sesión (estilo outline/secundario) -->
+          <a href="login.html" class="btn-outline">
+            <img src="content/images/user.svg" alt="" class="hero-btn-icon" />
+            Iniciar Sesión
+          </a>
+
+          <!-- Botón Registrarse (estilo primario oscuro) -->
+          <a href="register.html" class="btn-register">Registrarse</a>
+        </div>
+      </div>
+
+      <!-- Columna derecha: logo -->
+      <div class="hero-logo">
+        <div class="logo-placeholder" aria-label="Logo Automotriz">
+          <img src="content/images/logo-SGCA.svg" class="logo-img" width="550" />
+        </div>
+      </div>
+
+    </section>
+
+    <!-- =============================================
+         CARRUSEL DE AUTOS
+    ============================================= -->
+    <section class="carrusel-section" id="carrusel">
+      <div class="carrusel-header">
+        <h2>Vehículos disponibles</h2>
+        <div class="carrusel-controls">
+          <button class="carrusel-btn" id="btnPrev" aria-label="Anterior">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+          </button>
+          <button class="carrusel-btn" id="btnNext" aria-label="Siguiente">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="carrusel-track" id="carruselTrack">
+        <!-- Las tarjetas de autos se generan dinámicamente desde la base de datos -->
+      </div>
+
+      <!-- Barra de desplazamiento personalizada -->
+      <div class="carrusel-scrollbar">
+        <div class="carrusel-scrollbar-thumb" id="scrollThumb"></div>
+      </div>
+    </section>
+  </main>
+
+  <!-- =============================================
+       FOOTER
+  ============================================= -->
+  <footer class="footer">
+    <p>© 2026 SGCA · Todos los derechos reservados</p>
+  </footer>
+
+  <script src="js/carrusel.js"></script>
+
+</body>
+</html>

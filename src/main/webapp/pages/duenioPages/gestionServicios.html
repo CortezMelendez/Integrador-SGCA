@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gestión de Servicios — Concesionaria Automotriz</title>
+ 
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:wght@100..900&family=Google+Sans+Code:wght@300..800&family=Google+Sans+Code:ital,wght@1,300..800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="content/styless/styles.css">
+  <link rel="stylesheet" href="content/styless/gestiones.css" />
+  <link rel="stylesheet" href="content/styless/gestiones-extra.css" />
+  <link rel="stylesheet" href="content/styless/responsive.css" />
+</head>
+<body>
+
+  <!--BARRA DE NAVEGACIÓN-->
+  <header class="dash-navbar">
+    <div class="dash-navbar-left">
+      <div class="dash-logo-placeholder" aria-hidden="true">
+        <img src="content/images/logo2-SGCA.svg" class="logo-img" width="108" />
+      </div>
+      <span class="dash-brand">Concesionaria Automotriz</span>
+    </div>
+    <nav class="dash-nav-center">
+      <a href="index.html" class="dash-nav-link">Inicio</a>
+      <a href="dashboard.html" class="dash-nav-link">Dashboard</a>
+      <a href="" class="dash-nav-link">Servicios</a>
+      <a href="" class="dash-nav-link ">Perfil</a>
+    </nav>
+    <div class="dash-navbar-right">
+      <div class="dash-user">
+        <div class="dash-user-info">
+          <span class="dash-user-name" id="userName"></span>
+          <span class="dash-user-role" id="userRole"></span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- CONTENIDO PRINCIPAL-->
+  <main class="dash-main">
+
+    <div class="gest-header">
+      
+      <div class="gest-header-left">
+        <h1>Gestión de servicios</h1>
+        <p>Administra el inventario de servicios registrados.</p>
+      </div>
+      
+      <!-- Buscador -->
+     
+      
+      <button class="btn-agregar" id="btn-abrir-agregar">+ Agregar servicio</button>
+    </div>
+ <div class="gest-search-inline">
+        <input class="gest-input" id="buscador-servicio" type="text" placeholder="Buscar servicio..." />
+        <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+      </div>
+      
+    <!-- TABLA DE DATOS-->
+    <div class="table-card">
+      <div class="table-wrapper">
+        <table class="gest-table" id="tabla">
+          <thead>
+            <tr>
+              <th>Fotografía</th>
+              <th>Nombre</th>
+              <th>Precio</th>
+              <th>Estado</th>
+              <th>Tipo de servicio</th>
+              <th>Fecha</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Las filas se generan dinámicamente desde la base de datos -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </main>
+
+  <!--  FOOTER-->
+  <footer class="footer" style="display: flex; justify-content: space-between; align-items: center; padding: 20px; background-color: #000;">
+    <span style="color: rgb(8, 8, 8); font-size: 0.85rem;">© 2026 SGCA · Todos los derechos reservados</span>
+    <a href="dashboard.html" class="btn-atras" style="color: black; text-decoration: none; display: flex; align-items: center; gap: 8px; background: #CCCCCC; padding: 8px 16px; border-radius: 20px;">
+      <img src="content/images/back.svg" alt="">
+      Atrás
+    </a>
+  </footer>
+
+  <!--  MODALES-->
+  <!-- Modal Agregar -->
+  <div class="modal-overlay" id="modal-agregar">
+    <div class="modal-box">
+      <h2 class="modal-title">Agregar servicio</h2>
+      <div class="modal-field">
+        <label class="modal-label">Fotografía (URL)</label>
+        <input class="modal-input" type="text" placeholder="https://..." id="mod-foto" />
+      </div>
+      <div class="modal-field">
+        <label class="modal-label">Nombre del servicio *</label>
+        <input class="modal-input" type="text" placeholder="Ej. Cambio de aceite" id="mod-nombre-servicio"/>
+        <span class="modal-error" id="err-nombre-servicio"></span>
+      </div>
+      <div class="modal-row">
+        <div class="modal-field">
+          <label class="modal-label">Tipo</label>
+          <select class="modal-select" id="mod-tipo">
+            <option>Único</option>
+            <option>Mensual</option>
+            <option>Anual</option>
+          </select>
+        </div>
+        <div class="modal-field">
+          <label class="modal-label">Precio ($) *</label>
+          <input class="modal-input" type="number" min="0" step="0.01" placeholder="0.00" id="mod-precio" />
+          <span class="modal-error" id="err-precio"></span>
+        </div>
+      </div>
+      <div class="modal-row">
+        <div class="modal-field">
+          <label class="modal-label">Estado</label>
+          <select class="modal-select" id="mod-estado">
+            <option>Activo</option>
+            <option>Inactivo</option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button class="btn-modal-cancel" id="btn-cancelar-agregar">Cancelar</button>
+        <button class="btn-modal-save" id="btn-guardar-agregar">Guardar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Editar -->
+  <div class="modal-overlay" id="modal-editar">
+    <div class="modal-box" onclick="event.stopPropagation()">
+      <h2 class="modal-title">Editar servicio</h2>
+      <input type="hidden" id="edit-id" />
+      <div class="modal-field">
+        <label class="modal-label">Fotografía (URL)</label>
+        <input class="modal-input" id="edit-foto" type="text" />
+      </div>
+      <div class="modal-field">
+        <label class="modal-label">Nombre del servicio *</label>
+        <input class="modal-input" id="edit-nombre" type="text" />
+        <span class="modal-error" id="edit-err-nombre"></span>
+      </div>
+      <div class="modal-row">
+        <div class="modal-field">
+          <label class="modal-label">Tipo</label>
+          <select class="modal-select" id="edit-tipo">
+            <option>Único</option>
+            <option>Mensual</option>
+            <option>Anual</option>
+          </select>
+        </div>
+        <div class="modal-field">
+          <label class="modal-label">Precio ($) *</label>
+          <input class="modal-input" id="edit-precio" type="number" min="0" step="0.01" />
+          <span class="modal-error" id="edit-err-precio"></span>
+        </div>
+      </div>
+      <div class="modal-row">
+        <div class="modal-field">
+          <label class="modal-label">Estado</label>
+          <select class="modal-select" id="edit-estado">
+            <option>Activo</option>
+            <option>Inactivo</option>
+          </select>
+        </div>
+        
+      </div>
+      <div class="modal-actions">
+        <button class="btn-modal-cancel" id="btn-cancelar-editar">Cancelar</button>
+        <button class="btn-modal-save" id="btn-guardar-editar">Guardar cambios</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- VÍNCULO AL SCRIPT EXTERNO -->
+  <script src="js/gestionServicios.js"></script>
+</body>
+</html>

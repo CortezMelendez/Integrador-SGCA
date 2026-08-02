@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gestión de Clientes — Concesionaria Automotriz</title>
+  <!-- Asegúrate de que las rutas a tus CSS sean correctas -->
+     <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:wght@100..900&family=Google+Sans+Code:wght@300..800&family=Google+Sans+Code:ital,wght@1,300..800&display=swap" rel="stylesheet">
+ 
+   <link rel="stylesheet" href="content/styless/styles.css">
+  <link rel="stylesheet" href="content/styless/gestiones.css" />
+  <link rel="stylesheet" href="content/styless/gestiones-extra.css" />
+  <link rel="stylesheet" href="content/styless/responsive.css" />
+</head>
+<body>
+
+  <!-- =============================================
+       NAVBAR (BARRA DE NAVEGACIÓN)
+  ============================================= -->
+  <header class="dash-navbar">
+    <div class="dash-navbar-left">
+      <div class="dash-logo-placeholder" aria-hidden="true">
+        <img src="content/images/logo2-SGCA.svg" class="logo-img" width="108" />
+      </div>
+      <span class="dash-brand">Concesionaria Automotriz</span>
+    </div>
+    <nav class="dash-nav-center">
+        <a href="index.html" class="dash-nav-link">Inicio</a>
+      <a href="dashboard.html" class="dash-nav-link">Dashboard</a>
+      <a href="" class="dash-nav-link">Servicios</a>
+      <a href="" class="dash-nav-link ">Perfil</a>
+    </nav>
+    <div class="dash-navbar-right">
+      <div class="dash-user">
+        <div class="dash-user-info">
+          <span class="dash-user-name" id="userName"></span>
+          <span class="dash-user-role" id="userRole"></span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- =============================================
+       CONTENIDO PRINCIPAL
+  ============================================= -->
+  <main class="dash-main">
+
+    <div class="gest-header">
+      <div class="gest-header-left">
+        <h1>Gestión de clientes</h1>
+        <p>Administra los clientes registrados.</p>
+      </div>
+      
+      <!-- Buscador -->
+      
+      
+      <button class="btn-agregar" onclick="abrirModal('modalAgregar')">+ Agregar cliente</button>
+    </div>
+<div class="gest-search-inline">
+        <input class="gest-input" type="text" placeholder="Buscar servicio..." oninput="filtrar(this.value)" />
+        <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+      </div>
+    <!-- =============================================
+         TABLA DE DATOS
+    ============================================= -->
+    <div class="table-card">
+      <div class="table-wrapper">
+        <table class="gest-table" id="tabla">
+          <thead>
+            <tr>
+              <th>Nombre</th>
+              <th>RFC</th>
+              <th>Telefono</th>
+              <th>Curp</th>
+              <th>Estado</th>
+              <th>Correo</th>
+              <th>Fecha</th>
+              <th>Acciones</th>
+            
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Las filas se generan dinámicamente desde la base de datos -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- =============================================
+       FOOTER
+  ============================================= -->
+  <footer class="footer" style="display: flex; justify-content: space-between; align-items: center; padding: 20px; background-color: #000;">
+    <span style="color: rgb(8, 8, 8); font-size: 0.85rem;">© 2026 SGCA · Todos los derechos reservados</span>
+    <a href="dashboard.html" class="btn-atras" style="color: black; text-decoration: none; display: flex; align-items: center; gap: 8px; background: #CCCCCC; padding: 8px 16px; border-radius: 20px;">
+      <img src="content/images/back.svg" alt="">
+      Atrás
+    </a>
+  </footer>
+
+  <!-- =============================================
+       MODALES
+  ============================================= -->
+  <!-- Modal Agregar -->
+  <div class="modal-overlay" id="modalAgregar" onclick="cerrarOverlay(event,'modalAgregar')">
+    <div class="modal-box" onclick="event.stopPropagation()">
+      <h2 class="modal-title">Agregar cliente</h2>
+      <div class="modal-field">
+        <label class="modal-label">Nombre completo *</label>
+        <input class="modal-input" type="text" id="mod-nombre" placeholder="Ej. Juan Pérez López" />
+        <span class="modal-error" id="err-nombre"></span>
+      </div>
+      <div class="modal-row">
+        <div class="modal-field">
+          <label class="modal-label">RFC *</label>
+          <input class="modal-input" type="text" id="mod-rfc" placeholder="Ej. PELJ900101AB1" />
+          <span class="modal-error" id="err-rfc"></span>
+        </div>
+        <div class="modal-field">
+          <label class="modal-label">Teléfono *</label>
+          <input class="modal-input" type="text" id="mod-telefono" placeholder="Ej. 7771234567" />
+          <span class="modal-error" id="err-telefono"></span>
+        </div>
+      </div>
+      <div class="modal-row">
+        <div class="modal-field">
+          <label class="modal-label">CURP *</label>
+          <input class="modal-input" type="text" id="mod-curp" placeholder="Ej. PELJ900101HMLRPN01" />
+          <span class="modal-error" id="err-curp"></span>
+        </div>
+        <div class="modal-field">
+          <label class="modal-label">Estado</label>
+          <select class="modal-select" id="mod-estado">
+            <option>Activo</option>
+            <option>Inactivo</option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-field">
+        <label class="modal-label">Correo *</label>
+        <input class="modal-input" type="email" id="mod-correo" placeholder="Ej. correo@ejemplo.com" />
+        <span class="modal-error" id="err-correo"></span>
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn-modal-cancel" onclick="cerrarModal('modalAgregar')">Cancelar</button>
+        <button class="btn-modal-save" onclick="agregarRegistro()">Guardar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Editar -->
+  <div class="modal-overlay" id="modalEditar" onclick="cerrarOverlay(event,'modalEditar')">
+    <div class="modal-box" onclick="event.stopPropagation()">
+      <h2 class="modal-title">Editar cliente</h2>
+      <input type="hidden" id="edit-id" />
+      <div class="modal-field">
+        <label class="modal-label">Nombre completo *</label>
+        <input class="modal-input" type="text" id="edit-nombre" />
+        <span class="modal-error" id="edit-err-nombre"></span>
+      </div>
+      <div class="modal-row">
+        <div class="modal-field">
+          <label class="modal-label">RFC *</label>
+          <input class="modal-input" type="text" id="edit-rfc" />
+          <span class="modal-error" id="edit-err-rfc"></span>
+        </div>
+        <div class="modal-field">
+          <label class="modal-label">Teléfono *</label>
+          <input class="modal-input" type="text" id="edit-telefono" />
+          <span class="modal-error" id="edit-err-telefono"></span>
+        </div>
+      </div>
+      <div class="modal-row">
+        <div class="modal-field">
+          <label class="modal-label">CURP *</label>
+          <input class="modal-input" type="text" id="edit-curp" />
+          <span class="modal-error" id="edit-err-curp"></span>
+        </div>
+        <div class="modal-field">
+          <label class="modal-label">Estado</label>
+          <select class="modal-select" id="edit-estado">
+            <option>Activo</option>
+            <option>Inactivo</option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-field">
+        <label class="modal-label">Correo *</label>
+        <input class="modal-input" type="email" id="edit-correo" />
+        <span class="modal-error" id="edit-err-correo"></span>
+      </div>
+      <div class="modal-actions">
+        <button class="btn-modal-cancel" onclick="cerrarModal('modalEditar')">Cancelar</button>
+        <button class="btn-modal-save" onclick="guardarEdicion()">Guardar cambios</button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- =============================================
+       SCRIPTS JAVASCRIPT
+  ============================================= -->
+ 
+  <!-- gestion.js maneja: agregar registro, eliminar con el badge, filtrar y paginar -->
+  <script src="js/gestionClientes.js"></script>
+</body>
+</html>
