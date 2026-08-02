@@ -1,6 +1,6 @@
 package com.sgca.integradorsgca.model.dao;
 
-import com.sgca.integradorsgca.model.bean.VehImgbean;
+import com.sgca.integradorsgca.model.bean.VehImgBean;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -12,8 +12,8 @@ import java.util.List;
 public class VehImgDao {
 
     // Listar todas las imágenes correspondientes a un vehículo específico
-    public List<VehImgbean> listarPorVehiculo(int idVehiculo) {
-        List<VehImgbean> lista = new ArrayList<>();
+    public List<VehImgBean> listarPorVehiculo(int idVehiculo) {
+        List<VehImgBean> lista = new ArrayList<>();
         String sql = "SELECT ID_IMAGEN, ID_VEHICULO, RUTA_IMAGEN "
                 + "FROM ADMIN.VEHICULO_IMAGENES WHERE ID_VEHICULO = ? ORDER BY ID_IMAGEN ASC";
 
@@ -23,7 +23,7 @@ public class VehImgDao {
             ps.setInt(1, idVehiculo);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
-                    VehImgbean img = new VehImgbean();
+                    VehImgBean img = new VehImgBean();
                     img.setIdImagen(rs.getInt("ID_IMAGEN"));
                     img.setIdVehiculo(rs.getInt("ID_VEHICULO"));
                     img.setRutaImagen(rs.getString("RUTA_IMAGEN"));
@@ -37,7 +37,7 @@ public class VehImgDao {
     }
 
     // Metodo para registrar o guardar la ruta de la imagen se asocia por ID
-    public void registrar(VehImgbean img) {
+    public void registrar(VehImgBean img) {
         String sql = "INSERT INTO ADMIN.VEHICULO_IMAGENES (ID_VEHICULO, RUTA_IMAGEN) VALUES (?, ?)";
 
         try (Connection con = Conexion.getConexion();

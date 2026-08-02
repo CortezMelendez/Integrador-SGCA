@@ -1,21 +1,21 @@
 package com.sgca.integradorsgca.model.bean;
 
-public class VehImgbean {
+public class VehImgBean {
     private int idImagen;
     private int idVehiculo;
     private String rutaImagen;
 
-    public VehImgbean() {
+    public VehImgBean() {
     }
 
     // Constructor para insertar imagenes
-    public VehImgbean(int idVehiculo, String rutaImagen) {
+    public VehImgBean(int idVehiculo, String rutaImagen) {
         this.idVehiculo = idVehiculo;
         this.rutaImagen = rutaImagen;
     }
 
     // Constructor Completo
-    public VehImgbean(int idImagen, int idVehiculo, String rutaImagen) {
+    public VehImgBean(int idImagen, int idVehiculo, String rutaImagen) {
         this.idImagen = idImagen;
         this.idVehiculo = idVehiculo;
         this.rutaImagen = rutaImagen;

@@ -1,6 +1,6 @@
 package com.sgca.integradorsgca.controller;
 
-import com.sgca.integradorsgca.model.bean.VehImgbean;
+import com.sgca.integradorsgca.model.bean.VehImgBean;
 import com.sgca.integradorsgca.model.dao.VehImgDao;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -29,7 +29,7 @@ public class VehImgServlet extends HttpServlet {
         }
 
         // Obtener la galería completa para renderizarla en la vista de detalle
-        List<VehImgbean> galeria = imagenesDao.listarPorVehiculo(idVehiculo);
+        List<VehImgBean> galeria = imagenesDao.listarPorVehiculo(idVehiculo);
         req.setAttribute("galeria", galeria);
         req.setAttribute("idVehiculo", idVehiculo);
 
@@ -44,7 +44,7 @@ public class VehImgServlet extends HttpServlet {
         String rutaImagen = req.getParameter("rutaImagen");
 
         if (rutaImagen != null && !rutaImagen.trim().isEmpty()) {
-            VehImgbean nuevaImagen = new VehImgbean(idVehiculo, rutaImagen);
+            VehImgBean nuevaImagen = new VehImgBean(idVehiculo, rutaImagen);
             imagenesDao.registrar(nuevaImagen);
         }
 
