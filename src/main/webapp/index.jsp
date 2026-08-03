@@ -19,9 +19,9 @@
 <header class="navbar">
     <span class="navbar-brand">Gestionaria Automotriz</span>
     <nav class="navbar-links">
-        <a href="dashboard.html" class="dash-nav-link">Dashboard</a>
+        <a href="dashboard.jsp" class="dash-nav-link">Dashboard</a>
         <a href="#" class="dash-nav-link">Historial</a>
-        <a href="register.html" class="dash-nav-link">Perfil</a>
+        <a href="" class="dash-nav-link">Perfil</a>
     </nav>
 </header>
 
@@ -40,13 +40,13 @@
 
             <div class="hero-actions">
                 <!-- Botón Iniciar Sesión apunta a la raíz -->
-                <a href="login.html" class="btn-outline">
+                <a href="login.jsp" class="btn-outline">
                     <img src="Images/user.svg" alt="" class="hero-btn-icon" />
                     Iniciar Sesión
                 </a>
 
                 <!-- Botón Registrarse apunta a la raíz -->
-                <a href="register.html" class="btn-register">Registrarse</a>
+                <a href="register.jsp" class="btn-register">Registrarse</a>
             </div>
         </div>
 
