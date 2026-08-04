@@ -9,7 +9,6 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:wght@100..900&family=Google+Sans+Code:wght@300..800&family=Google+Sans+Code:ital,wght@1,300..800&display=swap" rel="stylesheet">
 
-
     <link rel="stylesheet" href="../../css/duenioStyles/styles.css">
   <link rel="stylesheet" href="../../css/duenioStyles/gestiones.css" />
   <link rel="stylesheet" href="../../css/duenioStyles/gestiones-extra.css" />

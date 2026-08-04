@@ -6,12 +6,10 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Concesionaria Automotriz — Registrarse</title>
-
     <link rel="stylesheet" href="css/duenioStyles/styles.css" />
-
+    <link rel="stylesheet" href="css/duenioStyles/responsive.css" />
     <link rel="stylesheet" href="css/duenioStyles/register.css" />
     <link rel="stylesheet" href="css/duenioStyles/auth.css">
-    <link rel="stylesheet" href="css/duenioStyles/responsive.css" />
 </head>
 <body>
 
