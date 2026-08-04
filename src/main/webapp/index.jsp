@@ -8,10 +8,10 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:wght@100..900&family=Google+Sans+Code:wght@300..800&family=Google+Sans+Code:ital,wght@1,300..800&display=swap" rel="stylesheet">
 
-    <link rel="stylesheet" href="css/duenioStyles/styles.css">
-    <link rel="stylesheet" href="css/duenioStyles/index.css" />
-    <link rel="stylesheet" href="css/duenioStyles/carruselIndex.css" />
-    <link rel="stylesheet" href="css/duenioStyles/responsive.css" />
+    <link rel="stylesheet" href="./css/duenioStyles/styles.css">
+    <link rel="stylesheet" href="./css/duenioStyles/index.css" />
+    <link rel="stylesheet" href="./css/duenioStyles/carruselIndex.css" />
+    <link rel="stylesheet" href="./css/duenioStyles/responsive.css" />
 </head>
 <body>
 
@@ -68,7 +68,7 @@
     <p>© 2026 SGCA · Todos los derechos reservados</p>
 </footer>
 
-<script src="js/duenioJS/carrusel.js"></script>
+<script src="./js/duenioJS/carrusel.js"></script>
 
 </body>
 </html>
