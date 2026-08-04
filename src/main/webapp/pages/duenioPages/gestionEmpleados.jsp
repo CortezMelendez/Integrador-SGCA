@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Gestión de Clientes — Concesionaria Automotriz</title>
+  <title>Gestión de Empleados — Concesionaria Automotriz</title>
   <!-- Asegúrate de que las rutas a tus CSS sean correctas -->
      <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -11,8 +11,7 @@
 
    <link rel="stylesheet" href="../../css/duenioStyles/styles.css">
   <link rel="stylesheet" href="../../css/duenioStyles/gestiones.css" />
-  <link rel="stylesheet" href="../../css/duenioStyles/gestiones-extra.css" />
-  <link rel="stylesheet" href="../..css/duenioStyles/responsive.css" />
+  <link rel="stylesheet" href="../../css/duenioStyles/responsive.css" />
 </head>
 <body>
 
@@ -27,8 +26,8 @@
       <span class="dash-brand">Concesionaria Automotriz</span>
     </div>
     <nav class="dash-nav-center">
-        <a href="index.html" class="dash-nav-link">Inicio</a>
-      <a href="/pages/duenioPages/dashboard.html" class="dash-nav-link">Dashboard</a>
+        <a href="index.jsp" class="dash-nav-link">Inicio</a>
+      <a href="../../pages/duenioPages/dashboard.jsp" class="dash-nav-link">Dashboard</a>
       <a href="" class="dash-nav-link">Servicios</a>
       <a href="" class="dash-nav-link ">Perfil</a>
     </nav>
@@ -49,17 +48,17 @@
 
     <div class="gest-header">
       <div class="gest-header-left">
-        <h1>Gestión de clientes</h1>
-        <p>Administra los clientes registrados.</p>
+        <h1>Gestión de empleados</h1>
+        <p>Administra los empleados registrados.</p>
       </div>
 
       <!-- Buscador -->
 
 
-      <button class="btn-agregar" onclick="abrirModal('modalAgregar')">+ Agregar cliente</button>
+      <button class="btn-agregar" onclick="abrirModal('modalAgregar')">+ Agregar empleado</button>
     </div>
 <div class="gest-search-inline">
-        <input class="gest-input" type="text" placeholder="Buscar servicio..." oninput="filtrar(this.value)" />
+        <input class="gest-input" type="text" placeholder="Buscar empleado..." oninput="filtrar(this.value)" />
         <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line>
         </svg>
@@ -72,14 +71,13 @@
         <table class="gest-table" id="tabla">
           <thead>
             <tr>
-                <th>Fecha</th>
+              <th>Fecha</th>
               <th>Nombre</th>
               <th>RFC</th>
               <th>Telefono</th>
               <th>Curp</th>
               <th>Estado</th>
               <th>Correo</th>
-              <th>Acciones</th>
 
             </tr>
           </thead>
@@ -97,7 +95,7 @@
   ============================================= -->
   <footer class="footer" style="display: flex; justify-content: space-between; align-items: center; padding: 20px; background-color: #000;">
     <span style="color: rgb(8, 8, 8); font-size: 0.85rem;">© 2026 SGCA · Todos los derechos reservados</span>
-    <a href="../../pages/duenioPages/dashboard.html" class="btn-atras" style="color: black; text-decoration: none; display: flex; align-items: center; gap: 8px; background: #CCCCCC; padding: 8px 16px; border-radius: 20px;">
+    <a href="../../pages/duenioPages/dashboard.jsp" class="btn-atras" style="color: black; text-decoration: none; display: flex; align-items: center; gap: 8px; background: #CCCCCC; padding: 8px 16px; border-radius: 20px;">
       <img src="../../Images/back.svg" alt="">
       Atrás
     </a>
@@ -108,30 +106,26 @@
   ============================================= -->
   <!-- Modal Agregar -->
   <div class="modal-overlay" id="modalAgregar" onclick="cerrarOverlay(event,'modalAgregar')">
-    <div class="modal-box" onclick="event.stopPropagation()">
-      <h2 class="modal-title">Agregar cliente</h2>
+    <div class="modal-box">
+      <h2 class="modal-title">Agregar empleado</h2>
       <div class="modal-field">
-        <label class="modal-label">Nombre completo *</label>
+        <label class="modal-label">Nombre completo</label>
         <input class="modal-input" type="text" id="mod-nombre" placeholder="Ej. Juan Pérez López" />
-        <span class="modal-error" id="err-nombre"></span>
       </div>
       <div class="modal-row">
         <div class="modal-field">
-          <label class="modal-label">RFC *</label>
+          <label class="modal-label">RFC</label>
           <input class="modal-input" type="text" id="mod-rfc" placeholder="Ej. PELJ900101AB1" />
-          <span class="modal-error" id="err-rfc"></span>
         </div>
         <div class="modal-field">
-          <label class="modal-label">Teléfono *</label>
+          <label class="modal-label">Teléfono</label>
           <input class="modal-input" type="text" id="mod-telefono" placeholder="Ej. 7771234567" />
-          <span class="modal-error" id="err-telefono"></span>
         </div>
       </div>
       <div class="modal-row">
         <div class="modal-field">
-          <label class="modal-label">CURP *</label>
+          <label class="modal-label">CURP</label>
           <input class="modal-input" type="text" id="mod-curp" placeholder="Ej. PELJ900101HMLRPN01" />
-          <span class="modal-error" id="err-curp"></span>
         </div>
         <div class="modal-field">
           <label class="modal-label">Estado</label>
@@ -142,9 +136,11 @@
         </div>
       </div>
       <div class="modal-field">
-        <label class="modal-label">Correo *</label>
+        <label class="modal-label">Correo</label>
         <input class="modal-input" type="email" id="mod-correo" placeholder="Ej. correo@ejemplo.com" />
-        <span class="modal-error" id="err-correo"></span>
+      </div>
+      <div class="modal-field">
+
       </div>
 
       <div class="modal-actions">
@@ -154,59 +150,67 @@
     </div>
   </div>
 
-  <!-- Modal Editar -->
-  <div class="modal-overlay" id="modalEditar" onclick="cerrarOverlay(event,'modalEditar')">
-    <div class="modal-box" onclick="event.stopPropagation()">
-      <h2 class="modal-title">Editar cliente</h2>
-      <input type="hidden" id="edit-id" />
-      <div class="modal-field">
-        <label class="modal-label">Nombre completo *</label>
-        <input class="modal-input" type="text" id="edit-nombre" />
-        <span class="modal-error" id="edit-err-nombre"></span>
-      </div>
-      <div class="modal-row">
-        <div class="modal-field">
-          <label class="modal-label">RFC *</label>
-          <input class="modal-input" type="text" id="edit-rfc" />
-          <span class="modal-error" id="edit-err-rfc"></span>
-        </div>
-        <div class="modal-field">
-          <label class="modal-label">Teléfono *</label>
-          <input class="modal-input" type="text" id="edit-telefono" />
-          <span class="modal-error" id="edit-err-telefono"></span>
-        </div>
-      </div>
-      <div class="modal-row">
-        <div class="modal-field">
-          <label class="modal-label">CURP *</label>
-          <input class="modal-input" type="text" id="edit-curp" />
-          <span class="modal-error" id="edit-err-curp"></span>
-        </div>
-        <div class="modal-field">
-          <label class="modal-label">Estado</label>
-          <select class="modal-select" id="edit-estado">
-            <option>Activo</option>
-            <option>Inactivo</option>
-          </select>
-        </div>
-      </div>
-      <div class="modal-field">
-        <label class="modal-label">Correo *</label>
-        <input class="modal-input" type="email" id="edit-correo" />
-        <span class="modal-error" id="edit-err-correo"></span>
-      </div>
-      <div class="modal-actions">
-        <button class="btn-modal-cancel" onclick="cerrarModal('modalEditar')">Cancelar</button>
-        <button class="btn-modal-save" onclick="guardarEdicion()">Guardar cambios</button>
-      </div>
-    </div>
-  </div>
 
   <!-- =============================================
        SCRIPTS JAVASCRIPT
   ============================================= -->
+  <script>
+    // Funciones de Modal
+    function abrirModal(id) {
+      document.getElementById(id).classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
 
-  <!-- gestion.js maneja: agregar registro, eliminar con el badge, filtrar y paginar -->
-  <script src="../../js/duenioJS/gestionClientes.js"></script>
+    function cerrarModal(id) {
+      document.getElementById(id).classList.remove('active');
+      document.body.style.overflow = '';
+    }
+
+    function cerrarOverlay(e, id) {
+      if (e.target === document.getElementById(id)) cerrarModal(id);
+    }
+
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') {
+        cerrarModal('modalAgregar');
+        cerrarModal('modalEditar');
+      }
+    });
+
+    // Función para llenar datos en modal Editar
+    function abrirEditar(nombre, tipo, precio, dur, estado) {
+      document.getElementById('edit-nombre').value = nombre;
+      document.getElementById('edit-precio').value = precio;
+      document.getElementById('edit-dur').value = dur;
+
+      ['edit-tipo','edit-estado'].forEach(id => {
+        const sel = document.getElementById(id);
+        const val = id === 'edit-tipo' ? tipo : estado;
+        [...sel.options].forEach(o => o.selected = o.value === val);
+      });
+      abrirModal('modalEditar');
+    }
+
+    // Función de filtrado en la tabla
+    function filtrar(texto) {
+      document.querySelectorAll('#tabla tbody tr').forEach(tr => {
+        tr.style.display = tr.textContent.toLowerCase().includes(texto.toLowerCase()) ? '' : 'none';
+      });
+    }
+
+    // Función para alternar estado Activo/Inactivo (Click en Badge)
+    function toggleEstado(elemento) {
+      if (elemento.classList.contains('badge-inactive')) {
+        elemento.classList.remove('badge-inactive');
+        elemento.classList.add('badge-active');
+        elemento.textContent = 'Activo';
+      } else if (elemento.classList.contains('badge-active')) {
+        elemento.classList.remove('badge-active');
+        elemento.classList.add('badge-inactive');
+        elemento.textContent = 'Inactivo';
+      }
+    }
+  </script>
+  <script src="js/gestionEmpleado.js"></script>
 </body>
 </html>
