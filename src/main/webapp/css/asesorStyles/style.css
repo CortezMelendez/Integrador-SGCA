@@ -1,0 +1,329 @@
+/* =============================================
+   styles.css — BASE GENERAL
+   Compartido por TODAS las páginas.
+   Contiene: tokens, reset, tipografías, HEADER,
+   FOOTER y botón "Atrás".
+   Cada página agrega su propio archivo para lo
+   demás (formularios, dashboard, etc).
+============================================= */
+
+
+/* =============================================
+   TOKENS DE DISEÑO
+============================================= */
+:root {
+  --color-bg:          #000000;
+  --color-black:       #000000;
+  --color-surface:     #111111;
+  --color-input-bg:    #cccccc;
+  --color-input-text:  #444444;
+  --color-placeholder: #888888;
+  --color-white:       #ffffff;
+
+  /* Botón principal (Iniciar sesión, Gestión, etc.) */
+  --btn-active:        #0B2545;
+  --btn-hover:         #113C6E;
+  --btn-click:         #040D1B;
+
+  /* Botón Atrás */
+  --btn-back-bg:       #cccccc;
+  --btn-back-hover:    #E0E0E0;
+  --btn-back-click:    #ABABAB;
+
+  /* Grises / bordes reutilizados en tablas, inputs y textos */
+  --color-gray-dark:      #333333;
+  --color-gray-mid:       #555555;
+  --color-gray-border:    #cccccc;
+  --color-gray-light:     #d8d8d8;
+  --color-gray-input:     #e5e7eb;
+  --color-gray-input-alt: #f9f9f9;
+  --color-gray-muted:     #4a4a4a;
+  --color-gray-role:      #b7b7b7;
+  --color-nav-active:     #8a8a8a;
+
+  /* Superficies / tablas */
+  --color-table-header: #aeb8c3;
+  --color-table-row:    #c9d0d8;
+  --color-hero-bg:      #D9D9D9;
+  --color-hero-bg-alt:  #f9f9fa;
+  --color-modal-stripe: #fff0f3;
+
+  /* Marca / navegación oscura */
+  --color-navy:        #1a2433;
+  --color-navy-hover:  #2b3a52;
+  --color-navy-alt:       #1a1c29;
+  --color-navy-alt-hover: #2a2d42;
+  --color-submenu-bg:  #333333;
+  --color-submenu-text: #cccccc;
+
+  /* Estados / feedback */
+  --color-danger:         #e63946;
+  --color-danger-hover:   #ff4c4c;
+  --color-info:           #4a90e2;
+  --color-info-hover:     #79aee6;
+  --color-info-active:    #1a5c9e;
+  --color-delete-bg:      #ffbaba;
+  --color-delete-hover:   #ffd8d8;
+  --color-delete-active:  #df6666;
+  --color-cancel-bg:      #450B0C;
+  --color-cancel-hover:   #761315;
+  --color-neutral-bg:        #D9D9D9;
+  --color-neutral-bg-hover:  #E8E8E8;
+  --color-neutral-bg-active: #999999;
+
+  /* Badges de estado */
+  --color-badge-inactive:       #9e9e9e;
+  --color-badge-inactive-hover: #cfcfcf;
+  --color-badge-active-bg:      #b5e5a5;
+  --color-badge-active-text:    #2b611e;
+  --color-badge-active-hover:   #d8f5ce;
+
+  /* Tipografía */
+  --font-primary: 'Google Sans Flex', 'Product Sans', 'Inter', sans-serif;
+  --font-code:    'Google Sans Code', 'Roboto Mono', monospace;
+
+  /* Espaciados */
+  --gap-sm:   8px;
+  --gap-md:   16px;
+  --gap-lg:   24px;
+  --gap-xl:   40px;
+
+  --radius-input:  6px;
+  --radius-btn:    999px;
+}
+
+/* =============================================
+   RESET Y BASE
+============================================= */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  height: 100%;
+  font-family: var(--font-primary);
+  background: var(--color-bg);
+  color: var(--color-white);
+}
+
+body {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* =============================================
+   HEADER / NAVBAR (uso general en páginas internas:
+   dashboard, servicios, perfil, etc. Las opciones
+   del nav cambian según el rol del usuario)
+============================================= */
+.dash-navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--gap-lg);
+  background: var(--color-bg);
+  padding: 14px 32px;
+  flex-wrap: wrap;
+}
+
+.dash-navbar-left {
+  display: flex;
+  align-items: center;
+  gap: var(--gap-md);
+}
+
+.dash-logo-placeholder {
+  display: flex;
+  align-items: center;
+}
+
+.logo-img {
+  display: block;
+}
+
+.dash-brand {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--color-white);
+  white-space: nowrap;
+}
+
+.dash-nav-center {
+  display: flex;
+  align-items: center;
+  gap: var(--gap-lg);
+}
+
+.dash-nav-link,
+.nav-link {
+  color: var(--color-white);
+  text-decoration: none;
+  font-size: 1.1rem;
+  font-weight: 500;
+  opacity: 0.85;
+  transition: color 0.2s ease, opacity 0.18s ease, text-decoration 0.2s ease;
+  text-underline-offset: 6px;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.dash-nav-link:hover,
+.nav-link:hover {
+  opacity: 1;
+  text-decoration: underline;
+}
+
+.dash-nav-link.active,
+.nav-link.active {
+  opacity: 1;
+  font-weight: 700;
+  color: var(--color-nav-active);
+  text-decoration: underline;
+}
+
+/* --- Menú desplegable de navegación (usado en todas las páginas internas) --- */
+.nav-item {
+  position: relative;
+}
+
+.nav-item-container {
+  position: relative;
+  display: inline-block;
+}
+
+.submenu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background-color: var(--color-submenu-bg);
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 12px 20px;
+  min-width: max-content;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+  width: 150px;
+  height: 40px;
+}
+
+.submenu-link {
+  color: var(--color-submenu-text);
+  text-decoration: none;
+  font-size: 14px;
+}
+
+.submenu-link:hover {
+  color: var(--color-white);
+}
+
+.btn-x {
+  background: transparent;
+  border: none;
+  color: var(--color-white);
+  font-size: 16px;
+  cursor: pointer;
+  padding: 0;
+  margin-left: 10px;
+}
+
+.btn-x:hover {
+  color: var(--color-danger-hover);
+}
+
+/* Clase de utilidad general para ocultar elementos (menús, modales, etc.) */
+.oculto,
+.hidden {
+  display: none !important;
+}
+
+.dash-navbar-right {
+  display: flex;
+  align-items: center;
+}
+
+.dash-user {
+  display: flex;
+  align-items: center;
+  gap: var(--gap-sm);
+}
+
+.dash-user-avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: var(--btn-active);
+  color: var(--color-white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.dash-user-info {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.25;
+}
+
+.dash-user-name {
+  color: var(--color-white);
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.dash-user-role {
+  color: var(--color-gray-role);
+  font-size: 0.75rem;
+}
+
+/* =============================================
+   FOOTER + BOTÓN ATRÁS (todas las páginas)
+============================================= */
+.footer {
+  background: var(--color-black) !important;
+  height: 75px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 0 24px;
+  flex-shrink: 0;
+}
+
+.btn-back {
+  position: static;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  width: fit-content;
+  background: var(--btn-back-bg);
+  color: var(--color-black);
+  border: none;
+  border-radius: var(--radius-btn);
+  padding: 10px 18px;
+  font-family: var(--font-primary);
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.18s ease, transform 0.1s ease;
+  text-decoration: none;
+}
+
+.btn-back img,
+.btn-back svg {
+  width: 18px;
+  height: 18px;
+}
+
+.btn-back:hover {
+  background: var(--btn-back-hover);
+}
+
+.btn-back:active {
+  background: var(--btn-back-click);
+  transform: scale(0.97);
+}

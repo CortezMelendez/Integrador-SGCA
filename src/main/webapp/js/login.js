@@ -88,6 +88,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Credenciales correctas: continuar
-    window.location.href = 'dashboard.html';
+    window.location.href = '';
   });
 });

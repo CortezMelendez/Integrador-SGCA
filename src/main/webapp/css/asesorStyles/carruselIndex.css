@@ -1,0 +1,227 @@
+/* -------------------------------------------------------
+   NAVBAR — enlaces adicionales
+------------------------------------------------------- */
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.navbar-brand{
+    display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--gap-lg);
+  background: var(--color-bg);
+  padding: 14px 32px;
+  flex-wrap: wrap;
+  height: 86px;
+  font-size: 32px;
+}
+.navbar-links {
+  display: flex;
+  gap: 28px;
+}
+
+.navbar-link {
+  color: var(--color-white);
+  text-decoration: none;
+  font-size: 0.95rem;
+  font-weight: 500;
+  opacity: 0.75;
+  transition: opacity 0.2s ease;
+  font-size: 16px;
+}
+
+.navbar-link:hover {
+  opacity: 1;
+}
+
+/* -------------------------------------------------------
+   HERO — descripción bajo el título
+------------------------------------------------------- */
+.hero-description {
+  color: black;
+  font-size: 1rem;
+  font-family: 'Google sans flex';
+  line-height: 1.6;
+  max-width: 420px;
+  margin: 16px 0 28px;
+}
+.hero{
+    background-color: var(--color-hero-bg-alt);
+}
+.hero-actions{
+    font-family: 'Google sans code';
+
+}
+
+
+/* -------------------------------------------------------
+   SECCIÓN DEL CARRUSEL
+------------------------------------------------------- */
+.carrusel-section {
+  padding: 40px;
+}
+
+.carrusel-header {
+  font-family: 'google sans flex',sans-serif;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.carrusel-header h2 {
+  font-size: 1.4rem;
+}
+
+.carrusel-controls {
+  display: flex;
+  gap: 8px;
+}
+
+.carrusel-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid var(--color-gray-border);
+  background: var(--color-white);
+  color: var(--color-navy);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.carrusel-btn:hover {
+  background: var(--color-navy);
+  color: var(--color-white);
+}
+
+.carrusel-btn:active {
+  transform: scale(0.92);
+}
+
+/* Pista deslizable con scroll horizontal nativo */
+.carrusel-track {
+  display: flex;
+  gap: 20px;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  scroll-snap-type: x mandatory;
+  padding-bottom: 8px;
+  /* Oculta la barra nativa del navegador; usamos la nuestra abajo */
+  scrollbar-width: none;
+}
+
+.carrusel-track::-webkit-scrollbar {
+  display: none;
+}
+
+/* Tarjeta de auto */
+.auto-card {
+  font-family: 'Google sans flex', sans-serif;
+  flex: 0 0 auto;
+  width: 220px;
+  scroll-snap-align: start;
+  border-radius: 10px;
+  overflow: hidden;
+  background: var(--color-navy);
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.auto-card:hover {
+  transform: translateY(-4px);
+}
+
+.auto-card-img {
+  width: 100%;
+  height: 130px;
+  background: linear-gradient(135deg, var(--color-navy) 0%, var(--color-navy-hover) 100%);
+}
+
+.auto-card-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 12px 14px 16px;
+}
+
+.auto-card-marca {
+  color: var(--color-white);
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+
+.auto-card-modelo {
+  color: var(--color-table-header);
+  font-size: 0.8rem;
+}
+
+.auto-card-precio {
+  font-family: 'google sans code',monospace;
+  color: var(--color-white);
+  font-size: 0.85rem;
+  margin-top: 6px;
+  font-weight: 600;
+}
+
+/* BARRA DE DESPLAZAMIENTO PERSONALIZADA  */
+.carrusel-scrollbar {
+  height: 6px;
+  background: var(--color-gray-input);
+  border-radius: 3px;
+  margin-top: 12px;
+  position: relative;
+  overflow: hidden;
+}
+
+.carrusel-scrollbar-thumb {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background: var(--color-navy);
+  border-radius: 3px;
+  transition: left 0.1s ease;
+}
+
+/*RESPONSIVo */
+@media (max-width: 900px) {
+  .navbar {
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 14px 20px;
+  }
+
+  .navbar-links {
+    width: 100%;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 14px 20px;
+  }
+
+  .carrusel-section {
+    padding: 24px 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .navbar-links {
+    gap: 10px 16px;
+  }
+
+  .navbar-link {
+    font-size: 0.85rem;
+  }
+
+  .auto-card {
+    width: 170px;
+  }
+
+  .carrusel-header h2 {
+    font-size: 1.15rem;
+  }
+}
