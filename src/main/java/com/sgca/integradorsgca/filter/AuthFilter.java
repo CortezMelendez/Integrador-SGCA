@@ -52,14 +52,34 @@ public class AuthFilter implements Filter {
 
         String path = req.getServletPath();
 
-        // RECURSOS PÚBLICOS: Acceso libre sin necesidad de login
-        boolean esRecursoPublico = path.equals("/login")
-                || path.equals("/login.jsp")
-                || path.equals("/logout")
-                || path.startsWith("/css/")
-                || path.startsWith("/js/")
-                || path.startsWith("/assets/")
-                || path.startsWith("/images/");
+        // =======================================================
+// RECURSOS PÚBLICOS
+// Estas rutas pueden abrirse sin haber iniciado sesión.
+// =======================================================
+        boolean esRecursoPublico =
+
+                // ===== CAMBIO =====
+                // Permite que la aplicación inicie mostrando index.jsp
+                // sin obligar al usuario a autenticarse.
+                path.equals("/")
+                        || path.equals("/index.jsp")
+
+                        // ==================
+                        || path.equals("/login")
+                        || path.equals("/login.jsp")
+                        || path.equals("/logout")
+
+                        // Recursos estáticos
+                        || path.startsWith("/css/")
+                        || path.startsWith("/js/")
+
+                        // ===== CAMBIO =====
+                        // Tu carpeta se llama "Images", no "images".
+                        // Si trabajas en Linux o Docker esto sí importa.
+                        || path.startsWith("/Images/")
+                        // ==================
+
+                        || path.startsWith("/assets/");
 
         if (esRecursoPublico) {
             chain.doFilter(request, response);
@@ -77,8 +97,15 @@ public class AuthFilter implements Filter {
         UsuarioBean usuario = (UsuarioBean) session.getAttribute("usuarioLogueado");
         String rolUsuario = obtenerNombreRol(usuario);
 
-        // LOQUEAR ACCESO DIRECTO A JSPs (evita escribir "clientes.jsp" en la barra de URL)
-        if (path.endsWith(".jsp") && !path.endsWith("login.jsp")) {
+        // =======================================================
+// BLOQUEAR EL ACCESO DIRECTO A LOS JSP PRIVADOS
+// index.jsp y login.jsp son públicos.
+// Todos los demás JSP requieren pasar por un Servlet.
+// =======================================================
+        if (path.endsWith(".jsp")
+                && !path.endsWith("login.jsp")
+                && !path.endsWith("index.jsp")) {   // ===== CAMBIO =====
+
             redirigirSegunRol(req, resp, rolUsuario);
             return;
         }

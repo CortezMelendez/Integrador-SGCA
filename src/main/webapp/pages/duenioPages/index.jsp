@@ -18,6 +18,11 @@
 <!-- NAVBAR -->
 <header class="navbar">
     <span class="navbar-brand">Gestionaria Automotriz</span>
+    <nav class="navbar-links">
+        <a href="dashboard.jsp" class="dash-nav-link">Dashboard</a>
+        <a href="#" class="dash-nav-link">Historial</a>
+        <a href="" class="dash-nav-link">Perfil</a>
+    </nav>
 </header>
 
 <!-- HERO -->
