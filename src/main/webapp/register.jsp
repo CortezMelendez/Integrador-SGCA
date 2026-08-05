@@ -168,7 +168,8 @@
                                 id="password"
                                 name="password"
                                 placeholder="Contraseña"
-                                required>
+                                required
+                                maxlength="255">
 
                     </div>
 
@@ -217,14 +218,16 @@
 
                         <img class="input-icon"
                              src="${pageContext.request.contextPath}/Images/phone.svg"
-                             alt="">
+                             alt=""
+                        >
 
                         <input
                                 class="input-field"
                                 type="text"
                                 id="curp"
                                 name="curp"
-                                placeholder="CURP">
+                                placeholder="CURP"
+                                maxlength="18">
 
                     </div>
 
@@ -248,7 +251,8 @@
                                 type="text"
                                 id="rfc"
                                 name="rfc"
-                                placeholder="RFC">
+                                placeholder="RFC"
+                                maxlength="13">
 
                     </div>
 

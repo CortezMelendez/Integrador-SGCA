@@ -8,11 +8,30 @@ import java.sql.SQLException;
 public class Conexion {
 
     public static Connection getConexion() {
-        // Ruta absoluta formateada para la Wallet
-        String rutaWallet = new File("src/main/resources/Wallet")
-                .getAbsolutePath()
-                .replace('\\', '/');
+        // 1) Primero intenta leer la ruta desde una variable de entorno (recomendado en despliegue)
+        String rutaWallet = System.getenv("TNS_ADMIN_PATH");
 
+        // 2) Si no existe la variable de entorno, resuelve la ruta vía el classloader
+        //    (funciona tanto en local como dentro del WAR/target/classes)
+        if (rutaWallet == null || rutaWallet.isBlank()) {
+            java.net.URL walletUrl = Conexion.class.getClassLoader().getResource("Wallet");
+            if (walletUrl != null) {
+                rutaWallet = new File(walletUrl.getFile()).getAbsolutePath().replace('\\', '/');
+            }
+        }
+
+        // 3) Último recurso: ruta relativa (solo funcionará si el working dir es el proyecto)
+        if (rutaWallet == null || rutaWallet.isBlank()) {
+            rutaWallet = new File("src/main/resources/Wallet")
+                    .getAbsolutePath()
+                    .replace('\\', '/');
+        }
+
+        System.out.println("Ruta Wallet: " + rutaWallet);
+
+        File wallet = new File(rutaWallet);
+        System.out.println("Existe Wallet: " + wallet.exists());
+        System.out.println("Es directorio: " + wallet.isDirectory());
         // Configurar la propiedad TNS para que encuentre los certificados SSL/TLS
         System.setProperty("oracle.net.tns_admin", rutaWallet);
 
@@ -33,9 +52,12 @@ public class Conexion {
         } catch (ClassNotFoundException e) {
             System.err.println("Driver no encontrado.");
             e.printStackTrace();
+            throw new RuntimeException("Driver Oracle JDBC no encontrado en el classpath.", e);
         } catch (SQLException e) {
             System.err.println("Error SQL al conectar:");
             e.printStackTrace();
+            throw new RuntimeException("No se pudo conectar a la base de datos. Verifica la ruta del Wallet ("
+                    + rutaWallet + "), las credenciales y la conectividad de red.", e);
         }
         return con;
     }
