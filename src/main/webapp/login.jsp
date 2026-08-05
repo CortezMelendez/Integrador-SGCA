@@ -1,62 +1,87 @@
-
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib prefix="c" uri="jakarta.tags.core" %> <%-- CAMBIO: necesario para usar c:if --%>
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Concesionaria Automotriz — Inicio de Sesion</title>
-    <link rel="stylesheet" href="css/duenioStyles/styles.css" />
-    <link rel="stylesheet" href="css/duenioStyles/responsive.css" />
-    <link rel="stylesheet" href="css/duenioStyles/login.css" />
-    <link rel="stylesheet" href="css/duenioStyles/auth.css">
+    <title>Concesionaria Automotriz — Inicio de Sesión</title>
+
+    <%-- CAMBIO: usar contextPath para que funcione aunque cambie el nombre del proyecto --%>
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/duenioStyles/styles.css" />
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/duenioStyles/responsive.css" />
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/duenioStyles/login.css" />
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/duenioStyles/auth.css" />
 </head>
 <body>
 
-<!-- LAYOUT PRINCIPAL -->
+
 <div class="page">
 
-    <!-- COLUMNA IZQUIERDA — imagen del showroom -->
     <section class="hero-image" aria-hidden="true">
-        <img src="Images/login.png" />
+        <img src="${pageContext.request.contextPath}/Images/login.png" alt="Showroom" />
     </section>
 
-    <!-- COLUMNA DERECHA — formulario + footer -->
     <main class="form-panel">
 
         <h1 class="brand-title">Concesionaria Automotriz</h1>
         <h2 class="form-title">Inicio de Sesión</h2>
 
-        <form class="login-form" id="loginForm" novalidate>
+        <%-- CAMBIO: el form ahora sí envía al servlet y por POST --%>
+        <form class="login-form"
+              id="loginForm"
+              method="post"
+              action="${pageContext.request.contextPath}/login"
+              novalidate>
 
-            <!-- Mensaje de error general (oculto por defecto) -->
-            <div class="error-message" id="errorMessage" role="alert" hidden>
-                <svg class="error-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                    <path d="M12 2 1 21h22L12 2Z" stroke="#ff9d9d" stroke-width="1.6" stroke-linejoin="round"/>
-                    <path d="M12 9v5" stroke="#ff9d9d" stroke-width="1.6" stroke-linecap="round"/>
-                    <circle cx="12" cy="17" r="1" fill="#ff9d9d"/>
-                </svg>
-                <span id="errorMessageText">Usuario o contraseña incorrectos. Intente de nuevo</span>
-            </div>
-
-
+            <%-- CAMBIO: mensaje dinámico según el error que mande LoginServlet --%>
+            <c:if test="${not empty param.error}">
+                <div class="error-message" role="alert">
+                    <c:choose>
+                        <c:when test="${param.error == 'credenciales_invalidas'}">
+                            Usuario o contraseña incorrectos. Intente de nuevo.
+                        </c:when>
+                        <c:when test="${param.error == 'sesion_requerida'}">
+                            Debes iniciar sesión para acceder a esa página.
+                        </c:when>
+                        <c:when test="${param.error == 'server_error'}">
+                            Ocurrió un error en el servidor. Intenta más tarde.
+                        </c:when>
+                        <c:otherwise>
+                            Ocurrió un error inesperado.
+                        </c:otherwise>
+                    </c:choose>
+                </div>
+            </c:if>
 
             <div class="field-group">
-                <label class="field-label" for="email">Correo Electrónico</label>
+                <label class="field-label" for="correo">Correo Electrónico</label>
                 <div class="input-wrapper">
-                    <img class="input-icon" src="Images/email.svg" alt="" />
-                    <input class="input-field" type="email" id="email" name="email" placeholder="Ingresa tu correo" autocomplete="email" required />
+                    <img class="input-icon" src="${pageContext.request.contextPath}/Images/email.svg" alt="" />
+                    <%-- CAMBIO: name="correo" porque LoginServlet lee req.getParameter("correo") --%>
+                    <input class="input-field"
+                           type="email"
+                           id="correo"
+                           name="correo"
+                           placeholder="Ingresa tu correo"
+                           autocomplete="email"
+                           required />
                 </div>
-                <span class="field-error" id="emailError"></span>
             </div>
 
             <div class="field-group">
                 <label class="field-label" for="password">Contraseña</label>
                 <div class="input-wrapper">
-                    <img class="input-icon" src="Images/llave-pass.svg" alt="" />
-                    <input class="input-field" type="password" id="password" name="password" placeholder="Ingresa tu contraseña" autocomplete="current-password" required />
+                    <img class="input-icon" src="${pageContext.request.contextPath}/Images/llave-pass.svg" alt="" />
+                    <input class="input-field"
+                           type="password"
+                           id="password"
+                           name="password"
+                           placeholder="Ingresa tu contraseña"
+                           autocomplete="current-password"
+                           required />
                 </div>
-                <span class="field-error" id="passwordError"></span>
             </div>
 
             <a href="#" class="forgot-link">¿Olvidaste tu contraseña?</a>
@@ -66,22 +91,21 @@
             <hr class="divider" />
 
             <p class="register-text">
-                ¿No tienes una cuenta? <a href="register.jsp" class="forgot-link" >Regístrate aquí</a>
+                ¿No tienes una cuenta?
+                <a href="${pageContext.request.contextPath}/register.jsp" class="forgot-link">Regístrate aquí</a>
             </p>
-
         </form>
 
         <footer class="footer login-footer">
-            <a href="index.jsp" class="btn-back">
-                <img src="Images/back.svg" alt="atras" />
+            <a href="${pageContext.request.contextPath}/index.jsp" class="btn-back">
+                <img src="${pageContext.request.contextPath}/Images/back.svg" alt="atras" />
                 Atrás
             </a>
         </footer>
 
     </main>
-
 </div>
 
-<script src="js/login.js"></script>
+<script src="${pageContext.request.contextPath}/js/login.js"></script>
 </body>
 </html>

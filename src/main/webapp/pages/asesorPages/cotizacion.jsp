@@ -12,8 +12,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:wght@100..900&family=Google+Sans+Code:wght@300..800&family=Google+Sans+Code:ital,wght@1,300..800&display=swap" rel="stylesheet">
 
 
-    <link rel="stylesheet" href="content/styles/style.css" />
-    <link rel="stylesheet" href="content/styles/cotizacion.css" />
+    <link rel="stylesheet" href="${pageContext.request.contextPath}../../css/asesorStyles/style.css" />
+    <link rel="stylesheet" href="${pageContext.request.contextPath}../../css/asesorStyles/cotizacion.css" />
 </head>
 <body>
 
@@ -21,7 +21,7 @@
 <header class="dash-navbar">
     <div class="dash-navbar-left">
         <div class="dash-logo-placeholder" aria-hidden="true">
-            <img src="content/images/logo2-SGCA.svg" class="logo-img" width="108" />
+            <img src="/Images/logo2-SGCA.svg" class="logo-img" width="108" />
         </div>
         <span class="dash-brand">Concesionaria Automotriz</span>
     </div>
@@ -32,7 +32,7 @@
             <button id="btn-registrar" class="nav-link">Registrar</button>
 
             <div id="submenu-registrar" class="submenu oculto">
-                <a href="registrarUsuario.html" class="submenu-link">Usuario</a>
+                <a href="registrarUsuario.jsp" class="submenu-link">Usuario</a>
                 <a href="#" class="submenu-link">Auto</a>
                 <button id="btn-cerrar" class="btn-x">X</button>
             </div>
@@ -101,10 +101,10 @@
 </main>
 
 <!-- FOOTER -->
-<footer class="footer"000;"#000;">
+<footer class="footer">
 <span>© 2026 SGCA · Todos los derechos reservados</span>
-<a href="index.html" class="btn-atras"CCCCCC; padding: 8px 16px; border-radius: 20px;"#CCCCCC; padding: 8px 16px; border-radius: 20px;">
-<img src="content/images/back.svg" alt="">
+<a href="index.jsp" class="btn-atras">
+<img src="/Images/back.svg" alt="">
 Atrás
 </a>
 </footer>
@@ -161,6 +161,6 @@ Atrás
     </div>
 </div>
 
-<script src="content/js/cotizacion.js"></script>
+<script src="../../js/asesorJS/cotizacion.js"></script>
 </body>
 </html>

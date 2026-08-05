@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import oracle.jdbc.internal.XSCacheOutput;
 
 import java.io.IOException;
 
@@ -34,6 +35,10 @@ public class LoginServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         req.setCharacterEncoding("UTF-8");
 
+        System.out.println("==================================" +
+                "ejecutando servlet" +
+                "===================================");
+
         String correo = req.getParameter("correo");
         String password = req.getParameter("password");
 
@@ -50,7 +55,6 @@ public class LoginServlet extends HttpServlet {
 
                 //Redirigir según el rol del usuario
                 redirigirSegunRol(req, resp, usuario);
-
             } else {
                 // Credenciales incorrectas o usuario inactivo (estado = 0)
                 resp.sendRedirect(req.getContextPath() + "/login.jsp?error=credenciales_invalidas");
@@ -60,6 +64,9 @@ public class LoginServlet extends HttpServlet {
             e.printStackTrace();
             resp.sendRedirect(req.getContextPath() + "/login.jsp?error=server_error");
         }
+        System.out.println("=====================================" +
+                "probando servlet" +
+                "============================================");
     }
 
     private void redirigirSegunRol(HttpServletRequest req, HttpServletResponse resp, UsuarioBean usuario) throws IOException {
