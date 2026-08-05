@@ -11,8 +11,8 @@
     <%-- CAMBIO: usar contextPath para que funcione aunque cambie el nombre del proyecto --%>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/duenioStyles/styles.css" />
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/duenioStyles/responsive.css" />
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/duenioStyles/login.css" />
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/duenioStyles/auth.css" />
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/login.css" />
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/auth.css" />
 </head>
 <body>
 

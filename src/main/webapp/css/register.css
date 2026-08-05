@@ -1,0 +1,74 @@
+/* =============================================
+   register.css — SOLO lo que es DISTINTO al login
+   Requiere styles.css y auth.css cargados antes.
+   Usa unicamente las variables de color definidas
+   en styles.css (:root), no se agregan colores nuevos.
+============================================= */
+
+/* El panel de registro es mas compacto: menos padding
+   vertical para que los 8 campos quepan sin scroll */
+.form-panel--compact {
+    padding-top: 28px;
+    padding-bottom: 28px;
+}
+
+.form-title {
+    margin-bottom: 12px;
+}
+
+/* El formulario de registro usa 2 columnas por fila
+   para acomodar los 8 campos sin scroll en desktop */
+.login-form.register-form {
+    gap: 10px;
+    max-width: 560px;
+}
+
+.register-form .field-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+.register-form .field-group {
+    gap: 4px;
+}
+
+.register-form .field-label {
+    font-size: 0.82rem;
+}
+
+.register-form .input-field {
+    padding: 10px 14px 10px 40px;
+    font-size: 0.88rem;
+}
+
+.register-form .input-icon {
+    left: 12px;
+    width: 17px;
+    height: 17px;
+}
+
+.register-form .field-error {
+    min-height: 0;
+    font-size: 0.72rem;
+}
+
+.register-form .btn-primary {
+    padding: 12px 24px;
+    font-size: 1.1rem;
+}
+
+.register-form .error-message {
+    padding: 8px 12px;
+    font-size: 0.78rem;
+    margin-bottom: 2px;
+}
+
+/* En pantallas angostas, cada fila vuelve a 1 columna
+   (se complementa con responsive.css) */
+@media (max-width: 480px) {
+    .register-form .field-row {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+}

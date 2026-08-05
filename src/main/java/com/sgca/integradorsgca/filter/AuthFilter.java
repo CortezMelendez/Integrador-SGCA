@@ -69,6 +69,9 @@ public class AuthFilter implements Filter {
                         || path.equals("/login.jsp")
                         || path.equals("/logout")
 
+                        || path.equals("/register.jsp")
+                        || path.equals("/RegisterServlet")
+
                         // Recursos estáticos
                         || path.startsWith("/css/")
                         || path.startsWith("/js/")
@@ -104,7 +107,8 @@ public class AuthFilter implements Filter {
 // =======================================================
         if (path.endsWith(".jsp")
                 && !path.endsWith("login.jsp")
-                && !path.endsWith("index.jsp")) {   // ===== CAMBIO =====
+                && !path.endsWith("index.jsp")
+                && !path.endsWith("register.jsp")) {   // ===== CAMBIO =====
 
             redirigirSegunRol(req, resp, rolUsuario);
             return;

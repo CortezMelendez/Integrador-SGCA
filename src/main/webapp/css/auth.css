@@ -1,0 +1,218 @@
+
+.page {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    min-height: 100vh;
+}
+
+/* --- Columna izquierda: imagen showroom --- */
+.hero-image {
+    position: relative;
+    overflow: hidden;
+    background: var(--color-black-soft);
+    height: 100vh;
+}
+
+.hero-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    display: block;
+}
+
+/* --- Columna derecha: panel del formulario --- */
+.form-panel {
+    background: var(--color-bg);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 48px var(--gap-xl);
+    min-height: 100vh;
+    gap: 0;
+}
+
+.brand-title {
+    font-size: clamp(1.2rem, 2.2vw, 1.5rem);
+    font-weight: 700;
+    text-align: center;
+    letter-spacing: 0.01em;
+    margin-bottom: var(--gap-md);
+    color: var(--color-white);
+}
+
+/* Base del título; margin-bottom se ajusta por pantalla
+   (ver login.css / register.css) */
+.form-title {
+    font-size: clamp(2rem, 4vw, 2.8rem);
+    font-weight: 700;
+    text-align: center;
+    margin-top: 0;
+    color: var(--color-white);
+}
+
+/* Base del formulario; gap se ajusta por pantalla
+   (ver login.css / register.css) */
+.login-form {
+    width: 100%;
+    max-width: 420px;
+    display: flex;
+    flex-direction: column;
+}
+
+.field-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--gap-sm);
+}
+
+.field-label {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--color-white);
+    letter-spacing: 0.01em;
+}
+
+.input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.input-icon {
+    position: absolute;
+    left: 14px;
+    width: 20px;
+    height: 20px;
+    color: var(--color-placeholder);
+    pointer-events: none;
+    flex-shrink: 0;
+}
+
+.input-field {
+    width: 100%;
+    background: var(--color-input-bg);
+    border: none;
+    border-radius: var(--radius-input);
+    padding: 14px 16px 14px 44px;
+    font-family: var(--font-primary);
+    font-size: 0.95rem;
+    color: var(--color-input-text);
+    outline: none;
+    transition: box-shadow 0.2s ease;
+}
+
+.input-field::placeholder {
+    color: var(--color-placeholder);
+    font-family: var(--font-code);
+    font-size: 0.9rem;
+}
+
+.input-field:focus {
+    box-shadow: 0 0 0 2px var(--btn-hover);
+}
+
+.forgot-link {
+    text-align: center;
+    color: var(--color-white);
+    font-size: 0.95rem;
+    text-decoration: none;
+    display: block;
+    transition: opacity 0.2s;
+}
+
+.forgot-link:hover {
+    opacity: 0.75;
+    text-decoration: underline;
+}
+
+.btn-primary {
+    width: 100%;
+    padding: 18px 24px;
+    background: var(--btn-active);
+    color: var(--color-white);
+    border: none;
+    border-radius: var(--radius-btn);
+    font-family: var(--font-code);
+    font-size: 1.4rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.18s ease, transform 0.1s ease;
+    letter-spacing: 0.01em;
+}
+
+a.btn-primary {
+    display: block;
+    text-align: center;
+    text-decoration: none;
+}
+
+.btn-primary:hover {
+    background: var(--btn-hover);
+}
+
+.btn-primary:active {
+    background: var(--btn-click);
+    transform: scale(0.98);
+}
+
+.divider {
+    border: none;
+    border-top: 1px solid var(--color-gray-750);
+    width: 100%;
+}
+
+/* Footer dentro del panel (login o registro); fondo transparente,
+   el btn-back ya viene estilizado desde styles.css */
+.login-footer {
+    width: 100%;
+    max-width: 420px;
+    height: auto;
+    justify-content: flex-end;
+    padding: 24px 0 0;
+    background: transparent !important;
+}
+
+.login-footer .btn-back {
+    background: var(--btn-back-bg);
+}
+
+/* =============================================
+   MENSAJES DE ERROR
+============================================= */
+.error-message {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--gap-sm);
+    background: rgba(200, 60, 60, 0.12);
+    border: 1px solid var(--color-danger-border);
+    border-radius: var(--radius-input);
+    padding: 12px 14px;
+    margin-bottom: var(--gap-sm);
+    color: var(--color-danger-text);
+    font-family: var(--font-code);
+    font-size: 0.85rem;
+    line-height: 1.35;
+}
+
+.error-message[hidden] {
+    display: none;
+}
+
+.error-icon {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+    margin-top: 1px;
+}
+
+.input-field.input-error {
+    box-shadow: 0 0 0 2px var(--color-danger-border);
+}
+
+.field-error {
+    color: var(--color-danger-text);
+    font-size: 0.8rem;
+    min-height: 1em;
+}
