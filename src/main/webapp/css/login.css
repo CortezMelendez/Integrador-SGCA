@@ -1,4 +1,7 @@
-
+.brand-link{
+    text-decoration:none;
+    color:inherit;
+}
 
 .form-title {
   margin-bottom: var(--gap-xl);
