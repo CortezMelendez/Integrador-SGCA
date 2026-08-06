@@ -9,6 +9,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
 
 import java.io.IOException;
+import java.sql.SQLException;
 
 @WebServlet(name = "RegisterServlet", urlPatterns = {"/RegisterServlet"})
 public class RegisterServlet extends HttpServlet {
@@ -29,6 +30,7 @@ public class RegisterServlet extends HttpServlet {
         System.out.println("REGISTER SERVLET EJECUTÁNDOSE...");
         System.out.println("=======================================");
 
+        UsuarioBean usuario = null;
         try {
 
             String nombre = request.getParameter("nombre");
@@ -72,7 +74,7 @@ public class RegisterServlet extends HttpServlet {
             // CREAR OBJETO
             // ==========================
 
-            UsuarioBean usuario = new UsuarioBean(
+            usuario = new UsuarioBean(
                     rol,
                     nombre,
                     apellidoPaterno,
@@ -86,6 +88,25 @@ public class RegisterServlet extends HttpServlet {
             );
 
             System.out.println("UsuarioBean creado correctamente.");
+
+            // Validar si ya existe un usuario con esos datos
+            String duplicado = usuarioDao.validarDuplicados(usuario);
+
+            if (duplicado != null) {
+
+                String mensaje = switch (duplicado) {
+                    case "CORREO" -> "El correo ya está registrado. Por favor inicia sesión.";
+                    case "RFC" -> "El RFC ya está registrado. Por favor inicia sesión.";
+                    case "CURP" -> "La CURP ya está registrada. Por favor inicia sesión.";
+                    case "TELEFONO" -> "El teléfono ya está registrado. Por favor inicia sesión.";
+                    default -> "Ya existe un usuario registrado.";
+                };
+
+                request.setAttribute("error", mensaje);
+                request.getRequestDispatcher("/register.jsp").forward(request, response);
+                return;
+            }
+
 
             // ==========================
             // REGISTRAR EN LA BD
@@ -129,5 +150,10 @@ public class RegisterServlet extends HttpServlet {
             request.getRequestDispatcher("/register.jsp")
                     .forward(request, response);
         }
+
+
+
     }
+
+
 }
