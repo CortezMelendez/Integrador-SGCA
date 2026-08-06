@@ -7,10 +7,54 @@
     import java.sql.Connection;
     import java.sql.PreparedStatement;
     import java.sql.ResultSet;
+    import java.sql.SQLException;
     import java.util.ArrayList;
     import java.util.List;
     
     public class UsuarioDao {
+
+        public String validarDuplicados(UsuarioBean usuario) throws SQLException {
+
+            String sql = """
+            SELECT
+                CASE
+                    WHEN CORREO = ? THEN 'CORREO'
+                    WHEN RFC = ? THEN 'RFC'
+                    WHEN CURP = ? THEN 'CURP'
+                    WHEN TELEFONO = ? THEN 'TELEFONO'
+                END AS DUPLICADO
+            FROM ADMIN.USUARIOS
+            WHERE CORREO = ?
+               OR RFC = ?
+               OR CURP = ?
+               OR TELEFONO = ?
+            FETCH FIRST 1 ROWS ONLY
+            """;
+
+            try (Connection con = Conexion.getConexion();
+                 PreparedStatement ps = con.prepareStatement(sql)) {
+
+                ps.setString(1, usuario.getCorreo());
+                ps.setString(2, usuario.getRfc());
+                ps.setString(3, usuario.getCurp());
+                ps.setString(4, usuario.getTelefono());
+
+                ps.setString(5, usuario.getCorreo());
+                ps.setString(6, usuario.getRfc());
+                ps.setString(7, usuario.getCurp());
+                ps.setString(8, usuario.getTelefono());
+
+                try (ResultSet rs = ps.executeQuery()) {
+
+                    if (rs.next()) {
+                        return rs.getString("DUPLICADO");
+                    }
+
+                }
+            }
+
+            return null;
+        }
     
         public boolean registrar(UsuarioBean usuario) throws Exception {
             String sql = "INSERT INTO ADMIN.USUARIOS (id_rol, nombre, apellido_paterno, apellido_materno, " +
