@@ -122,6 +122,8 @@
     
                 try (ResultSet rs = ps.executeQuery()) {
                     if (rs.next()) {
+                        System.out.println("Password obtenida de Oracle: " + rs.getString("password"));
+
                         rolBean rol = new rolBean();
                         rol.setId_Rol(rs.getInt("id_rol"));
                         rol.setRol(rs.getString("nombre_rol"));
@@ -142,6 +144,7 @@
                     }
                 }
             }
+
             return null;
         }
     
@@ -160,13 +163,27 @@
     
         // Metodo para autenticacion segura
         public UsuarioBean validarLogin(String correo, String passwordPlana) throws Exception {
+
+            System.out.println("===== VALIDANDO LOGIN =====");
+
             UsuarioBean usuario = obtenerPorCorreo(correo);
-    
-            // Si el usuario existe y la contraseña ingresada coincide con la contraseña hash guardada
-            if (usuario != null && PasswordUtils.checkPassword(passwordPlana, usuario.getPassword())) {
+
+            if (usuario == null) {
+                System.out.println("Usuario NO encontrado.");
+                return null;
+            }
+
+            System.out.println("Usuario encontrado: " + usuario.getCorreo());
+            System.out.println("Hash BD: " + usuario.getPassword());
+
+            boolean coincide = PasswordUtils.checkPassword(passwordPlana, usuario.getPassword());
+
+            System.out.println("¿Coincide contraseña?: " + coincide);
+
+            if (coincide) {
                 return usuario;
             }
-    
-            return null; // Credenciales inválidas o usuario inactivo
+
+            return null;
         }
     }

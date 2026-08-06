@@ -41,10 +41,16 @@ public class LoginServlet extends HttpServlet {
 
         String correo = req.getParameter("correo");
         String password = req.getParameter("password");
+        System.out.println("Correo recibido: " + correo);
+        System.out.println("Password recibida: " + password);
+
 
         try {
             // Validar credenciales con jBCrypt mediante el UsuarioDao
             UsuarioBean usuario = usuarioDao.validarLogin(correo, password);
+
+
+            System.out.println("Resultado validarLogin: " + usuario);
 
             if (usuario != null) {
                 //Crear nueva sesión limpia
@@ -60,10 +66,13 @@ public class LoginServlet extends HttpServlet {
                 resp.sendRedirect(req.getContextPath() + "/login.jsp?error=credenciales_invalidas");
             }
 
+
         } catch (Exception e) {
             e.printStackTrace();
             resp.sendRedirect(req.getContextPath() + "/login.jsp?error=server_error");
+
         }
+
         System.out.println("=====================================" +
                 "probando servlet" +
                 "============================================");
@@ -78,7 +87,8 @@ public class LoginServlet extends HttpServlet {
 
         switch (rol) {
             case "ADMIN":
-                resp.sendRedirect(req.getContextPath() + "/panel");
+                resp.sendRedirect(req.getContextPath()
+                        + "/pages/duenioPages/indexDuenio.jsp");
                 break;
             case "AGENTE":
                 resp.sendRedirect(req.getContextPath() + "/clientes");

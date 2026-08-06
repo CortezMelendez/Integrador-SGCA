@@ -99,19 +99,37 @@ public class AuthFilter implements Filter {
         // OBTENER USUARIO LOGUEADO
         UsuarioBean usuario = (UsuarioBean) session.getAttribute("usuarioLogueado");
         String rolUsuario = obtenerNombreRol(usuario);
+// ==========================
+// PÁGINAS DEL DUEÑO
+// ==========================
+        if (path.startsWith("/pages/duenioPages/")) {
 
-        // =======================================================
-// BLOQUEAR EL ACCESO DIRECTO A LOS JSP PRIVADOS
-// index.jsp y login.jsp son públicos.
-// Todos los demás JSP requieren pasar por un Servlet.
-// =======================================================
-        if (path.endsWith(".jsp")
-                && !path.endsWith("login.jsp")
-                && !path.endsWith("index.jsp")
-                && !path.endsWith("register.jsp")) {   // ===== CAMBIO =====
+            if (!rolUsuario.equals("ADMIN")) {
+                redirigirSegunRol(req, resp, rolUsuario);
+                return;
+            }
+        }
 
-            redirigirSegunRol(req, resp, rolUsuario);
-            return;
+// ==========================
+// PÁGINAS DEL ASESOR
+// ==========================
+        if (path.startsWith("/pages/asesorPages/")) {
+
+            if (!rolUsuario.equals("AGENTE")) {
+                redirigirSegunRol(req, resp, rolUsuario);
+                return;
+            }
+        }
+
+// ==========================
+// PÁGINAS DEL CLIENTE
+// ==========================
+        if (path.startsWith("/pages/clientePages/")) {
+
+            if (!rolUsuario.equals("CLIENTE")) {
+                redirigirSegunRol(req, resp, rolUsuario);
+                return;
+            }
         }
 
         // CONTROL DE ACCESO BASADO EN ROLES (RBAC)
@@ -158,7 +176,7 @@ public class AuthFilter implements Filter {
     private void redirigirSegunRol(HttpServletRequest req, HttpServletResponse resp, String rol) throws IOException {
         switch (rol) {
             case "ADMIN":
-                resp.sendRedirect(req.getContextPath() + "/panel");
+                resp.sendRedirect(req.getContextPath() + "/pages/duenioPages/indexDuenio.jsp");
                 break;
             case "AGENTE":
                 resp.sendRedirect(req.getContextPath() + "/clientes");

@@ -20,7 +20,7 @@
         <span class="dash-brand">Concesionaria Automotriz</span>
     </div>
     <nav class="dash-nav-center">
-        <a href="index.jsp" class="dash-nav-link">Inicio</a>
+        <a href="indexDuenio.jsp" class="dash-nav-link">Inicio</a>
         <a href="" class="dash-nav-link active">Dashboard</a>
         <a href="" class="dash-nav-link">Servicios</a>
         <a href="" class="dash-nav-link ">Perfil</a>
@@ -129,7 +129,7 @@
 
 <!-- FOOTER con botón Atrás -->
 <footer class="footer">
-    <a href="index.jsp" class="btn-back">
+    <a href="indexDuenio.jsp" class="btn-back">
         <img src="../../Images/back.svg" alt="atras" />
         Atrás
     </a>
