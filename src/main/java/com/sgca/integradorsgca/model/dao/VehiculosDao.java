@@ -123,6 +123,21 @@ public class VehiculosDao {
         }
     }
 
+    // Cambia únicamente el estado Activo(1)/Inactivo(0) de un vehículo
+    public void cambiarEstado(int idVehiculo, int disponible) {
+        String sql = "UPDATE ADMIN.VEHICULOS SET DISPONIBLE = ? WHERE ID_VEHICULO = ?";
+
+        try (Connection con = Conexion.getConexion();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+
+            ps.setInt(1, disponible);
+            ps.setInt(2, idVehiculo);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            System.err.println("Error al cambiar estado del vehículo: " + e.getMessage());
+        }
+    }
+
     public void eliminar(int id) {
         String sql = "DELETE FROM ADMIN.VEHICULOS WHERE ID_VEHICULO = ?";
 
@@ -220,5 +235,3 @@ public class VehiculosDao {
 
     }
 }
-
-

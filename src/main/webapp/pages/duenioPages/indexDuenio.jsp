@@ -31,9 +31,9 @@
 
     <header class="navbar">
         <nav class="navbar-links">
-            <a href="dashboard.jsp" class="dash-nav-link">Dashboard</a>
-            <a href="#" class="dash-nav-link">Historial</a>
-            <a href="" class="dash-nav-link">Perfil</a>
+            <a href="${pageContext.request.contextPath}/nav?action=dashboard" class="dash-nav-link">Dashboard</a>
+            <a href="${pageContext.request.contextPath}/nav?action=historial" class="dash-nav-link">Historial</a>
+            <a href="${pageContext.request.contextPath}/nav?action=perfil" class="dash-nav-link">Perfil</a>
         </nav>
     </header>
 

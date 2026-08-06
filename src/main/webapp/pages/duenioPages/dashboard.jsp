@@ -5,9 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Dashboard — Concesionaria Automotriz</title>
     <!-- ENLACES A TUS ESTILOS CSS CORREGIDOS -->
-    <link rel="stylesheet" href="../../css/duenioStyles/styles.css" />
-    <link rel="stylesheet" href="../../css/duenioStyles/dashboard.css" />
-    <link rel="stylesheet" href="../../css/duenioStyles/responsive.css" />
+
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/duenioStyles/styles.css" />
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/duenioStyles/dashboard.css" />
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/duenioStyles/responsive.css" />
 </head>
 <body>
 
@@ -15,15 +16,14 @@
 <header class="dash-navbar">
     <div class="dash-navbar-left">
         <div class="dash-logo-placeholder" aria-hidden="true">
-            <img src="../../Images/logo2-SGCA.svg" class="logo-img" width="108" />
+            <img src="${pageContext.request.contextPath}/Images/logo2-SGCA.svg" class="logo-img" width="108" />
         </div>
         <span class="dash-brand">Concesionaria Automotriz</span>
     </div>
-    <nav class="dash-nav-center">
-        <a href="indexDuenio.jsp" class="dash-nav-link">Inicio</a>
-        <a href="" class="dash-nav-link active">Dashboard</a>
-        <a href="" class="dash-nav-link">Servicios</a>
-        <a href="" class="dash-nav-link ">Perfil</a>
+    <nav class="navbar-links">
+        <a href="${pageContext.request.contextPath}/nav?action=dashboard" class="dash-nav-link">Dashboard</a>
+        <a href="${pageContext.request.contextPath}/nav?action=historial" class="dash-nav-link">Historial</a>
+        <a href="${pageContext.request.contextPath}/nav?action=perfil" class="dash-nav-link">Perfil</a>
     </nav>
 
     <div class="dash-navbar-right">
@@ -52,19 +52,19 @@
                 </svg>
             </button>
             <div class="gestion-menu" id="gestionMenu" role="menu">
-                <a href="gestionServicios.jsp" class="gestion-menu-item" role="menuitem">
+                <a href="${pageContext.request.contextPath}/btn?action=gestionServicio" class="gestion-menu-item" role="menuitem">
                     <span class="gestion-menu-item-title">Gestionar servicios</span>
                     <span class="gestion-menu-item-desc">Catálogo de servicios únicos, mensuales y anuales registrados en el sistema.</span>
                 </a>
-                <a href="gestionEmpleados.jsp" class="gestion-menu-item" role="menuitem">
+                <a href="${pageContext.request.contextPath}/btn?action=gestionEmpleados" class="gestion-menu-item" role="menuitem">
                     <span class="gestion-menu-item-title">Gestionar empleados</span>
                     <span class="gestion-menu-item-desc">Alta, baja y edición del personal. Control de estado activo, permiso o baja definitiva.</span>
                 </a>
-                <a href="gestionClientes.jsp" class="gestion-menu-item" role="menuitem">
+                <a href="${pageContext.request.contextPath}/btn?action=gestionClientes" class="gestion-menu-item" role="menuitem">
                     <span class="gestion-menu-item-title">Gestionar clientes</span>
                     <span class="gestion-menu-item-desc">Puntos de contacto, asignación y transferencia de asesores entre sucursales.</span>
                 </a>
-                <a href="gestionAutos.jsp" class="gestion-menu-item" role="menuitem">
+                <a href="${pageContext.request.contextPath}/btn?action=gestionAutos" class="gestion-menu-item" role="menuitem">
                     <span class="gestion-menu-item-title">Gestionar autos</span>
                     <span class="gestion-menu-item-desc">Registro de marcas, modelos, precios, placas y disponibilidad del inventario.</span>
                 </a>
@@ -129,13 +129,13 @@
 
 <!-- FOOTER con botón Atrás -->
 <footer class="footer">
-    <a href="indexDuenio.jsp" class="btn-back">
-        <img src="../../Images/back.svg" alt="atras" />
+    <a href="javascript:history.back()" class="btn-back">
+        <img src="${pageContext.request.contextPath}/Images/back.svg" alt="atras" />
         Atras
     </a>
 </footer>
 
-<script src="../../js/duenioJS/menuDesplegable.js"></script>
+<script src="${pageContext.request.contextPath}/js/duenioJS/menuDesplegable.js"></script>
 
 </body>
 </html>

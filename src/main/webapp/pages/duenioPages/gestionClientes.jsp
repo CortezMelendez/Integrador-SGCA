@@ -9,10 +9,10 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:wght@100..900&family=Google+Sans+Code:wght@300..800&family=Google+Sans+Code:ital,wght@1,300..800&display=swap" rel="stylesheet">
 
-   <link rel="stylesheet" href="../../css/duenioStyles/styles.css">
-  <link rel="stylesheet" href="../../css/duenioStyles/gestiones.css" />
-  <link rel="stylesheet" href="../../css/duenioStyles/gestiones-extra.css" />
-  <link rel="stylesheet" href="../..css/duenioStyles/responsive.css" />
+   <link rel="stylesheet" href="${pageContext.request.contextPath}/css/duenioStyles/styles.css">
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/css/duenioStyles/gestiones.css" />
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/css/duenioStyles/gestiones-extra.css" />
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/css/duenioStyles/responsive.css" />
 </head>
 <body>
 
@@ -22,15 +22,15 @@
   <header class="dash-navbar">
     <div class="dash-navbar-left">
       <div class="dash-logo-placeholder" aria-hidden="true">
-        <img src="../../Images/logo2-SGCA.svg" class="logo-img" width="108" />
+        <img src="${pageContext.request.contextPath}/Images/logo2-SGCA.svg" class="logo-img" width="108" />
       </div>
       <span class="dash-brand">Concesionaria Automotriz</span>
     </div>
     <nav class="dash-nav-center">
-        <a href="index.html" class="dash-nav-link">Inicio</a>
-      <a href="/pages/duenioPages/dashboard.html" class="dash-nav-link">Dashboard</a>
-      <a href="" class="dash-nav-link">Servicios</a>
-      <a href="" class="dash-nav-link ">Perfil</a>
+        <a href="${pageContext.request.contextPath}/index.html" class="dash-nav-link">Inicio</a>
+        <a href="${pageContext.request.contextPath}/nav?action=dashboard" class="dash-nav-link">Dashboard</a>
+        <a href="${pageContext.request.contextPath}/nav?action=historial" class="dash-nav-link">Historial</a>
+        <a href="${pageContext.request.contextPath}/nav?action=perfil" class="dash-nav-link">Perfil</a>
     </nav>
     <div class="dash-navbar-right">
       <div class="dash-user">
@@ -95,12 +95,12 @@
   <!-- =============================================
        FOOTER
   ============================================= -->
-  <footer class="footer" style="display: flex; justify-content: space-between; align-items: center; padding: 20px; background-color: #000;">
-    <span style="color: rgb(8, 8, 8); font-size: 0.85rem;">© 2026 SGCA · Todos los derechos reservados</span>
-    <a href="../../pages/duenioPages/dashboard.html" class="btn-atras" style="color: black; text-decoration: none; display: flex; align-items: center; gap: 8px; background: #CCCCCC; padding: 8px 16px; border-radius: 20px;">
-      <img src="../../Images/back.svg" alt="">
-      Atrás
-    </a>
+  <footer class="footer">
+      <span style="color: rgb(8, 8, 8); font-size: 0.85rem;">© 2026 SGCA · Todos los derechos reservados</span>
+      <a href="javascript:history.back()" class="btn-back">
+          <img src="${pageContext.request.contextPath}/Images/back.svg" alt="atras" />
+          Atras
+      </a>
   </footer>
 
   <!-- =============================================
@@ -207,6 +207,6 @@
   ============================================= -->
 
   <!-- gestion.js maneja: agregar registro, eliminar con el badge, filtrar y paginar -->
-  <script src="../../js/duenioJS/gestionClientes.js"></script>
+  <script src=".${pageContext.request.contextPath}/js/duenioJS/gestionClientes.js"></script>
 </body>
 </html>

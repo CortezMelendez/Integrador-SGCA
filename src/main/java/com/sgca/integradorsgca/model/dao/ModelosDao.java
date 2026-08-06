@@ -62,6 +62,43 @@ public class ModelosDao {
         return m;
     }
 
+    // Busca un modelo por nombre dentro de una marca específica
+    public ModelosBean buscarPorNombreYMarca(String nombre, int idMarca) {
+        ModelosBean m = null;
+        String sql = "SELECT M.ID_MODELO, M.ID_MARCA, M.NOMBRE AS NOMBRE_MODELO, M.ESTADO AS ESTADO_MODELO, "
+                + "MA.NOMBRE AS NOMBRE_MARCA, MA.ESTADO AS ESTADO_MARCA "
+                + "FROM ADMIN.MODELOS M "
+                + "INNER JOIN ADMIN.MARCAS MA ON M.ID_MARCA = MA.ID_MARCA "
+                + "WHERE UPPER(M.NOMBRE) = UPPER(?) AND M.ID_MARCA = ?";
+
+        try (Connection conn = Conexion.getConexion();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, nombre);
+            ps.setInt(2, idMarca);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    m = mapearModelo(rs);
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Error al buscar modelo por nombre y marca: " + e.getMessage());
+        }
+        return m;
+    }
+
+    // Devuelve el ID del modelo; si no existe dentro de la marca, lo crea
+    public int obtenerOCrearId(int idMarca, String nombre) {
+        ModelosBean existente = buscarPorNombreYMarca(nombre, idMarca);
+        if (existente != null) return existente.getId_Modelo();
+
+        registrar(new ModelosBean(idMarca, nombre, 1));
+
+        ModelosBean creado = buscarPorNombreYMarca(nombre, idMarca);
+        return creado != null ? creado.getId_Modelo() : -1;
+    }
+
     public void registrar(ModelosBean m) {
         String sql = "INSERT INTO ADMIN.MODELOS (ID_MARCA, NOMBRE, ESTADO) VALUES (?, ?, ?)";
 
