@@ -14,6 +14,9 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.util.List;
 
 @WebServlet(name="VehiculosServlet", value="/vehiculos")
@@ -79,4 +82,6 @@ public class VehiculosServlet extends HttpServlet {
         }
         resp.sendRedirect(req.getContextPath()+"/vehiculos");
     }
+
+
 }

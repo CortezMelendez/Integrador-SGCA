@@ -25,7 +25,11 @@
 
     <main class="form-panel">
 
-        <h1 class="brand-title">Concesionaria Automotriz</h1>
+        <a href="${pageContext.request.contextPath}/catalogo" class="brand-link">
+            <h1 class="brand-title">
+                Concesionaria Automotriz
+            </h1>
+        </a>
         <h2 class="form-title">Inicio de Sesión</h2>
 
         <%-- CAMBIO: el form ahora sí envía al servlet y por POST --%>

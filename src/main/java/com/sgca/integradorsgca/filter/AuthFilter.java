@@ -51,6 +51,7 @@ public class AuthFilter implements Filter {
         resp.setDateHeader("Expires", 0);
 
         String path = req.getServletPath();
+        System.out.println("PATH: " + path);
 
         // =======================================================
 // RECURSOS PÚBLICOS
@@ -62,9 +63,9 @@ public class AuthFilter implements Filter {
                 // Permite que la aplicación inicie mostrando index.jsp
                 // sin obligar al usuario a autenticarse.
                 path.equals("/")
-                        || path.equals("/index.jsp")
 
                         // ==================
+                        || path.equals("/catalogo")
                         || path.equals("/login")
                         || path.equals("/login.jsp")
                         || path.equals("/logout")
@@ -78,7 +79,6 @@ public class AuthFilter implements Filter {
 
                         // ===== CAMBIO =====
                         // Tu carpeta se llama "Images", no "images".
-                        // Si trabajas en Linux o Docker esto sí importa.
                         || path.startsWith("/Images/")
                         // ==================
 

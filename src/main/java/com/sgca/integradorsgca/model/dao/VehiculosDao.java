@@ -176,6 +176,49 @@ public class VehiculosDao {
 
         return v;
     }
+    public List<VehiculosBean> listarDisponibles() {
+
+        List<VehiculosBean> lista = new ArrayList<>();
+
+        String sql =
+                "SELECT "
+                        + "V.ID_VEHICULO, V.ID_MODELO, V.ID_TIPO, V.ID_AGENTE,"
+                        + "V.PLACA, V.COLOR, V.ANIO, V.PRECIO,"
+                        + "V.DISPONIBLE, V.FECHA_REGISTRO,"
+                        + "V.FOTO_PORTADA,"
+                        + "M.NOMBRE NOMBRE_MODELO,"
+                        + "M.ESTADO ESTADO_MODELO,"
+                        + "MA.ID_MARCA,"
+                        + "MA.NOMBRE NOMBRE_MARCA,"
+                        + "MA.ESTADO ESTADO_MARCA,"
+                        + "TV.NOMBRE NOMBRE_TIPO "
+                        + "FROM ADMIN.VEHICULOS V "
+                        + "INNER JOIN ADMIN.MODELOS M ON V.ID_MODELO=M.ID_MODELO "
+                        + "INNER JOIN ADMIN.MARCAS MA ON M.ID_MARCA=MA.ID_MARCA "
+                        + "INNER JOIN ADMIN.TIPOS_VEHICULO TV ON V.ID_TIPO=TV.ID_TIPO "
+                        + "WHERE V.DISPONIBLE=1 "
+                        + "ORDER BY V.ID_VEHICULO DESC";
+
+        try (Connection con = Conexion.getConexion();
+             PreparedStatement ps = con.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            System.out.println("Ejecutando consulta de vehículos...");
+
+            while (rs.next()) {
+                System.out.println("Vehículo encontrado: " +
+                        rs.getInt("ID_VEHICULO"));
+
+                lista.add(mapearVehiculo(rs));
+            }
+            System.out.println("Total en DAO: " + lista.size());
+
+        } catch (SQLException e) {
+            System.err.println("Error al listar vehículos disponibles: " + e.getMessage());
+        }
+
+        return lista;
+
+    }
 }
 
 

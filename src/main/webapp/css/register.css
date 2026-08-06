@@ -7,6 +7,11 @@
 
 /* El panel de registro es mas compacto: menos padding
    vertical para que los 8 campos quepan sin scroll */
+
+.brand-link{
+    text-decoration:none;
+    color:inherit;
+}
 .form-panel--compact {
     padding-top: 28px;
     padding-bottom: 28px;
