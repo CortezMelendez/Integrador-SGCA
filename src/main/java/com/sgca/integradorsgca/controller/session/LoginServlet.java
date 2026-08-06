@@ -91,10 +91,10 @@ public class LoginServlet extends HttpServlet {
                         + "/pages/duenioPages/indexDuenio.jsp");
                 break;
             case "AGENTE":
-                resp.sendRedirect(req.getContextPath() + "/clientes");
+                resp.sendRedirect(req.getContextPath() + "/index");
                 break;
             case "CLIENTE":
-                resp.sendRedirect(req.getContextPath() + "/mis-servicios");
+                resp.sendRedirect(req.getContextPath() + "/cliente");
                 break;
             default:
                 resp.sendRedirect(req.getContextPath() + "/login.jsp");

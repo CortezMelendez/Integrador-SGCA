@@ -1,0 +1,690 @@
+/* =============================================
+   BODY
+============================================= */
+
+body {
+
+    background: var(--color-white);
+    color: var(--color-text-body);
+
+    display: flex;
+    flex-direction: column;
+
+    min-height:100vh;
+
+}
+
+
+
+/* =============================================
+   NAVBAR
+   (NO MODIFICAR)
+============================================= */
+
+.navbar-links{
+    display:flex;
+    gap:25px;
+    align-items:center;
+}
+
+.navbar {
+
+    background: var(--color-text-body);
+
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+
+    gap:var(--gap-lg);
+
+    flex-wrap:wrap;
+
+    height:86px;
+
+    font-size:32px;
+
+}
+.dash-nav-link{
+
+    color:var(--color-white);
+
+    text-decoration:none;
+
+    font-family:'Google Sans Flex',sans-serif;
+
+    font-size:16px;
+
+    transition:.3s;
+
+}
+
+
+.dash-nav-link:hover{
+
+    color:var(--btn-active);
+
+}
+.dropdown{
+
+    position:relative;
+
+}
+
+
+.dropdown-menu{
+
+    display:none;
+
+    position:absolute;
+
+    top:30px;
+
+    left:0;
+
+    background:var(--color-text-body);
+
+    min-width:200px;
+
+    border-radius:10px;
+
+    padding:10px 0;
+
+    z-index:999;
+
+}
+
+
+.dropdown-menu a{
+
+    display:block;
+
+    padding:10px 20px;
+
+    color:white;
+
+    text-decoration:none;
+
+}
+
+
+.dropdown-menu a:hover{
+
+    background:#333;
+
+}
+
+
+.dropdown:hover .dropdown-menu{
+
+    display:block;
+
+}
+
+
+
+.navbar-brand {
+
+    color:var(--color-white);
+
+    padding:30px;
+
+    font-family:'Google Sans Flex',sans-serif;
+
+    font-size:24px;
+
+    font-weight:700;
+
+    letter-spacing:.01em;
+
+    height:86px;
+
+}
+
+
+
+/* =============================================
+   MAIN
+============================================= */
+
+main{
+
+    display:block;
+    width:100%;
+
+}
+
+
+
+/* =============================================
+   HERO
+============================================= */
+
+.hero {
+
+    background:var(--color-hero-alt-bg);
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:space-between;
+
+    gap:32px;
+
+
+    padding:35px 48px;
+
+
+    /* antes estaba casi pantalla completa */
+    min-height:65vh;
+
+
+}
+
+
+
+/* =============================================
+   HERO CONTENT
+============================================= */
+
+
+.hero-content {
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:25px;
+
+    max-width:420px;
+
+}
+
+
+
+.hero-heading {
+
+    font-family:'Google Sans Flex',sans-serif;
+
+    font-size:clamp(2rem,5vw,3rem);
+
+    font-weight:700;
+
+    line-height:1.15;
+
+    color:var(--color-text-body);
+
+}
+
+
+
+.hero-accent {
+
+    color:var(--btn-active);
+
+    font-style:normal;
+
+}
+
+
+
+.hero-description {
+
+    font-size:1rem;
+
+    line-height:1.5;
+
+}
+
+
+
+/* =============================================
+   BOTONES
+============================================= */
+
+
+.hero-actions {
+
+    display:flex;
+
+    align-items:center;
+
+    gap:16px;
+
+    flex-wrap:wrap;
+
+}
+
+
+
+.btn-outline {
+
+
+    display:inline-flex;
+
+    align-items:center;
+
+    gap:8px;
+
+
+    padding:10px 20px;
+
+
+    background:transparent;
+
+    color:var(--color-text-body);
+
+
+    border:2px solid var(--color-text-body);
+
+    border-radius:999px;
+
+
+    text-decoration:none;
+
+
+}
+
+
+
+.hero-btn-icon {
+
+    width:16px;
+
+    height:16px;
+
+}
+
+
+
+.btn-register {
+
+
+    display:inline-flex;
+
+    align-items:center;
+
+
+    padding:10px 24px;
+
+
+    background:var(--btn-active);
+
+    color:white;
+
+
+    border-radius:999px;
+
+
+    text-decoration:none;
+
+}
+
+
+
+/* =============================================
+   LOGO
+============================================= */
+
+
+.hero-logo {
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+
+    flex-shrink:0;
+
+
+    margin:50px;
+
+}
+
+
+
+.logo-img {
+
+    width:350px;
+
+    height:auto;
+
+}
+
+
+
+/* =============================================
+   CARRUSEL
+============================================= */
+
+
+.carrusel-section{
+
+    width:100%;
+
+}
+
+
+
+/* =============================================
+   CATALOGO
+============================================= */
+
+
+.catalogo {
+
+
+    width:100%;
+
+
+    display:block;
+
+
+    padding:50px 40px;
+
+
+}
+
+
+
+.catalogo-header {
+
+
+    width:100%;
+
+
+    display:block;
+
+
+    text-align:center;
+
+
+    margin-bottom:35px;
+
+
+}
+
+
+
+.catalogo-titulo {
+
+
+    width:100%;
+
+
+    text-align:center;
+
+
+    font-size:2rem;
+
+
+    font-weight:700;
+
+
+    margin:0;
+
+
+}
+
+
+
+
+/* CONTENEDOR DE CARDS */
+
+
+.cards-container {
+
+
+    width:100%;
+
+
+    display:flex;
+
+
+    flex-wrap:wrap;
+
+
+    justify-content:center;
+
+
+    gap:30px;
+
+
+}
+
+
+
+
+
+/* =============================================
+   CARD VEHICULOS
+============================================= */
+
+
+.card-auto {
+
+
+    width:300px;
+
+
+    background:white;
+
+
+    border-radius:20px;
+
+
+    padding:20px;
+
+
+    box-shadow:0 5px 20px rgba(0,0,0,.15);
+
+
+    display:flex;
+
+
+    flex-direction:column;
+
+
+    gap:12px;
+
+
+}
+
+
+
+
+.card-imagen {
+
+
+    width:100%;
+
+
+    height:180px;
+
+
+    object-fit:cover;
+
+
+    border-radius:15px;
+
+
+}
+
+
+
+
+
+.card-auto h3 {
+
+
+    font-size:1.3rem;
+
+
+    margin:5px 0;
+
+
+}
+
+
+
+
+
+.card-auto h2 {
+
+
+    font-size:1.4rem;
+
+
+}
+
+
+
+
+
+.btn-detalles {
+
+
+    display:inline-block;
+
+
+    text-align:center;
+
+
+    padding:10px 20px;
+
+
+    border-radius:20px;
+
+
+    background:var(--btn-active);
+
+
+    color:white;
+
+
+    text-decoration:none;
+
+
+}
+
+
+
+
+/* =============================================
+   FOOTER
+   (NO MODIFICAR)
+============================================= */
+
+
+.footer {
+
+
+    background:var(--color-bg);
+
+
+    padding:16px 32px;
+
+
+    border-top:1px solid var(--color-gray-100);
+
+
+}
+
+
+
+.footer p {
+
+
+    font-family:'Google Sans','Product Sans','Inter',sans-serif;
+
+    font-size:.8rem;
+
+    color:var(--color-gray-700);
+
+}
+
+
+
+/* =============================================
+   RESPONSIVE
+============================================= */
+
+
+@media(max-width:768px){
+
+
+    .hero{
+
+
+        flex-direction:column-reverse;
+
+        text-align:center;
+
+        min-height:auto;
+
+
+    }
+
+
+
+    .hero-content{
+
+
+        align-items:center;
+
+    }
+
+
+
+    .logo-img{
+
+
+        width:200px;
+
+
+    }
+
+
+}
+
+
+
+@media(max-width:480px){
+
+
+    .hero{
+
+        padding:30px 20px;
+
+    }
+
+
+
+    .hero-actions{
+
+
+        flex-direction:column;
+
+        width:100%;
+
+
+    }
+
+
+
+    .btn-outline,
+    .btn-register{
+
+
+        width:100%;
+
+        justify-content:center;
+
+
+    }
+
+
+
+}

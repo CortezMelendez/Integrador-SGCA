@@ -1,3 +1,4 @@
+</html>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 
@@ -17,11 +18,13 @@
     <link href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:wght@100..900&family=Google+Sans+Code:wght@300..800&display=swap" rel="stylesheet">
 
 
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/duenioStyles/styles.css">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/duenioStyles/index.css">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/duenioStyles/carruselIndex.css">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/duenioStyles/responsive.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/clientePages/clienteStyles.css">
 
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/clientePages/indexCliente.css">
+
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/clientePages/carruselCliente.css">
+
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/clientePages/responsiveIndex.css">
 </head>
 
 
@@ -35,8 +38,75 @@
         Gestionaria Automotriz
     </span>
 
-</header>
 
+    <nav class="navbar-links">
+
+
+        <a href="${pageContext.request.contextPath}/index"
+           class="dash-nav-link">
+            Inicio
+        </a>
+
+
+        <div class="dropdown">
+
+            <a class="dash-nav-link">
+                Automóviles ▾
+            </a>
+
+            <div class="dropdown-menu">
+
+                <a href="#">Sedán</a>
+                <a href="#">Hatchback</a>
+                <a href="#">Camioneta</a>
+                <a href="#">Pickup</a>
+
+            </div>
+
+        </div>
+
+
+        <a href="#" class="dash-nav-link">
+            Servicios
+        </a>
+
+
+        <a href="#" class="dash-nav-link">
+            Mis compras
+        </a>
+
+
+
+        <div class="dropdown">
+
+            <a class="dash-nav-link">
+                Configuración ▾
+            </a>
+
+
+            <div class="dropdown-menu">
+
+                <a href="#">
+                    Perfil
+                </a>
+
+                <a href="#">
+                    Cambiar contraseña
+                </a>
+
+                <a href="${pageContext.request.contextPath}/logout">
+                    Cerrar sesión
+                </a>
+
+            </div>
+
+
+        </div>
+
+
+    </nav>
+
+</header>
 
 
 
@@ -70,39 +140,6 @@
 
             </p>
 
-
-
-
-            <div class="hero-actions">
-
-
-                <a href="${pageContext.request.contextPath}/login.jsp"
-                   class="btn-outline">
-
-
-                    <img
-                            src="${pageContext.request.contextPath}/Images/user.svg"
-                            class="hero-btn-icon">
-
-
-                    Iniciar Sesión
-
-
-                </a>
-
-
-
-
-                <a href="${pageContext.request.contextPath}/register.jsp"
-                   class="btn-register">
-
-                    Registrarse
-
-                </a>
-
-
-
-            </div>
 
 
         </div>
@@ -148,7 +185,7 @@
 
 <!-- CATALOGO -->
 
-<section class="catalogo">
+<section class="cliente">
 
 
     <!-- TITULO DEL CATALOGO -->
@@ -220,6 +257,5 @@
     </p>
 </footer>
 
-<script src="${pageContext.request.contextPath}/js/duenioJS/carrusel.js"></script>
+<script src="${pageContext.request.contextPath}/js/clienteJS/carrusel.js"></script>
 </body>
-</html>

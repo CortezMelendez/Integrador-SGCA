@@ -1,4 +1,5 @@
 
+import com.sgca.integradorsgca.model.bean.UsuarioBean;
 import com.sgca.integradorsgca.model.bean.VehiculosBean;
 import com.sgca.integradorsgca.model.dao.VehiculosDao;
 import jakarta.servlet.ServletException;
@@ -6,6 +7,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
 import java.util.List;
@@ -39,5 +41,15 @@ public class IndexServlet extends HttpServlet {
 
         request.getRequestDispatcher("/index.jsp")
                 .forward(request, response);
+
+        HttpSession session = request.getSession(false);
+
+        if(session != null){
+            UsuarioBean usuario = (UsuarioBean) session.getAttribute("usuarioLogueado");
+
+            if(usuario != null){
+                request.setAttribute("usuario", usuario);
+            }
+        }
     }
 }
