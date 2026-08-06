@@ -131,7 +131,7 @@
 <footer class="footer">
     <a href="indexDuenio.jsp" class="btn-back">
         <img src="../../Images/back.svg" alt="atras" />
-        Atrás
+        Atras
     </a>
 </footer>
 

@@ -31,10 +31,6 @@ public class RegisterServlet extends HttpServlet {
 
         try {
 
-            // ==========================
-            // DATOS DEL FORMULARIO
-            // ==========================
-
             String nombre = request.getParameter("nombre");
             String apellidoPaterno = request.getParameter("apellidoPaterno");
             String apellidoMaterno = request.getParameter("apellidoMaterno");

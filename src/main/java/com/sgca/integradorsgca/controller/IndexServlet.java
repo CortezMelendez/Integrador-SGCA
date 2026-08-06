@@ -10,7 +10,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 
-@WebServlet("/catalogo")
+@WebServlet("/index")
 public class IndexServlet extends HttpServlet {
 
     private final VehiculosDao dao = new VehiculosDao();
@@ -20,7 +20,7 @@ public class IndexServlet extends HttpServlet {
                          HttpServletResponse response)
             throws ServletException, IOException {
 
-        System.out.println("===== ENTRANDO A IndexServlet =====");
+        System.out.println("===== ENTRANDO A Index =====");
 
         List<VehiculosBean> lista = dao.listarDisponibles();
 

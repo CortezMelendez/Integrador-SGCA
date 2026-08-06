@@ -1,5 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib prefix="c" uri="jakarta.tags.core" %> <%-- CAMBIO: necesario para usar c:if --%>
+<%@ taglib prefix="c" uri="jakarta.tags.core" %> <%-- necesario para usar c:if --%>
 
 <!DOCTYPE html>
 <html lang="es">
@@ -8,7 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Concesionaria Automotriz — Inicio de Sesión</title>
 
-    <%-- CAMBIO: usar contextPath para que funcione aunque cambie el nombre del proyecto --%>
+    <%-- Se usa contextPath para que funcione aunque cambie el nombre del proyecto --%>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/duenioStyles/styles.css" />
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/duenioStyles/responsive.css" />
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/login.css" />
