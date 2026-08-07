@@ -18,13 +18,13 @@
     <link href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:wght@100..900&family=Google+Sans+Code:wght@300..800&display=swap" rel="stylesheet">
 
 
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/clientePages/clienteStyles.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/duenioStyles/styles.css">
 
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/clientePages/indexCliente.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/duenioStyles/index.css">
 
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/clientePages/carruselCliente.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/duenioStyles/carruselIndex.css">
 
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/clientePages/responsiveIndex.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/duenioStyles/responsive.css">
 </head>
 
 
@@ -32,27 +32,30 @@
 
 
 <!-- NAVBAR -->
-<header class="navbar">
-
-    <span class="navbar-brand">
-        Gestionaria Automotriz
-    </span>
+<header class="dash-navbar">
 
 
-    <nav class="navbar-links">
+    <div class="dash-navbar-left">
 
 
-        <a href="${pageContext.request.contextPath}/index"
-           class="dash-nav-link">
-            Inicio
-        </a>
+        <span class="dash-brand">
+            Gestionaria Automotriz
+        </span>
+
+
+    </div>
+
+
+
+    <nav class="dash-nav-center">>
 
 
         <div class="dropdown">
 
-            <a class="dash-nav-link">
+            <button class="dash-nav-link dropdown-btn">
                 Automóviles ▾
-            </a>
+            </button>
+
 
             <div class="dropdown-menu">
 
@@ -64,7 +67,6 @@
             </div>
 
         </div>
-
 
         <a href="#" class="dash-nav-link">
             Servicios
@@ -79,16 +81,14 @@
 
         <div class="dropdown">
 
-            <a class="dash-nav-link">
+            <button class="dash-nav-link dropdown-btn">
                 Configuración ▾
-            </a>
+            </button>
 
 
             <div class="dropdown-menu">
 
-                <a href="#">
-                    Perfil
-                </a>
+                <a href="#">Perfil</a>
 
                 <a href="#">
                     Cambiar contraseña
@@ -100,6 +100,7 @@
 
             </div>
 
+        </div>
 
         </div>
 
@@ -258,4 +259,45 @@
 </footer>
 
 <script src="${pageContext.request.contextPath}/js/clienteJS/carrusel.js"></script>
+
+<script>
+
+    document.querySelectorAll(".dropdown-btn")
+        .forEach(button => {
+
+
+            button.addEventListener("click", function(e){
+
+
+                e.stopPropagation();
+
+
+                let menu = this.nextElementSibling;
+
+
+                menu.classList.toggle("show");
+
+
+            });
+
+
+        });
+
+
+    // Cerrar menú al hacer click fuera
+
+    document.addEventListener("click", function(){
+
+
+        document.querySelectorAll(".dropdown-menu")
+            .forEach(menu => {
+
+                menu.classList.remove("show");
+
+            });
+
+
+    });
+
+</script>
 </body>

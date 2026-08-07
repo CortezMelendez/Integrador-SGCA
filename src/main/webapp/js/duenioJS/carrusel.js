@@ -54,4 +54,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const scrollableWidth = track.scrollWidth - track.clientWidth;
     track.scrollLeft = porcentaje * scrollableWidth;
   });
+
+    document.querySelector(".dropdown-btn")
+        .addEventListener("click", function(){
+
+            document.querySelector(".dropdown-menu")
+                .classList.toggle("show");
+
+        });
 });
