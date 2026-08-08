@@ -1,4 +1,5 @@
 package com.sgca.integradorsgca.model.bean;
+import java.sql.Timestamp;
 
 public class ServiciosBean {
     private int id_servicio;
@@ -7,6 +8,7 @@ public class ServiciosBean {
     private String descripcion;
     private double precio;
     private int estado;
+    private Timestamp fechaRegistro;
 
     public ServiciosBean() {}
 
@@ -17,6 +19,7 @@ public class ServiciosBean {
         this.descripcion = descripcion;
         this.precio = precio;
         this.estado = estado;
+
     }
 
     public int getId_servicio() {
@@ -65,5 +68,12 @@ public class ServiciosBean {
 
     public void setEstado(int estado) {
         this.estado = estado;
+    }
+    public Timestamp getFechaRegistro() {
+        return fechaRegistro;
+    }
+
+    public void setFechaRegistro(Timestamp fechaRegistro) {
+        this.fechaRegistro = fechaRegistro;
     }
 }

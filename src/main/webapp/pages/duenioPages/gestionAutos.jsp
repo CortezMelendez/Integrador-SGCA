@@ -48,11 +48,9 @@
 
     <div class="gest-header">
         <div class="gest-header-left">
-            <h1>Gestión de servicios</h1>
+            <h1>Gestion de autos</h1>
             <p>Administra el inventario de autos registrados.</p>
         </div>
-
-        <!-- Buscador -->
 
         <button class="btn-agregar" onclick="abrirModal('modalAgregar')">+ Agregar auto</button>
     </div>
@@ -69,6 +67,7 @@
             <table class="gest-table" id="tabla">
                 <thead>
                 <tr>
+                    <th>Foto</th>
                     <th>Marca</th>
                     <th>Modelo</th>
                     <th>Categoria</th>
@@ -83,6 +82,16 @@
                 <tbody>
                 <c:forEach var="v" items="${listaVehiculos}">
                     <tr>
+                        <td>
+                            <c:choose>
+                                <c:when test="${not empty v.foto_Portada}">
+                                    <img class="foto-thumb" src="${pageContext.request.contextPath}/${v.foto_Portada}" alt="${v.marca.nombre} ${v.modelos.nombre}" />
+                                </c:when>
+                                <c:otherwise>
+                                    <div class="foto-placeholder"></div>
+                                </c:otherwise>
+                            </c:choose>
+                        </td>
                         <td>${v.marca.nombre}</td>
                         <td>${v.modelos.nombre}</td>
                         <td>${v.tipoVehiculo.nombre}</td>
@@ -97,21 +106,23 @@
                         </td>
                         <td><fmt:formatDate value="${v.fecha_registro}" pattern="dd/MM/yyyy"/></td>
                         <td class="acciones-cell">
-                            <button class="btn-icon btn-editar"
-                                    onclick="abrirEditar(${v.id_Vehiculo}, '${v.marca.nombre}', '${v.modelos.nombre}', '${v.tipoVehiculo.nombre}', ${v.precio}, '${v.color}', '${v.placa}', ${v.anio}, ${v.id_Agente}, '${v.disponible == 1 ? 'Activo' : 'Inactivo'}')">
-                                Editar
-                            </button>
-                            <a class="btn-icon btn-eliminar"
-                               href="${pageContext.request.contextPath}/gestionAutos?accion=eliminar&id=${v.id_Vehiculo}"
-                               onclick="return confirm('¿Eliminar este auto? Esta acción no se puede deshacer.')">
-                                Eliminar
-                            </a>
+                            <div class="action-group">
+                                <button type="button" class="btn-icon btn-edit" title="Editar"
+                                        onclick="abrirEditar(${v.id_Vehiculo}, '${v.marca.nombre}', '${v.modelos.nombre}', '${v.tipoVehiculo.nombre}', ${v.precio}, '${v.color}', '${v.placa}', ${v.anio}, ${v.id_Agente}, '${v.disponible == 1 ? 'Activo' : 'Inactivo'}', '${v.foto_Portada}', '<fmt:formatDate value="${v.fecha_registro}" pattern="dd/MM/yyyy"/>', '${pageContext.request.contextPath}/gestionAutos?accion=eliminar&id=${v.id_Vehiculo}')">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                                </button>
+                                <a class="btn-icon btn-delete" title="Eliminar"
+                                   href="${pageContext.request.contextPath}/gestionAutos?accion=eliminar&id=${v.id_Vehiculo}"
+                                   onclick="return confirm('¿Eliminar este auto? Esta acción no se puede deshacer.')">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                                </a>
+                            </div>
                         </td>
                     </tr>
                 </c:forEach>
                 <c:if test="${empty listaVehiculos}">
                     <tr>
-                        <td colspan="9" style="text-align:center; padding: 24px;">No hay autos registrados todavía.</td>
+                        <td colspan="10" style="text-align:center; padding: 24px;">No hay autos registrados todavía.</td>
                     </tr>
                 </c:if>
                 </tbody>
@@ -134,168 +145,225 @@
 
 <!-- Ventana emergente agregar-->
 <div class="modal-overlay" id="modalAgregar" onclick="cerrarOverlay(event,'modalAgregar')">
-    <div class="modal-box" onclick="event.stopPropagation()">
-        <h2 class="modal-title">Agregar auto</h2>
-        <div class="modal-row">
-            <div class="modal-field">
-                <label class="modal-label">Marca *</label>
-                <input class="modal-input" id="mod-marca" type="text" placeholder="Ej. Toyota" />
-                <span class="modal-error" id="err-marca"></span>
+    <div class="modal-box modal-box-lg" onclick="event.stopPropagation()">
+        <form id="formAgregar" method="POST"
+              action="${pageContext.request.contextPath}/gestionAutos"
+              enctype="multipart/form-data"
+              onsubmit="return validarYPrepararEnvio('mod')">
+            <input type="hidden" name="accion" value="registrar" />
+
+            <div class="modal-header-bar">Agregar Automóvil</div>
+            <p class="modal-subtitle">Completa la información para registrar un nuevo vehículo</p>
+
+            <div class="modal-photo-row">
+                <div class="modal-photo-upload" id="mod-foto-box" onclick="document.getElementById('mod-foto-input').click()">
+                    <input type="file" id="mod-foto-input" name="foto" accept="image/*" hidden onchange="previsualizarFoto(this,'mod-foto-box')" />
+                    <div class="upload-placeholder" id="mod-foto-placeholder">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                        <span>Subir Imagen</span>
+                    </div>
+                    <img class="modal-photo-preview" id="mod-foto-preview" style="display:none" alt="Vista previa" />
+                </div>
+
+                <div class="modal-photo-fields">
+                    <div class="modal-field">
+                        <label class="modal-label">Marca *</label>
+                        <input class="modal-input" id="mod-marca" name="marca" type="text" placeholder="Ej. Mazda" />
+                        <span class="modal-error" id="err-marca"></span>
+                    </div>
+                    <div class="modal-field">
+                        <label class="modal-label">Modelo *</label>
+                        <input class="modal-input" id="mod-modelo" name="modelo" type="text" placeholder="Ej. CX-5" />
+                        <span class="modal-error" id="err-modelo"></span>
+                    </div>
+                </div>
             </div>
-            <div class="modal-field">
-                <label class="modal-label">Modelo *</label>
-                <input class="modal-input" id="mod-modelo" type="text" placeholder="Ej. Corolla" />
-                <span class="modal-error" id="err-modelo"></span>
+
+            <div class="modal-row modal-row-3">
+                <div class="modal-field">
+                    <label class="modal-label">Año *</label>
+                    <input class="modal-input" id="mod-anio" name="anio" type="number" min="1980" max="2100" placeholder="2024" />
+                    <span class="modal-error" id="err-anio"></span>
+                </div>
+                <div class="modal-field">
+                    <label class="modal-label">Tipo *</label>
+                    <select class="modal-select" id="mod-categoria" name="categoria">
+                        <option value="">Selecciona...</option>
+                        <c:forEach var="t" items="${listaTipos}">
+                            <option value="${t.nombre}">${t.nombre}</option>
+                        </c:forEach>
+                        <c:if test="${empty listaTipos}">
+                            <option>Sedán</option>
+                            <option>SUV</option>
+                            <option>Pickup</option>
+                            <option>Hatchback</option>
+                            <option>Deportivo</option>
+                        </c:if>
+                    </select>
+                    <span class="modal-error" id="err-categoria"></span>
+                </div>
+                <div class="modal-field">
+                    <label class="modal-label">Precio ($) *</label>
+                    <input class="modal-input" id="mod-precio" name="precio" type="number" min="0" step="0.01" placeholder="0.00" />
+                    <span class="modal-error" id="err-precio"></span>
+                </div>
             </div>
-        </div>
-        <div class="modal-row">
-            <div class="modal-field">
-                <label class="modal-label">Categoría *</label>
-                <select class="modal-select" id="mod-categoria">
-                    <option value="">Selecciona...</option>
-                    <c:forEach var="t" items="${listaTipos}">
-                        <option value="${t.nombre}">${t.nombre}</option>
-                    </c:forEach>
-                    <c:if test="${empty listaTipos}">
-                        <option>Sedán</option>
-                        <option>SUV</option>
-                        <option>Pickup</option>
-                        <option>Hatchback</option>
-                        <option>Deportivo</option>
-                    </c:if>
-                </select>
-                <span class="modal-error" id="err-categoria"></span>
+
+            <div class="modal-row">
+                <div class="modal-field">
+                    <label class="modal-label">Color *</label>
+                    <input class="modal-input" id="mod-color" name="color" type="text" placeholder="Ej. Gris Metálico" />
+                    <span class="modal-error" id="err-color"></span>
+                </div>
+                <div class="modal-field">
+                    <label class="modal-label">Placa *</label>
+                    <input class="modal-input" id="mod-placa" name="placa" type="text" placeholder="Ej. ABC-123-A" />
+                    <span class="modal-error" id="err-placa"></span>
+                </div>
             </div>
-            <div class="modal-field">
-                <label class="modal-label">Precio ($) *</label>
-                <input class="modal-input" id="mod-precio" type="number" min="0" step="0.01" placeholder="0.00" />
-                <span class="modal-error" id="err-precio"></span>
+
+            <div class="modal-row">
+                <div class="modal-field">
+                    <label class="modal-label">Agente responsable *</label>
+                    <select class="modal-select" id="mod-agente" name="id_Agente">
+                        <option value="">Selecciona...</option>
+                        <c:forEach var="a" items="${listaAgentes}">
+                            <option value="${a.idAgente}">${a.nombreCompletoUsuario}</option>
+                        </c:forEach>
+                    </select>
+                    <span class="modal-error" id="err-agente"></span>
+                </div>
+                <div class="modal-field">
+                    <label class="modal-label">Estado</label>
+                    <select class="modal-select" id="mod-estado" name="estado">
+                        <option>Activo</option>
+                        <option>Inactivo</option>
+                    </select>
+                </div>
             </div>
-        </div>
-        <div class="modal-row">
-            <div class="modal-field">
-                <label class="modal-label">Color *</label>
-                <input class="modal-input" id="mod-color" type="text" placeholder="Ej. Rojo" />
-                <span class="modal-error" id="err-color"></span>
+
+            <div class="modal-actions">
+                <button type="button" class="btn-modal-cancel" onclick="cerrarModal('modalAgregar')">Cancelar</button>
+                <button type="submit" class="btn-modal-save">Guardar cambios</button>
             </div>
-            <div class="modal-field">
-                <label class="modal-label">Placa *</label>
-                <input class="modal-input" id="mod-placa" type="text" placeholder="Ej. ABC-123-A" />
-                <span class="modal-error" id="err-placa"></span>
-            </div>
-        </div>
-        <div class="modal-row">
-            <div class="modal-field">
-                <label class="modal-label">Año *</label>
-                <input class="modal-input" id="mod-anio" type="number" min="1980" max="2100" placeholder="Ej. 2024" />
-                <span class="modal-error" id="err-anio"></span>
-            </div>
-            <div class="modal-field">
-                <label class="modal-label">Agente responsable *</label>
-                <select class="modal-select" id="mod-agente">
-                    <option value="">Selecciona...</option>
-                    <c:forEach var="a" items="${listaAgentes}">
-                        <option value="${a.idAgente}">${a.nombreCompletoUsuario}</option>
-                    </c:forEach>
-                </select>
-                <span class="modal-error" id="err-agente"></span>
-            </div>
-        </div>
-        <div class="modal-field">
-            <label class="modal-label">Estado</label>
-            <select class="modal-select" id="mod-estado">
-                <option>Activo</option>
-                <option>Inactivo</option>
-            </select>
-        </div>
-        <div class="modal-actions">
-            <button class="btn-modal-cancel" onclick="cerrarModal('modalAgregar')">Cancelar</button>
-            <button class="btn-modal-save" onclick="agregarRegistro()">Guardar</button>
-        </div>
+        </form>
     </div>
 </div>
 
 <!-- ventana emergente Editar -->
 <div class="modal-overlay" id="modalEditar" onclick="cerrarOverlay(event,'modalEditar')">
-    <div class="modal-box" onclick="event.stopPropagation()">
-        <h2 class="modal-title">Editar auto</h2>
-        <input type="hidden" id="edit-id" />
-        <div class="modal-row">
-            <div class="modal-field">
-                <label class="modal-label">Marca *</label>
-                <input class="modal-input" id="edit-marca" type="text" />
-                <span class="modal-error" id="edit-err-marca"></span>
+    <div class="modal-box modal-box-lg" onclick="event.stopPropagation()">
+        <form id="formEditar" method="POST"
+              action="${pageContext.request.contextPath}/gestionAutos"
+              enctype="multipart/form-data"
+              onsubmit="return validarYPrepararEnvio('edit')">
+            <input type="hidden" name="accion" value="actualizar" />
+            <input type="hidden" name="id_Vehiculo" id="edit-id" />
+            <input type="hidden" name="foto_actual" id="edit-foto-actual" />
+
+            <div class="modal-header-bar">
+                Editar Automóvil
+                <span class="badge-edicion">En edición</span>
             </div>
-            <div class="modal-field">
-                <label class="modal-label">Modelo *</label>
-                <input class="modal-input" id="edit-modelo" type="text" />
-                <span class="modal-error" id="edit-err-modelo"></span>
+            <p class="modal-subtitle">Modifica la información del vehículo seleccionado</p>
+
+            <div class="modal-photo-row">
+                <div class="modal-photo-upload" id="edit-foto-box" onclick="document.getElementById('edit-foto-input').click()">
+                    <input type="file" id="edit-foto-input" name="foto" accept="image/*" hidden onchange="previsualizarFoto(this,'edit-foto-box')" />
+                    <div class="upload-placeholder" id="edit-foto-placeholder">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                        <span>Subir Imagen</span>
+                    </div>
+                    <img class="modal-photo-preview" id="edit-foto-preview" style="display:none" alt="Vista previa" />
+                </div>
+
+                <div class="modal-photo-fields">
+                    <div class="modal-field">
+                        <label class="modal-label">Marca *</label>
+                        <input class="modal-input" id="edit-marca" name="marca" type="text" />
+                        <span class="modal-error" id="edit-err-marca"></span>
+                    </div>
+                    <div class="modal-field">
+                        <label class="modal-label">Modelo *</label>
+                        <input class="modal-input" id="edit-modelo" name="modelo" type="text" />
+                        <span class="modal-error" id="edit-err-modelo"></span>
+                    </div>
+                </div>
             </div>
-        </div>
-        <div class="modal-row">
-            <div class="modal-field">
-                <label class="modal-label">Categoría *</label>
-                <select class="modal-select" id="edit-categoria">
-                    <option value="">Selecciona...</option>
-                    <c:forEach var="t" items="${listaTipos}">
-                        <option value="${t.nombre}">${t.nombre}</option>
-                    </c:forEach>
-                    <c:if test="${empty listaTipos}">
-                        <option>Sedán</option>
-                        <option>SUV</option>
-                        <option>Pickup</option>
-                        <option>Hatchback</option>
-                        <option>Deportivo</option>
-                    </c:if>
-                </select>
-                <span class="modal-error" id="edit-err-categoria"></span>
+
+            <div class="modal-row modal-row-3">
+                <div class="modal-field">
+                    <label class="modal-label">Año *</label>
+                    <input class="modal-input" id="edit-anio" name="anio" type="number" min="1980" max="2100" />
+                    <span class="modal-error" id="edit-err-anio"></span>
+                </div>
+                <div class="modal-field">
+                    <label class="modal-label">Tipo *</label>
+                    <select class="modal-select" id="edit-categoria" name="categoria">
+                        <option value="">Selecciona...</option>
+                        <c:forEach var="t" items="${listaTipos}">
+                            <option value="${t.nombre}">${t.nombre}</option>
+                        </c:forEach>
+                        <c:if test="${empty listaTipos}">
+                            <option>Sedán</option>
+                            <option>SUV</option>
+                            <option>Pickup</option>
+                            <option>Hatchback</option>
+                            <option>Deportivo</option>
+                        </c:if>
+                    </select>
+                    <span class="modal-error" id="edit-err-categoria"></span>
+                </div>
+                <div class="modal-field">
+                    <label class="modal-label">Precio ($) *</label>
+                    <input class="modal-input" id="edit-precio" name="precio" type="number" min="0" step="0.01" />
+                    <span class="modal-error" id="edit-err-precio"></span>
+                </div>
             </div>
-            <div class="modal-field">
-                <label class="modal-label">Precio ($) *</label>
-                <input class="modal-input" id="edit-precio" type="number" min="0" step="0.01" />
-                <span class="modal-error" id="edit-err-precio"></span>
+
+            <div class="modal-row">
+                <div class="modal-field">
+                    <label class="modal-label">Color *</label>
+                    <input class="modal-input" id="edit-color" name="color" type="text" />
+                    <span class="modal-error" id="edit-err-color"></span>
+                </div>
+                <div class="modal-field">
+                    <label class="modal-label">Placa *</label>
+                    <input class="modal-input" id="edit-placa" name="placa" type="text" />
+                    <span class="modal-error" id="edit-err-placa"></span>
+                </div>
             </div>
-        </div>
-        <div class="modal-row">
-            <div class="modal-field">
-                <label class="modal-label">Color *</label>
-                <input class="modal-input" id="edit-color" type="text" />
-                <span class="modal-error" id="edit-err-color"></span>
+
+            <div class="modal-row">
+                <div class="modal-field">
+                    <label class="modal-label">Agente responsable *</label>
+                    <select class="modal-select" id="edit-agente" name="id_Agente">
+                        <option value="">Selecciona...</option>
+                        <c:forEach var="a" items="${listaAgentes}">
+                            <option value="${a.idAgente}">${a.nombreCompletoUsuario}</option>
+                        </c:forEach>
+                    </select>
+                    <span class="modal-error" id="edit-err-agente"></span>
+                </div>
+                <div class="modal-field">
+                    <label class="modal-label">Estado</label>
+                    <select class="modal-select" id="edit-estado" name="estado">
+                        <option>Activo</option>
+                        <option>Inactivo</option>
+                    </select>
+                </div>
             </div>
-            <div class="modal-field">
-                <label class="modal-label">Placa *</label>
-                <input class="modal-input" id="edit-placa" type="text" />
-                <span class="modal-error" id="edit-err-placa"></span>
+
+            <p class="modal-updated" id="edit-fecha-actualizado"></p>
+
+            <div class="modal-actions modal-actions-edit">
+                <a class="btn-modal-delete" id="edit-eliminar-link" href="#" onclick="return confirm('¿Eliminar este auto? Esta acción no se puede deshacer.')">Eliminar</a>
+                <div class="modal-actions-right">
+                    <button type="button" class="btn-modal-cancel" onclick="cerrarModal('modalEditar')">Cancelar</button>
+                    <button type="submit" class="btn-modal-save">Guardar cambios</button>
+                </div>
             </div>
-        </div>
-        <div class="modal-row">
-            <div class="modal-field">
-                <label class="modal-label">Año *</label>
-                <input class="modal-input" id="edit-anio" type="number" min="1980" max="2100" />
-                <span class="modal-error" id="edit-err-anio"></span>
-            </div>
-            <div class="modal-field">
-                <label class="modal-label">Agente responsable *</label>
-                <select class="modal-select" id="edit-agente">
-                    <option value="">Selecciona...</option>
-                    <c:forEach var="a" items="${listaAgentes}">
-                        <option value="${a.idAgente}">${a.nombreCompletoUsuario}</option>
-                    </c:forEach>
-                </select>
-                <span class="modal-error" id="edit-err-agente"></span>
-            </div>
-        </div>
-        <div class="modal-field">
-            <label class="modal-label">Estado</label>
-            <select class="modal-select" id="edit-estado">
-                <option>Activo</option>
-                <option>Inactivo</option>
-            </select>
-        </div>
-        <div class="modal-actions">
-            <button class="btn-modal-cancel" onclick="cerrarModal('modalEditar')">Cancelar</button>
-            <button class="btn-modal-save" onclick="guardarEdicion()">Guardar cambios</button>
-        </div>
+        </form>
     </div>
 </div>
 <script src="${pageContext.request.contextPath}/js/duenioJS/gestionAutos.js"></script>

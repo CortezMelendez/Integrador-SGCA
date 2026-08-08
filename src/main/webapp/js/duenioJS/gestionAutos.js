@@ -6,6 +6,7 @@ const CONTEXT_PATH = (() => {
 
 // Funciones de Modal
 function abrirModal(id) {
+    if (id === 'modalAgregar') resetearModalAgregar();
     document.getElementById(id).classList.add('active');
     document.body.style.overflow = 'hidden';
 }
@@ -26,8 +27,19 @@ document.addEventListener('keydown', e => {
     }
 });
 
+// Limpia el formulario de "Agregar" cada vez que se abre desde cero
+function resetearModalAgregar() {
+    document.getElementById('formAgregar').reset();
+    const preview = document.getElementById('mod-foto-preview');
+    const placeholder = document.getElementById('mod-foto-placeholder');
+    preview.removeAttribute('src');
+    preview.style.display = 'none';
+    placeholder.style.display = 'flex';
+    limpiarErrores('mod');
+}
+
 // Función para llenar datos en modal Editar
-function abrirEditar(id, marca, modelo, categoria, precio, color, placa, anio, idAgente, estado) {
+function abrirEditar(id, marca, modelo, categoria, precio, color, placa, anio, idAgente, estado, foto, fechaActualizado, urlEliminar) {
     document.getElementById('edit-id').value = id;
     document.getElementById('edit-marca').value = marca;
     document.getElementById('edit-modelo').value = modelo;
@@ -43,6 +55,31 @@ function abrirEditar(id, marca, modelo, categoria, precio, color, placa, anio, i
         if (id2 === 'edit-estado') val = estado;
         [...sel.options].forEach(o => o.selected = o.value === val);
     });
+
+    // Limpia el <input type="file">: si el usuario no elige una nueva imagen,
+    // se conserva la que ya tenía (ver campo oculto foto_actual)
+    document.getElementById('edit-foto-input').value = '';
+    document.getElementById('edit-foto-actual').value = foto || '';
+
+    const preview = document.getElementById('edit-foto-preview');
+    const placeholder = document.getElementById('edit-foto-placeholder');
+    if (foto && foto.trim() !== '') {
+        preview.src = `${CONTEXT_PATH}/${foto}`;
+        preview.style.display = 'block';
+        placeholder.style.display = 'none';
+    } else {
+        preview.removeAttribute('src');
+        preview.style.display = 'none';
+        placeholder.style.display = 'flex';
+    }
+
+    // Última actualización
+    document.getElementById('edit-fecha-actualizado').textContent =
+        fechaActualizado ? `Última actualización: ${fechaActualizado}` : '';
+
+    // Link de eliminar de este auto en particular
+    const eliminarLink = document.getElementById('edit-eliminar-link');
+    if (urlEliminar) eliminarLink.setAttribute('href', urlEliminar);
 
     limpiarErrores('edit');
     abrirModal('modalEditar');
@@ -66,6 +103,23 @@ function toggleEstado(elemento, idVehiculo) {
 
     fetch(`${CONTEXT_PATH}/gestionAutos?accion=cambiarEstado&id=${idVehiculo}&disponible=${nuevoEstado}`)
         .catch(err => console.error('No se pudo actualizar el estado:', err));
+}
+
+// Vista previa de la imagen elegida en el <input type="file"> (Agregar / Editar)
+function previsualizarFoto(input, boxId) {
+    const box = document.getElementById(boxId);
+    const preview = box.querySelector('.modal-photo-preview');
+    const placeholder = box.querySelector('.upload-placeholder');
+    const file = input.files && input.files[0];
+    if (!file) return;
+
+    const lector = new FileReader();
+    lector.onload = e => {
+        preview.src = e.target.result;
+        preview.style.display = 'block';
+        placeholder.style.display = 'none';
+    };
+    lector.readAsDataURL(file);
 }
 
 // --- Validación básica ---
@@ -103,83 +157,24 @@ function validarCampos(prefijo, datos) {
     return valido;
 }
 
-// Envía un formulario dinámico por POST hacia el servlet /gestionAutos
-function enviarFormulario(datos) {
-    const form = document.createElement('form');
-    form.method = 'POST';
-    form.action = `${CONTEXT_PATH}/gestionAutos`;
-
-    Object.entries(datos).forEach(([nombre, valor]) => {
-        const input = document.createElement('input');
-        input.type = 'hidden';
-        input.name = nombre;
-        input.value = valor;
-        form.appendChild(input);
-    });
-
-    document.body.appendChild(form);
-    form.submit();
-}
-
-// Guardar nuevo auto
-function agregarRegistro() {
-    const datos = {
-        marca: document.getElementById('mod-marca').value.trim(),
-        modelo: document.getElementById('mod-modelo').value.trim(),
-        categoria: document.getElementById('mod-categoria').value,
-        precio: document.getElementById('mod-precio').value,
-        color: document.getElementById('mod-color').value.trim(),
-        placa: document.getElementById('mod-placa').value.trim(),
-        anio: document.getElementById('mod-anio').value,
-        agente: document.getElementById('mod-agente').value,
-        estado: document.getElementById('mod-estado').value
+// Se ejecuta en el onsubmit de los formularios reales (formAgregar / formEditar).
+// Si retorna false, el navegador NO envía el formulario (evita el POST con datos inválidos).
+function validarYPrepararEnvio(prefijo) {
+    const val = id => {
+        const el = document.getElementById(id);
+        return el ? el.value.trim() : '';
     };
 
-    if (!validarCampos('mod', datos)) return;
-
-    enviarFormulario({
-        accion: 'registrar',
-        marca: datos.marca,
-        modelo: datos.modelo,
-        categoria: datos.categoria,
-        precio: datos.precio,
-        color: datos.color,
-        placa: datos.placa,
-        anio: datos.anio,
-        id_Agente: datos.agente,
-        estado: datos.estado,
-        foto_Portada: ''
-    });
-}
-
-// Guardar edición de un auto existente
-function guardarEdicion() {
     const datos = {
-        marca: document.getElementById('edit-marca').value.trim(),
-        modelo: document.getElementById('edit-modelo').value.trim(),
-        categoria: document.getElementById('edit-categoria').value,
-        precio: document.getElementById('edit-precio').value,
-        color: document.getElementById('edit-color').value.trim(),
-        placa: document.getElementById('edit-placa').value.trim(),
-        anio: document.getElementById('edit-anio').value,
-        agente: document.getElementById('edit-agente').value,
-        estado: document.getElementById('edit-estado').value
+        marca: val(`${prefijo}-marca`),
+        modelo: val(`${prefijo}-modelo`),
+        categoria: val(`${prefijo}-categoria`),
+        precio: val(`${prefijo}-precio`),
+        color: val(`${prefijo}-color`),
+        placa: val(`${prefijo}-placa`),
+        anio: val(`${prefijo}-anio`),
+        agente: val(`${prefijo}-agente`)
     };
 
-    if (!validarCampos('edit', datos)) return;
-
-    enviarFormulario({
-        accion: 'actualizar',
-        id_Vehiculo: document.getElementById('edit-id').value,
-        marca: datos.marca,
-        modelo: datos.modelo,
-        categoria: datos.categoria,
-        precio: datos.precio,
-        color: datos.color,
-        placa: datos.placa,
-        anio: datos.anio,
-        id_Agente: datos.agente,
-        estado: datos.estado,
-        foto_Portada: ''
-    });
+    return validarCampos(prefijo, datos);
 }

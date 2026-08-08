@@ -1,10 +1,14 @@
 package com.sgca.integradorsgca.controller;
 
 import com.sgca.integradorsgca.model.bean.AgentesBean;
+import com.sgca.integradorsgca.model.bean.ServiciosBean;
+import com.sgca.integradorsgca.model.bean.TiposServicioBean;
 import com.sgca.integradorsgca.model.bean.TiposVehiculoBean;
 import com.sgca.integradorsgca.model.bean.UsuarioBean;
 import com.sgca.integradorsgca.model.bean.VehiculosBean;
 import com.sgca.integradorsgca.model.dao.AgentesDao;
+import com.sgca.integradorsgca.model.dao.ServiciosDao;
+import com.sgca.integradorsgca.model.dao.TiposServicioDao;
 import com.sgca.integradorsgca.model.dao.TiposVehiculoDao;
 import com.sgca.integradorsgca.model.dao.VehiculosDao;
 import jakarta.servlet.ServletException;
@@ -25,6 +29,8 @@ public class GestionBtnServlet extends HttpServlet {
     private final VehiculosDao vehiculosDao = new VehiculosDao();
     private final TiposVehiculoDao tiposVehiculoDao = new TiposVehiculoDao();
     private final AgentesDao agentesDao = new AgentesDao();
+    private final ServiciosDao serviciosDao = new ServiciosDao();
+    private final TiposServicioDao tiposServicioDao = new TiposServicioDao();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -49,35 +55,44 @@ public class GestionBtnServlet extends HttpServlet {
         String action = request.getParameter("action");
         if (action == null) action = "inicio";
 
-        switch (action) {
-            case "gestionServicio":
-                request.getRequestDispatcher(BASE_DUENIO + "gestionServicios.jsp").forward(request, response);
-                break;
+        try {
+            switch (action) {
+                case "gestionServicio":
+                    List<ServiciosBean> listaServicios = serviciosDao.listar();
+                    List<TiposServicioBean> listaTiposServicio = tiposServicioDao.listar();
 
-            case "gestionEmpleados":
-                request.getRequestDispatcher(BASE_DUENIO + "gestionEmpleados.jsp").forward(request, response);
-                break;
+                    request.setAttribute("listaServicios", listaServicios);
+                    request.setAttribute("listaTipos", listaTiposServicio);
 
-            case "gestionClientes":
-                request.getRequestDispatcher(BASE_DUENIO + "gestionClientes.jsp").forward(request, response);
-                break;
+                    request.getRequestDispatcher(BASE_DUENIO + "gestionServicios.jsp").forward(request, response);
+                    break;
 
-            case "gestionAutos":
-                List<VehiculosBean> listaVehiculos = vehiculosDao.listar();
-                List<TiposVehiculoBean> listaTipos = tiposVehiculoDao.listar();
-                List<AgentesBean> listaAgentes = agentesDao.listar();
+                case "gestionEmpleados":
+                    request.getRequestDispatcher(BASE_DUENIO + "gestionEmpleados.jsp").forward(request, response);
+                    break;
 
-                request.setAttribute("listaVehiculos", listaVehiculos);
-                request.setAttribute("listaTipos", listaTipos);
-                request.setAttribute("listaAgentes", listaAgentes);
+                case "gestionClientes":
+                    request.getRequestDispatcher(BASE_DUENIO + "gestionClientes.jsp").forward(request, response);
+                    break;
 
-                request.getRequestDispatcher(BASE_DUENIO + "gestionAutos.jsp").forward(request, response);
-                break;
+                case "gestionAutos":
+                    List<VehiculosBean> listaVehiculos = vehiculosDao.listar();
+                    List<TiposVehiculoBean> listaTipos = tiposVehiculoDao.listar();
+                    List<AgentesBean> listaAgentes = agentesDao.listar();
 
+                    request.setAttribute("listaVehiculos", listaVehiculos);
+                    request.setAttribute("listaTipos", listaTipos);
+                    request.setAttribute("listaAgentes", listaAgentes);
 
+                    request.getRequestDispatcher(BASE_DUENIO + "gestionAutos.jsp").forward(request, response);
+                    break;
 
-            default:
-                response.sendRedirect(request.getContextPath() + BASE_DUENIO + "indexDuenio.jsp");
+                default:
+                    response.sendRedirect(request.getContextPath() + BASE_DUENIO + "indexDuenio.jsp");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.sendRedirect(request.getContextPath() + "/btn?action=inicio&error=carga");
         }
     }
 

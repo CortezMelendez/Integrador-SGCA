@@ -1,4 +1,3 @@
-
 /* -------------------------------------------------------
    Base: que nada se desborde horizontalmente
 ------------------------------------------------------- */
@@ -118,7 +117,8 @@ img {
         overflow-y: auto;
     }
 
-    .modal-row {
+    .modal-row,
+    .modal-row-3 {
         flex-direction: column;
         gap: 12px;
     }
@@ -130,6 +130,31 @@ img {
 
     .modal-actions button {
         width: 100%;
+    }
+
+    .modal-box-lg .modal-photo-row {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .modal-photo-upload {
+        width: 100%;
+        max-width: 200px;
+    }
+
+    .modal-actions-edit {
+        flex-direction: column-reverse;
+        align-items: stretch;
+        gap: 10px;
+    }
+
+    .modal-actions-right {
+        flex-direction: column-reverse;
+        gap: 10px;
+    }
+
+    .btn-modal-delete {
+        text-align: center;
     }
 }
 
