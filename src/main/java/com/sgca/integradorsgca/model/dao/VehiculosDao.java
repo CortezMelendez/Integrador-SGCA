@@ -234,4 +234,102 @@ public class VehiculosDao {
         return lista;
 
     }
+
+    // Catálogo del cliente: trae los vehículos disponibles, permite filtrar por tipo
+    // y por un texto de búsqueda libre (marca, modelo, año o precio), y ordena según
+    // lo que pida el cliente. Tanto el tipo como el texto de búsqueda van siempre
+    // parametrizados, nunca concatenados directo al SQL.
+    public List<VehiculosBean> listarClientePorTipo(String tipo, String buscar, String orden) {
+        List<VehiculosBean> lista = new ArrayList<>();
+        List<String> parametros = new ArrayList<>();
+
+        StringBuilder sql = new StringBuilder(
+                "SELECT "
+                        + "V.ID_VEHICULO, V.ID_MODELO, V.ID_TIPO, V.ID_AGENTE, "
+                        + "V.PLACA, V.COLOR, V.ANIO, V.PRECIO, V.DISPONIBLE, V.FECHA_REGISTRO, V.FOTO_PORTADA, "
+                        + "M.NOMBRE NOMBRE_MODELO, M.ESTADO ESTADO_MODELO, "
+                        + "MA.ID_MARCA, MA.NOMBRE NOMBRE_MARCA, MA.ESTADO ESTADO_MARCA, "
+                        + "TV.NOMBRE NOMBRE_TIPO "
+                        + "FROM ADMIN.VEHICULOS V "
+                        + "INNER JOIN ADMIN.MODELOS M ON V.ID_MODELO = M.ID_MODELO "
+                        + "INNER JOIN ADMIN.MARCAS MA ON M.ID_MARCA = MA.ID_MARCA "
+                        + "INNER JOIN ADMIN.TIPOS_VEHICULO TV ON V.ID_TIPO = TV.ID_TIPO "
+                        + "WHERE V.DISPONIBLE = 1 "
+        );
+
+        if (tipo != null && !tipo.isBlank()) {
+            sql.append("AND UPPER(TV.NOMBRE) = UPPER(?) ");
+            parametros.add(tipo);
+        }
+
+        // El mismo texto se busca a la vez en marca, modelo, el nombre combinado, año y precio
+        if (buscar != null && !buscar.isBlank()) {
+            sql.append(
+                    "AND (UPPER(MA.NOMBRE) LIKE UPPER(?) ESCAPE '\\' "
+                            + "OR UPPER(M.NOMBRE) LIKE UPPER(?) ESCAPE '\\' "
+                            + "OR UPPER(MA.NOMBRE || ' ' || M.NOMBRE) LIKE UPPER(?) ESCAPE '\\' "
+                            + "OR TO_CHAR(V.ANIO) LIKE ? ESCAPE '\\' "
+                            + "OR TO_CHAR(V.PRECIO) LIKE ? ESCAPE '\\') "
+            );
+            String comodin = "%" + escaparComodinesLike(buscar.trim()) + "%";
+            for (int i = 0; i < 5; i++) {
+                parametros.add(comodin);
+            }
+        }
+
+        // "Recién agregados" no solo ordena, también limita a los últimos 7 días
+        if ("recientes".equals(orden)) {
+            sql.append("AND V.FECHA_REGISTRO >= (SYSDATE - 7) ");
+        }
+
+        sql.append(construirOrderBy(orden));
+
+        try (Connection con = Conexion.getConexion();
+             PreparedStatement ps = con.prepareStatement(sql.toString())) {
+
+            for (int i = 0; i < parametros.size(); i++) {
+                ps.setString(i + 1, parametros.get(i));
+            }
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    lista.add(mapearVehiculo(rs));
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Error al listar catálogo de cliente: " + e.getMessage());
+        }
+
+        return lista;
+    }
+
+    // El orden que se aplica siempre sale de esta lista fija de opciones, nunca de lo
+    // que mande el usuario directo al SQL.
+    private String construirOrderBy(String orden) {
+        if (orden == null) {
+            return "ORDER BY V.ID_VEHICULO DESC";
+        }
+
+        switch (orden) {
+            case "precio_desc":
+                return "ORDER BY V.PRECIO DESC";
+            case "precio_asc":
+                return "ORDER BY V.PRECIO ASC";
+            case "az":
+                return "ORDER BY MA.NOMBRE ASC, M.NOMBRE ASC";
+            case "recientes":
+                return "ORDER BY V.FECHA_REGISTRO DESC";
+            default:
+                return "ORDER BY V.ID_VEHICULO DESC";
+        }
+    }
+
+    //sirve para evitar que ciertos caracteres que tienen un significado especial en SQL LIKE sean interpretados como comodines.
+    //Es decir seran interpretados como caracteres normales
+    private String escaparComodinesLike(String valor) {
+        return valor
+                .replace("\\", "\\\\")
+                .replace("%", "\\%")
+                .replace("_", "\\_");
+    }
 }

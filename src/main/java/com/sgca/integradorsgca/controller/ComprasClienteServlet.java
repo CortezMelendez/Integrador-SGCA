@@ -6,6 +6,7 @@ import com.sgca.integradorsgca.model.bean.UsuarioBean;
 import com.sgca.integradorsgca.model.bean.VentasBean;
 import com.sgca.integradorsgca.model.dao.ClientesDao;
 import com.sgca.integradorsgca.model.dao.ServiciosDao;
+import com.sgca.integradorsgca.model.dao.TiposVehiculoDao;
 import com.sgca.integradorsgca.model.dao.VentasDao;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -24,6 +25,7 @@ public class ComprasClienteServlet extends HttpServlet {
     private final ClientesDao clientesDao = new ClientesDao();
     private final VentasDao ventasDao = new VentasDao();
     private final ServiciosDao serviciosDao = new ServiciosDao();
+    private final TiposVehiculoDao tiposVehiculoDao = new TiposVehiculoDao();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -55,6 +57,8 @@ public class ComprasClienteServlet extends HttpServlet {
         request.setAttribute("totalCompras", compras.size());
         request.setAttribute("totalPagado", totalPagado);
         request.setAttribute("ultimaCompra", compras.isEmpty() ? null : compras.get(0).getFechaVenta());
+
+        request.setAttribute("listaTipos", tiposVehiculoDao.listar());
 
         try {
 

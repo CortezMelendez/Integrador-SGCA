@@ -67,10 +67,10 @@
 
             <div class="dropdown-menu">
 
-                <a href="#">Sedán</a>
-                <a href="#">Hatchback</a>
-                <a href="#">Camioneta</a>
-                <a href="#">Pickup</a>
+                <a href="${pageContext.request.contextPath}/automoviles">Ver todos</a>
+                <c:forEach var="t" items="${listaTipos}">
+                    <a href="${pageContext.request.contextPath}/automoviles?tipo=${t.nombre}">${t.nombre}</a>
+                </c:forEach>
 
             </div>
 

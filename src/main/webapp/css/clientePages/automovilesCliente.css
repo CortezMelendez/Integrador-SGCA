@@ -1,0 +1,286 @@
+/* =============================================
+   NAVBAR (marca como enlace a inicio +
+   opción activa en el dropdown de tipos/filtro)
+============================================= */
+
+a.dash-brand {
+
+    text-decoration: none;
+
+}
+
+.dropdown-menu a.activo {
+
+    font-weight: 700;
+    color: var(--btn-active);
+
+}
+
+
+
+/* =============================================
+   CATALOGO DE AUTOMOVILES
+============================================= */
+
+.automoviles-page {
+
+    flex: 1;
+
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px 24px 60px;
+    width: 100%;
+
+}
+
+.automoviles-header h1 {
+
+    font-family: 'Google Sans Flex', sans-serif;
+    font-size: 1.8rem;
+    font-weight: 700;
+
+    color: var(--btn-active);
+
+    margin-bottom: 4px;
+
+}
+
+.automoviles-header p {
+
+    color: var(--color-gray-700);
+    font-size: .95rem;
+
+}
+
+
+
+/* ---------- Toolbar: buscador + filtrar ---------- */
+
+.automoviles-toolbar {
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 20px;
+    flex-wrap: wrap;
+
+    margin: 28px 0 32px;
+
+}
+
+.automoviles-buscador {
+
+    display: flex;
+    align-items: center;
+
+    flex: 1;
+    min-width: 240px;
+    max-width: 640px;
+
+    background: var(--color-white);
+    border: 1px solid var(--color-gray-100);
+    border-radius: 999px;
+
+    padding: 0 8px 0 20px;
+
+}
+
+.automoviles-buscador input {
+
+    flex: 1;
+
+    border: none;
+    outline: none;
+
+    padding: 12px 8px;
+
+    font-family: inherit;
+    font-size: .95rem;
+
+    background: transparent;
+    color: var(--color-text-body);
+
+}
+
+.automoviles-buscador button {
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 36px;
+    height: 36px;
+
+    border: none;
+    border-radius: 50%;
+
+    background: transparent;
+    color: var(--color-gray-700);
+
+    cursor: pointer;
+
+}
+
+.automoviles-buscador button:hover {
+
+    background: var(--color-gray-50);
+
+}
+
+.btn-filtrar {
+
+    color: var(--color-white);
+
+    background: var(--btn-active);
+
+    padding: 12px 28px;
+    border-radius: 999px;
+
+    font-size: .95rem;
+    font-weight: 600;
+
+    white-space: nowrap;
+
+}
+
+.btn-filtrar:hover {
+
+    opacity: .9;
+
+}
+
+.dropdown-menu-filtro {
+
+    left: auto;
+    right: 0;
+
+    min-width: 190px;
+
+}
+
+
+
+/*Grid de resultados*/
+
+.automoviles-page .cards-container {
+
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+
+}
+
+.automoviles-page .card-auto {
+
+    width: 100%;
+
+}
+
+@media (max-width: 980px) {
+
+    .automoviles-page .cards-container {
+
+        grid-template-columns: repeat(2, 1fr);
+
+    }
+
+}
+
+@media (max-width: 560px) {
+
+    .automoviles-page .cards-container {
+
+        grid-template-columns: 1fr;
+
+    }
+
+}
+
+.automoviles-vacio {
+
+    width: 100%;
+
+    text-align: center;
+    color: var(--color-gray-700);
+
+    padding: 40px 0;
+
+}
+
+
+
+/*  Botón "Regresar"  */
+
+.automoviles-atras-wrap {
+
+    display: flex;
+    justify-content: flex-end;
+
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+
+    padding: 0 24px 24px;
+
+}
+
+.btn-atras {
+
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+
+    color: var(--color-white);
+    text-decoration: none;
+
+    background: var(--color-gray-750);
+
+    padding: 8px 16px;
+    border-radius: 20px;
+
+    font-size: .9rem;
+    font-weight: 600;
+
+    transition: background-color .2s ease;
+
+}
+
+.btn-atras:hover {
+
+    background: var(--color-gray-700);
+
+}
+
+
+
+/*  Responsive  */
+
+@media (max-width: 640px) {
+
+    .automoviles-page {
+
+        padding: 32px 16px 48px;
+
+    }
+
+    .automoviles-toolbar {
+
+        flex-direction: column;
+        align-items: stretch;
+
+    }
+
+    .automoviles-buscador {
+
+        max-width: 100%;
+
+    }
+
+    .btn-filtrar {
+
+        align-self: flex-start;
+
+    }
+
+}

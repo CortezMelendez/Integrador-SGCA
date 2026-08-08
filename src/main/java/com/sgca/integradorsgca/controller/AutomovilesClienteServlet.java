@@ -15,22 +15,38 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-@WebServlet("/cliente")
-public class clienteServlet extends HttpServlet {
+// Catálogo de vehículos del cliente: es una sola vista (automovilesCliente.jsp) que se
+// reutiliza para cualquier tipo de vehículo que exista en la BD, sin importar cuál sea.
+@WebServlet("/automoviles")
+public class AutomovilesClienteServlet extends HttpServlet {
 
-    private final VehiculosDao dao = new VehiculosDao();
-    private final ServiciosDao serviciosDao = new ServiciosDao();
+    private final VehiculosDao vehiculosDao = new VehiculosDao();
     private final TiposVehiculoDao tiposVehiculoDao = new TiposVehiculoDao();
+    private final ServiciosDao serviciosDao = new ServiciosDao();
 
-@Override
-    protected void doGet(HttpServletRequest request,
-                         HttpServletResponse response)
+    private static final List<String> ORDENES_VALIDOS =
+            List.of("precio_desc", "precio_asc", "az", "recientes");
+
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
+        String tipo = request.getParameter("tipo");
+        String buscar = request.getParameter("buscar");
+        String orden = request.getParameter("orden");
 
-        List<VehiculosBean> lista = dao.listarDisponibles();
+        if (orden != null && !ORDENES_VALIDOS.contains(orden)) {
+            orden = null;
+        }
 
-        request.setAttribute("vehiculos", lista);
+        List<VehiculosBean> automoviles =
+                vehiculosDao.listarClientePorTipo(tipo, buscar, orden);
+
+        request.setAttribute("automoviles", automoviles);
+        request.setAttribute("tipoSeleccionado", tipo);
+        request.setAttribute("ordenSeleccionado", orden);
+        request.setAttribute("buscarValor", buscar);
+
         request.setAttribute("listaTipos", tiposVehiculoDao.listar());
 
         try {
@@ -38,7 +54,6 @@ public class clienteServlet extends HttpServlet {
             List<ServiciosBean> servicios = new ArrayList<>();
 
             for (ServiciosBean s : serviciosDao.listar()) {
-
                 if (s.getEstado() == 1) {
                     servicios.add(s);
                 }
@@ -47,16 +62,12 @@ public class clienteServlet extends HttpServlet {
             request.setAttribute("servicios", servicios);
 
         } catch (Exception e) {
-
             e.printStackTrace();
-
             request.setAttribute("servicios", new ArrayList<ServiciosBean>());
         }
 
-
         request.getRequestDispatcher(
-                "/pages/clientePages/index.jsp"
-        ).forward(request,response);
-
+                "/pages/clientePages/automovilesCliente.jsp"
+        ).forward(request, response);
     }
 }
