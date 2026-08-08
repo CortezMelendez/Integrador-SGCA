@@ -50,6 +50,36 @@ public class ClientesDao {
     }
 
 
+    // Resuelve el ID_CLIENTE a partir del ID_USUARIO de la sesión (usuario logueado con rol CLIENTE)
+    public ClientesBean buscarPorIdUsuario(int idUsuario) {
+        ClientesBean cliente = null;
+        String sql = "SELECT c.ID_CLIENTE, c.ID_USUARIO, c.ID_AGENTE, c.FECHA_REGISTRO "
+                + "FROM ADMIN.CLIENTES c "
+                + "WHERE c.ID_USUARIO = ?";
+
+        try (Connection con = Conexion.getConexion();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+
+            ps.setInt(1, idUsuario);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    cliente = new ClientesBean();
+                    cliente.setIdCliente(rs.getInt("ID_CLIENTE"));
+                    cliente.setIdUsuario(rs.getInt("ID_USUARIO"));
+
+                    int idAgente = rs.getInt("ID_AGENTE");
+                    cliente.setIdAgente(rs.wasNull() ? null : idAgente);
+
+                    cliente.setFechaRegistro(rs.getTimestamp("FECHA_REGISTRO"));
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Error al buscar cliente por id_usuario: " + e.getMessage());
+        }
+        return cliente;
+    }
+
     public List<ClientesBean> listarClientesDisponibles() {
         List<ClientesBean> lista = new ArrayList<>();
         String sql = "SELECT c.ID_CLIENTE, c.ID_USUARIO, c.FECHA_REGISTRO, "

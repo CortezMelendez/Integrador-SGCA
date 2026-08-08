@@ -200,7 +200,7 @@
 
 
                 <a class="btn-detalles"
-                   href="${pageContext.request.contextPath}/detalleVehiculo?id=${v.id_Vehiculo}">
+                   href="${pageContext.request.contextPath}/login.jsp">
 
                     Ver detalles
 

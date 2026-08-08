@@ -11,20 +11,14 @@
 
     <title>Gestionaria Automotriz</title>
 
-
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
     <link href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:wght@100..900&family=Google+Sans+Code:wght@300..800&display=swap" rel="stylesheet">
-
-
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/duenioStyles/styles.css">
-
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/duenioStyles/index.css">
-
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/duenioStyles/carruselIndex.css">
-
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/duenioStyles/responsive.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/clientePages/serviciosModal.css">
 </head>
 
 
@@ -34,21 +28,13 @@
 <!-- NAVBAR -->
 <header class="dash-navbar">
 
-
     <div class="dash-navbar-left">
-
-
         <span class="dash-brand">
             Gestionaria Automotriz
         </span>
-
-
     </div>
 
-
-
     <nav class="dash-nav-center">>
-
 
         <div class="dropdown">
 
@@ -56,36 +42,27 @@
                 Automóviles ▾
             </button>
 
-
             <div class="dropdown-menu">
-
                 <a href="#">Sedán</a>
                 <a href="#">Hatchback</a>
                 <a href="#">Camioneta</a>
                 <a href="#">Pickup</a>
-
             </div>
 
         </div>
 
-        <a href="#" class="dash-nav-link">
+        <button type="button" class="dash-nav-link" id="btnAbrirServicios">
             Servicios
-        </a>
+        </button>
 
-
-        <a href="#" class="dash-nav-link">
+        <a href="${pageContext.request.contextPath}/comprasCliente" class="dash-nav-link">
             Mis compras
         </a>
 
-
-
         <div class="dropdown">
-
             <button class="dash-nav-link dropdown-btn">
                 Configuración ▾
             </button>
-
-
             <div class="dropdown-menu">
 
                 <a href="#">Perfil</a>
@@ -97,32 +74,58 @@
                 <a href="${pageContext.request.contextPath}/logout">
                     Cerrar sesión
                 </a>
-
             </div>
-
         </div>
-
         </div>
-
-
     </nav>
 
 </header>
 
+<!-- MODAL SERVICIOS -->
+<div class="modal-overlay" id="modalServicios">
 
+    <div class="modal-box modal-box-servicios">
+
+        <div class="modal-header-bar">
+            <span>Catálogo de servicios</span>
+            <button type="button" class="modal-cerrar" id="btnCerrarServicios" aria-label="Cerrar">&times;</button>
+        </div>
+
+        <div class="modal-servicios-grid">
+
+            <c:forEach var="s" items="${servicios}">
+
+                <div class="card-servicio">
+
+                    <div class="servicio-encabezado">
+                        <h3>${s.nombre}</h3>
+                        <span class="servicio-tipo">${s.tipoServicio.nombre}</span>
+                    </div>
+
+                    <p class="servicio-descripcion">${s.descripcion}</p>
+
+                    <h2>$${s.precio}</h2>
+
+                </div>
+
+            </c:forEach>
+
+            <c:if test="${empty servicios}">
+                <p class="servicios-vacio">Por el momento no hay servicios disponibles.</p>
+            </c:if>
+
+        </div>
+
+    </div>
+
+</div>
 
 <!-- HERO -->
 
 <main>
-
     <section class="hero">
-
-
         <div class="hero-content">
-
-
             <h1 class="hero-heading">
-
                 El auto<br>
                 que
                 <em class="hero-accent">
@@ -130,65 +133,34 @@
                 </em>
                 <br>
                 está aquí.
-
             </h1>
 
-
-
             <p class="hero-description">
-
                 Accede al catálogo más completo, gestiona tus servicios y encuentra el vehículo ideal con la asesoría de nuestros expertos.
-
             </p>
-
-
-
         </div>
 
 
-
-
         <div class="hero-logo">
-
-
             <div class="logo-placeholder">
-
-
                 <img
                         src="${pageContext.request.contextPath}/Images/logo-SGCA.svg"
                         class="logo-img"
                         width="350">
-
-
             </div>
-
-
         </div>
-
-
-
     </section>
-
-
 
 
     <section class="carrusel-section" id="carrusel">
 
     </section>
 
-
-
 </main>
 
 
-
-
-
 <!-- CATALOGO -->
-
 <section class="cliente">
-
-
     <!-- TITULO DEL CATALOGO -->
     <div class="catalogo-header">
 
@@ -199,36 +171,25 @@
     </div>
 
 
-
-
     <!-- CONTENEDOR DE CARDS -->
 
     <div class="cards-container">
 
-
-
         <c:forEach var="v" items="${vehiculos}">
-
-
             <div class="card-auto">
-
-
                 <img
                         class="card-imagen"
                         src="${pageContext.request.contextPath}/Images/imagesAutos/${v.foto_Portada}"
                         alt="Vehículo">
-
 
                 <h3>
                         ${v.marca.nombre}
                         ${v.modelos.nombre}
                 </h3>
 
-
                 <p>
                     Año: ${v.anio}
                 </p>
-
 
                 <h2>
 
@@ -236,21 +197,17 @@
 
                 </h2>
 
-
                 <a class="btn-detalles"
                    href="${pageContext.request.contextPath}/detalleVehiculo?id=${v.id_Vehiculo}">
 
                     Ver detalles
 
                 </a>
-
             </div>
-
         </c:forEach>
-
     </div>
-
 </section>
+
 
 <footer class="footer">
     <p>
@@ -258,26 +215,17 @@
     </p>
 </footer>
 
+
 <script src="${pageContext.request.contextPath}/js/clienteJS/carrusel.js"></script>
 
 <script>
 
     document.querySelectorAll(".dropdown-btn")
         .forEach(button => {
-
-
             button.addEventListener("click", function(e){
-
-
                 e.stopPropagation();
-
-
                 let menu = this.nextElementSibling;
-
-
                 menu.classList.toggle("show");
-
-
             });
 
 
@@ -297,6 +245,34 @@
             });
 
 
+    });
+
+
+    // MODAL SERVICIOS
+
+    const modalServicios = document.getElementById("modalServicios");
+    const btnAbrirServicios = document.getElementById("btnAbrirServicios");
+    const btnCerrarServicios = document.getElementById("btnCerrarServicios");
+
+    btnAbrirServicios.addEventListener("click", function(e){
+        e.stopPropagation();
+        modalServicios.classList.add("active");
+    });
+
+    btnCerrarServicios.addEventListener("click", function(){
+        modalServicios.classList.remove("active");
+    });
+
+    modalServicios.addEventListener("click", function(e){
+        if(e.target === modalServicios){
+            modalServicios.classList.remove("active");
+        }
+    });
+
+    document.addEventListener("keydown", function(e){
+        if(e.key === "Escape"){
+            modalServicios.classList.remove("active");
+        }
     });
 
 </script>

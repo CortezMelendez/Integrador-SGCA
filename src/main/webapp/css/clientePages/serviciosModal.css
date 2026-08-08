@@ -1,0 +1,215 @@
+/* =============================================
+   BOTON "SERVICIOS" EN NAVBAR
+============================================= */
+
+#btnAbrirServicios {
+
+    background: transparent;
+    border: none;
+    outline: none;
+    padding: 0;
+
+    font-family: inherit;
+
+    cursor: pointer;
+
+}
+
+
+
+/* =============================================
+   MODAL SERVICIOS
+============================================= */
+
+.modal-overlay {
+
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+
+    background: rgba(0,0,0,0.6);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    opacity: 0;
+    pointer-events: none;
+
+    transition: opacity 0.2s ease;
+
+    z-index: 1000;
+
+}
+
+.modal-overlay.active {
+
+    opacity: 1;
+    pointer-events: auto;
+
+}
+
+.modal-box {
+
+    background: var(--color-white);
+
+    border-radius: 12px;
+
+    width: 100%;
+
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+
+    transform: translateY(-20px);
+    transition: transform 0.2s ease;
+
+}
+
+.modal-overlay.active .modal-box {
+
+    transform: translateY(0);
+
+}
+
+.modal-box-servicios {
+
+    max-width: 900px;
+    max-height: 85vh;
+
+    overflow: hidden;
+
+    display: flex;
+    flex-direction: column;
+
+}
+
+.modal-header-bar {
+
+    background: var(--color-navy-dark);
+    color: var(--color-white);
+
+    padding: 18px 28px;
+
+    font-size: 1.15rem;
+    font-weight: 700;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+}
+
+.modal-cerrar {
+
+    background: transparent;
+    border: none;
+    outline: none;
+
+    color: var(--color-white);
+
+    font-size: 1.5rem;
+    line-height: 1;
+
+    cursor: pointer;
+
+}
+
+.modal-servicios-grid {
+
+    padding: 20px;
+
+    overflow-y: auto;
+
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+
+    gap: 14px;
+
+}
+
+
+
+/* =============================================
+   CARD SERVICIO
+============================================= */
+
+.card-servicio {
+
+    background: white;
+
+    border: 1px solid var(--color-gray-100);
+    border-radius: 10px;
+
+    padding: 14px 16px;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 6px;
+
+}
+
+.servicio-encabezado {
+
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+
+    gap: 8px;
+
+}
+
+.card-servicio h3 {
+
+    font-size: .95rem;
+    margin: 0;
+
+}
+
+.servicio-tipo {
+
+    flex-shrink: 0;
+
+    font-size: .78rem;
+    color: var(--color-gray-600);
+
+}
+
+.card-servicio h2 {
+
+    font-size: 1rem;
+    margin: 0;
+
+    color: var(--btn-active);
+
+}
+
+.servicio-descripcion {
+
+    font-size: .82rem;
+    color: var(--color-gray-700);
+
+    margin: 0;
+
+}
+
+
+
+/* =============================================
+   RESPONSIVE
+============================================= */
+
+@media (max-width: 620px) {
+
+    .modal-servicios-grid {
+
+        grid-template-columns: 1fr;
+
+    }
+
+}
+
+.servicios-vacio {
+
+    text-align: center;
+    color: var(--color-gray-700);
+
+}

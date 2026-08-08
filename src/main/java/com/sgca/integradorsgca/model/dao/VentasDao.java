@@ -123,4 +123,74 @@ public class VentasDao {
         }
         return lista;
     }
+
+    // Historial de compras de un cliente específico, con datos completos del vehículo y del asesor
+    public List<VentasBean> listarPorCliente(int idCliente) throws Exception {
+        List<VentasBean> lista = new ArrayList<>();
+        String sql = "SELECT v.id_venta, v.fecha_venta, v.total, " +
+                "c.id_cliente, " +
+                "a.id_agente, (u_a.nombre || ' ' || u_a.apellido_paterno) AS nombre_agente, " +
+                "veh.id_vehiculo, veh.placa, veh.anio, " +
+                "ma.nombre AS nombre_marca, mo.nombre AS nombre_modelo, tv.nombre AS nombre_tipo " +
+                "FROM ADMIN.VENTAS v " +
+                "INNER JOIN ADMIN.CLIENTES c ON v.id_cliente = c.id_cliente " +
+                "INNER JOIN ADMIN.AGENTES a ON v.id_agente = a.id_agente " +
+                "INNER JOIN ADMIN.USUARIOS u_a ON a.id_usuario = u_a.id_usuario " +
+                "INNER JOIN ADMIN.VEHICULOS veh ON v.id_vehiculo = veh.id_vehiculo " +
+                "INNER JOIN ADMIN.MODELOS mo ON veh.id_modelo = mo.id_modelo " +
+                "INNER JOIN ADMIN.MARCAS ma ON mo.id_marca = ma.id_marca " +
+                "INNER JOIN ADMIN.TIPOS_VEHICULO tv ON veh.id_tipo = tv.id_tipo " +
+                "WHERE v.id_cliente = ? " +
+                "ORDER BY v.fecha_venta DESC";
+
+        try (Connection con = Conexion.getConexion();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+
+            ps.setInt(1, idCliente);
+
+            try (ResultSet rs = ps.executeQuery()) {
+
+                while (rs.next()) {
+
+                    ClientesBean cliente = new ClientesBean();
+                    cliente.setIdCliente(rs.getInt("id_cliente"));
+
+                    AgentesBean agente = new AgentesBean();
+                    agente.setIdAgente(rs.getInt("id_agente"));
+                    agente.setNombreCompletoUsuario(rs.getString("nombre_agente"));
+
+                    MarcaBean marca = new MarcaBean();
+                    marca.setNombre(rs.getString("nombre_marca"));
+
+                    ModelosBean modelo = new ModelosBean();
+                    modelo.setNombre(rs.getString("nombre_modelo"));
+                    modelo.setMarca(marca);
+
+                    TiposVehiculoBean tipo = new TiposVehiculoBean();
+                    tipo.setNombre(rs.getString("nombre_tipo"));
+
+                    VehiculosBean vehiculo = new VehiculosBean();
+                    vehiculo.setId_Vehiculo(rs.getInt("id_vehiculo"));
+                    vehiculo.setPlaca(rs.getString("placa"));
+                    vehiculo.setAnio(rs.getInt("anio"));
+                    vehiculo.setMarca(marca);
+                    vehiculo.setModelos(modelo);
+                    vehiculo.setTipoVehiculo(tipo);
+
+                    VentasBean venta = new VentasBean(
+                            rs.getInt("id_venta"),
+                            cliente,
+                            agente,
+                            vehiculo,
+                            rs.getTimestamp("fecha_venta"),
+                            rs.getDouble("total")
+                    );
+
+                    venta.setDetalles(detalleDao.obtenerPorVenta(venta.getId_venta()));
+                    lista.add(venta);
+                }
+            }
+        }
+        return lista;
+    }
 }
