@@ -1,0 +1,326 @@
+/* =============================================
+   NAVBAR (marca como enlace a inicio)
+============================================= */
+
+a.dash-brand {
+    text-decoration: none;
+}
+
+
+
+/* =============================================
+   PAGINA
+============================================= */
+
+.detalle-page {
+    flex: 1;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 24px 24px 60px;
+    width: 100%;
+}
+
+.detalle-breadcrumb {
+    font-size: .85rem;
+    color: var(--color-gray-700);
+    margin-bottom: 24px;
+}
+
+.detalle-breadcrumb a {
+    color: var(--color-gray-700);
+    text-decoration: none;
+}
+
+.detalle-breadcrumb a:hover {
+    text-decoration: underline;
+}
+
+
+
+/* =============================================
+   GRID PRINCIPAL: GALERIA + INFO
+============================================= */
+
+.detalle-grid {
+    display: grid;
+    grid-template-columns: 1.1fr 1fr;
+    gap: 40px;
+}
+
+
+
+/* ---------- Galería ---------- */
+
+.galeria-principal {
+    position: relative;
+    border-radius: 16px;
+    overflow: hidden;
+    background: var(--color-gray-50);
+}
+
+.galeria-principal img {
+    width: 100%;
+    height: 340px;
+    object-fit: cover;
+    display: block;
+}
+
+.galeria-flecha {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: none;
+
+    background: var(--color-white);
+    color: var(--color-text-body);
+
+    font-size: 1.1rem;
+    cursor: pointer;
+
+    box-shadow: 0 2px 8px rgba(0,0,0,.25);
+}
+
+.galeria-flecha-izq { left: 12px; }
+.galeria-flecha-der { right: 12px; }
+
+.galeria-flecha:hover {
+    background: var(--color-gray-50);
+}
+
+.galeria-miniaturas {
+    display: flex;
+    gap: 10px;
+    margin-top: 12px;
+    overflow-x: auto;
+}
+
+.miniatura {
+    width: 72px;
+    height: 56px;
+    object-fit: cover;
+    border-radius: 8px;
+    cursor: pointer;
+    flex-shrink: 0;
+    border: 2px solid transparent;
+    opacity: .7;
+}
+
+.miniatura:hover {
+    opacity: 1;
+}
+
+.miniatura.activa {
+    border-color: var(--btn-active);
+    opacity: 1;
+}
+
+
+
+/* ---------- Info del vehículo ---------- */
+
+.detalle-info {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.badge-disponibilidad {
+    align-self: flex-start;
+
+    padding: 5px 14px;
+    border-radius: 999px;
+
+    font-size: .8rem;
+    font-weight: 600;
+}
+
+.badge-disponibilidad.disponible {
+    background: var(--color-success-bg);
+    color: var(--color-success-text);
+}
+
+.badge-disponibilidad.no-disponible {
+    background: var(--color-danger-bg);
+    color: var(--color-danger-dark);
+}
+
+.detalle-titulo {
+    font-family: 'Google Sans Flex', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin: 4px 0 0;
+}
+
+.detalle-precio {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--btn-active);
+}
+
+.detalle-placa {
+    align-self: flex-start;
+
+    background: var(--color-gray-50);
+    color: var(--color-gray-700);
+
+    padding: 4px 12px;
+    border-radius: 8px;
+
+    font-size: .8rem;
+    font-weight: 600;
+}
+
+.detalle-campos {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-top: 8px;
+}
+
+.detalle-campo {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+
+    background: var(--color-gray-50);
+    border-radius: 10px;
+    padding: 10px 14px;
+}
+
+.detalle-campo-label {
+    font-size: .75rem;
+    color: var(--color-gray-700);
+}
+
+.detalle-campo-valor {
+    font-size: .95rem;
+    font-weight: 600;
+}
+
+.detalle-campo-valor.texto-disponible {
+    color: var(--color-success-text);
+}
+
+.detalle-campo-valor.texto-no-disponible {
+    color: var(--color-danger-dark);
+}
+
+.btn-descripcion {
+    align-self: flex-start;
+    margin-top: 12px;
+
+    background: var(--color-navy-dark);
+    color: var(--color-white);
+
+    border: none;
+    border-radius: 999px;
+
+    padding: 12px 24px;
+
+    font-size: .9rem;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.btn-descripcion:hover {
+    opacity: .9;
+}
+
+
+
+/* =============================================
+   MODAL DESCRIPCIÓN GENERAL
+============================================= */
+
+.modal-box-descripcion {
+    max-width: 480px;
+    width: 100%;
+}
+
+.modal-descripcion-body {
+    padding: 28px;
+    min-height: 80px;
+}
+
+
+
+/* =============================================
+   VEHICULOS RELACIONADOS
+============================================= */
+
+.relacionados {
+    margin-top: 48px;
+}
+
+.relacionados-titulo {
+    font-family: 'Google Sans Flex', sans-serif;
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 16px;
+}
+
+.relacionados-wrap {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.relacionados-scroll {
+    display: flex;
+    gap: 20px;
+
+    overflow-x: auto;
+    scroll-behavior: smooth;
+
+    padding-bottom: 8px;
+}
+
+.relacionados-scroll .card-auto {
+    flex-shrink: 0;
+}
+
+.relacionados-flecha {
+    flex-shrink: 0;
+
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 1px solid var(--color-gray-100);
+
+    background: var(--color-white);
+    color: var(--color-text-body);
+
+    font-size: 1.1rem;
+    cursor: pointer;
+}
+
+.relacionados-flecha:hover {
+    background: var(--color-gray-50);
+}
+
+.relacionados-vacio {
+    color: var(--color-gray-700);
+    font-size: .9rem;
+}
+
+
+
+/* =============================================
+   RESPONSIVE
+============================================= */
+
+@media (max-width: 860px) {
+
+    .detalle-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .detalle-campos {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+}
