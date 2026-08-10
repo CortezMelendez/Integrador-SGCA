@@ -14,8 +14,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.Properties;
 
 @WebServlet(name = "TokRec", value="/RecuperarPasswordServlet")
@@ -36,7 +34,8 @@ public class EmailService extends HttpServlet {
         String destino = request.getParameter("destino");
 
         if (destino == null || destino.trim().isEmpty()) {
-            response.getWriter().println("Error: Debes ingresar un correo electrónico válido.");
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.getWriter().println("Debes ingresar un correo electrónico válido.");
             return;
         }
 
@@ -47,11 +46,13 @@ public class EmailService extends HttpServlet {
         try {
             usuario = usuarioDao.obtenerPorCorreo(destino);
             if (usuario == null) {
+                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                 response.getWriter().println("El correo no está registrado o la cuenta está inactiva.");
                 return;
             }
         } catch (Exception e) {
             e.printStackTrace();
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             response.getWriter().println("Error al consultar la base de datos.");
             return;
         }
@@ -60,23 +61,26 @@ public class EmailService extends HttpServlet {
         String codigoSeguridad = generarCodigo6Digitos();
         int idUsuario = usuario.getId_usuario();
 
-        // Calcular tiempo de expiración
-        Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.MINUTE, 5);
-        Date fechaExpiracion = calendar.getTime();
-
-        //Instanciar Bean y guardar en la Base de Datos con TokRecDao
+        // La expiración ya no se calcula aquí: TokRecDao la fija con SYSDATE + 5 minutos
+        // directamente en Oracle, para no depender de la hora local de este servidor.
         TokRecBean tokenBean = new TokRecBean();
         tokenBean.setIdUsuario(idUsuario);
         tokenBean.setToken(codigoSeguridad);
-        tokenBean.setExpiracion(fechaExpiracion);
         tokenBean.setUsado(0); // 0 = No usado
 
         TokRecDao tokenDao = new TokRecDao();
-        boolean guardadoCorrecto = tokenDao.guardarToken(tokenBean);
 
-        if (!guardadoCorrecto) {
-            response.getWriter().println("Error al generar el código de seguridad en la base de datos.");
+        try {
+            boolean guardadoCorrecto = tokenDao.guardarToken(tokenBean);
+
+            if (!guardadoCorrecto) {
+                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                response.getWriter().println("Error al generar el código de seguridad en la base de datos.");
+                return;
+            }
+        } catch (java.sql.SQLException e) {
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            response.getWriter().println("Error al generar el código de seguridad: " + e.getMessage());
             return;
         }
 
@@ -103,6 +107,7 @@ public class EmailService extends HttpServlet {
             response.getWriter().println("Se ha enviado el código de seguridad a tu correo electrónico.");
 
         } catch (MessagingException e) {
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             response.getWriter().println("Error al enviar el correo automático: " + e.getMessage());
             e.printStackTrace();
         }

@@ -74,6 +74,11 @@ public class AuthFilter implements Filter {
                         || path.equals("/register.jsp")
                         || path.equals("/RegisterServlet")
 
+                        // Recuperación de contraseña (modal dentro de login.jsp): el usuario todavía no tiene sesión
+                        || path.equals("/RecuperarPasswordServlet")
+                        || path.equals("/ValidarCodigoServlet")
+                        || path.equals("/CambiarPasswordServlet")
+
                         // Recursos estáticos
                         || path.startsWith("/css/")
                         || path.startsWith("/js/")

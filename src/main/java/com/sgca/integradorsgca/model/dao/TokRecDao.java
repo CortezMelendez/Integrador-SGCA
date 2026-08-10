@@ -7,22 +7,25 @@ import java.sql.*;
 public class TokRecDao {
 
     // Guardar un nuevo token generado
-    public boolean guardarToken(TokRecBean tokenBean) {
-        String sql = "INSERT INTO ADMIN.TOKENS_RECUPERACION (ID_USUARIO, TOKEN, EXPIRACION, USADO) VALUES (?, ?, ?, ?)";
+    public boolean guardarToken(TokRecBean tokenBean) throws SQLException {
+        // La expiración se calcula con la hora del propio servidor de Oracle (SYSDATE),
+        // no con la hora local de la app, para que coincida con el SYSDATE que se usa
+        // después en validarTokenActivo() y no expire de inmediato por diferencia de huso horario.
+        String sql = "INSERT INTO ADMIN.TOKENS_RECUPERACION (ID_USUARIO, TOKEN, EXPIRACION, USADO) "
+                + "VALUES (?, ?, SYSDATE + INTERVAL '5' MINUTE, ?)";
         try (Connection con = Conexion.getConexion();
              PreparedStatement ps = con.prepareStatement(sql)) {
 
             ps.setInt(1, tokenBean.getIdUsuario());
             ps.setString(2, tokenBean.getToken());
-
-            // Convertimos java.util.Date a java.sql.Timestamp para incluir horas y minutos
-            ps.setTimestamp(3, new java.sql.Timestamp(tokenBean.getExpiracion().getTime()));
-            ps.setInt(4, tokenBean.getUsado());
+            ps.setInt(3, tokenBean.getUsado());
 
             return ps.executeUpdate() > 0;
         } catch (SQLException e) {
+            // Se deja subir la excepción real para poder mostrarla en EmailService
+            // en vez de esconderla detrás de un simple "false"
             e.printStackTrace();
-            return false;
+            throw e;
         }
     }
 

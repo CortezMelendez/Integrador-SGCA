@@ -20,12 +20,14 @@ public class NewPassServlet extends HttpServlet {
             throws ServletException, IOException {
 
         request.setCharacterEncoding("UTF-8");
+        response.setContentType("text/html; charset=UTF-8");
 
         HttpSession session = request.getSession(false);
 
-        // Verificamos que exista la sesión de recuperación
+        // Verificamos que exista la sesión de recuperación (viene de ValidarCodigoServlet)
         if (session == null || session.getAttribute("idUsuarioRecuperacion") == null) {
-            response.sendRedirect(request.getContextPath() + "/login.jsp?error=sesion_expirada");
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.getWriter().println("Tu sesión de recuperación expiró. Vuelve a solicitar el código.");
             return;
         }
 
@@ -35,13 +37,15 @@ public class NewPassServlet extends HttpServlet {
         String nuevaPassword = request.getParameter("nuevaPassword");
         String confirmarPassword = request.getParameter("confirmarPassword");
 
-        if (nuevaPassword == null || nuevaPassword.trim().isEmpty()) {
-            response.sendRedirect(request.getContextPath() + "/cambiar-password.jsp?error=vacio");
+        if (nuevaPassword == null || nuevaPassword.length() < 8) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.getWriter().println("La contraseña debe tener al menos 8 caracteres.");
             return;
         }
 
         if (!nuevaPassword.equals(confirmarPassword)) {
-            response.sendRedirect(request.getContextPath() + "/cambiar-password.jsp?error=mismatch");
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.getWriter().println("Las contraseñas no coinciden.");
             return;
         }
 
@@ -62,16 +66,17 @@ public class NewPassServlet extends HttpServlet {
                 //DESTRUCCIÓN COMPLETA DE LA SESIÓN POR SEGURIDAD
                 session.invalidate();
 
-                //Redirección al login para que vuelva a iniciar sesión
-                response.sendRedirect(request.getContextPath() + "/login.jsp?exito=password_actualizada");
+                response.getWriter().println("Contraseña actualizada correctamente.");
 
             } else {
-                response.sendRedirect(request.getContextPath() + "/cambiar-password.jsp?error=db_error");
+                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                response.getWriter().println("No se pudo actualizar la contraseña. Intenta de nuevo.");
             }
 
         } catch (Exception e) {
             e.printStackTrace();
-            response.sendRedirect(request.getContextPath() + "/cambiar-password.jsp?error=server_error");
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            response.getWriter().println("Ocurrió un error en el servidor. Intenta más tarde.");
         }
     }
 }

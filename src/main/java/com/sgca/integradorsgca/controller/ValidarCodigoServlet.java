@@ -24,16 +24,18 @@ public class ValidarCodigoServlet extends HttpServlet {
         String codigo = request.getParameter("codigo");
 
         if (codigo == null || codigo.trim().isEmpty()) {
-            response.getWriter().println("Error: Ingresa el código de 6 dígitos.");
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.getWriter().println("Ingresa el código de 6 dígitos.");
             return;
         }
 
         TokRecDao tokRecDao = new TokRecDao();
-        //Usamos el metodo de obtener token para verioficar si el codigo de 6 digitos existe
-        TokRecBean tokenBean = tokRecDao.obtenerToken(codigo.trim());
+        // Solo se acepta un token no usado y todavía vigente (no vencido)
+        TokRecBean tokenBean = tokRecDao.validarTokenActivo(codigo.trim());
 
-        if (tokenBean == null || tokenBean.getUsado() == 1) {
-            response.getWriter().println("El código es incorrecto o ya fue utilizado.");
+        if (tokenBean == null) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.getWriter().println("El código es incorrecto, ya fue utilizado o ha expirado.");
             return;
         }
 
@@ -42,7 +44,6 @@ public class ValidarCodigoServlet extends HttpServlet {
         session.setAttribute("idUsuarioRecuperacion", tokenBean.getIdUsuario());
         session.setAttribute("idTokenRecuperacion", tokenBean.getIdToken());
 
-        // Redirigimos al siguiente modal para que el usuario ingrese su nueva credencial
-        response.sendRedirect("cambiar-password.jsp");
+        response.getWriter().println("Código verificado correctamente.");
     }
 }
