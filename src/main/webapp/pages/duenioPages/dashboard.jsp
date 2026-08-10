@@ -1,3 +1,6 @@
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -7,6 +10,7 @@
     <!-- ENLACES A TUS ESTILOS CSS CORREGIDOS -->
 
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/duenioStyles/styles.css" />
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/duenioStyles/gestiones.css" />
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/duenioStyles/dashboard.css" />
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/duenioStyles/responsive.css" />
 </head>
@@ -20,8 +24,9 @@
         </div>
         <span class="dash-brand">Concesionaria Automotriz</span>
     </div>
-    <nav class="navbar-links">
-        <a href="${pageContext.request.contextPath}/nav?action=dashboard" class="dash-nav-link">Dashboard</a>
+    <nav class="dash-nav-center">
+        <a href="${pageContext.request.contextPath}/index" class="dash-nav-link">Inicio</a>
+        <a href="${pageContext.request.contextPath}/nav?action=dashboard" class="dash-nav-link active">Dashboard</a>
         <a href="${pageContext.request.contextPath}/nav?action=historial" class="dash-nav-link">Historial</a>
         <a href="${pageContext.request.contextPath}/nav?action=perfil" class="dash-nav-link">Perfil</a>
     </nav>
@@ -76,66 +81,145 @@
     <div class="dash-metrics">
         <div class="metric-card">
             <span class="metric-label">Vehículos registrados</span>
-            <span class="metric-value" id="metric-vehiculos"></span>
-            <span class="metric-delta" id="metric-vehiculos-delta"></span>
+            <span class="metric-value">${metricVehiculos}</span>
+            <span class="metric-delta positive">${metricVehiculosDisponibles} disponibles</span>
         </div>
         <div class="metric-card">
             <span class="metric-label">Servicios activos</span>
-            <span class="metric-value" id="metric-servicios"></span>
-            <span class="metric-delta" id="metric-servicios-delta"></span>
+            <span class="metric-value">${metricServicios}</span>
+            <span class="metric-delta neutral">${metricServiciosTotal} en catálogo</span>
         </div>
         <div class="metric-card">
             <span class="metric-label">Puntos de contacto</span>
-            <span class="metric-value" id="metric-contactos"></span>
-            <span class="metric-delta" id="metric-contactos-delta"></span>
+            <span class="metric-value">${metricContactos}</span>
+            <span class="metric-delta neutral">Asesores activos</span>
         </div>
         <div class="metric-card">
             <span class="metric-label">Clientes registrados</span>
-            <span class="metric-value" id="metric-clientes"></span>
-            <span class="metric-delta" id="metric-clientes-delta"></span>
+            <span class="metric-value">${metricClientes}</span>
+            <span class="metric-delta positive">+${metricClientesNuevosMes} este mes</span>
         </div>
     </div>
 
-    <!-- Gráficas placeholder -->
+    <!-- Gráficas -->
     <div class="dash-charts">
         <div class="chart-card">
-            <div class="chart-placeholder">
-                <span class="chart-placeholder-label">Gráfica de barras<br/>Cantidad por mes</span>
-            </div>
+            <canvas id="chartVentas" aria-label="Ventas de los últimos 6 meses" role="img"></canvas>
         </div>
         <div class="chart-card">
-            <div class="chart-placeholder">
-                <span class="chart-placeholder-label">Distribución<br/>por categoría<br/>(Gráfica circular)</span>
+            <canvas id="chartVehiculos" aria-label="Vehículos por categoría" role="img"></canvas>
+        </div>
+    </div>
+
+    <!-- Registros recientes -->
+    <div class="dash-recientes">
+        <h2 class="dash-recientes-title">Ventas recientes</h2>
+        <div class="table-card">
+            <div class="table-wrapper">
+                <table class="gest-table">
+                    <thead>
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Cliente</th>
+                        <th>Asesor</th>
+                        <th>Vehículo</th>
+                        <th>Total</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <c:forEach var="v" items="${ventasRecientes}">
+                        <tr>
+                            <td><fmt:formatDate value="${v.fechaVenta}" pattern="dd/MM/yyyy"/></td>
+                            <td>${v.cliente.nombreCliente}</td>
+                            <td>${v.agente.nombreCompletoUsuario}</td>
+                            <td>${v.vehiculo.placa}</td>
+                            <td class="precio">$<fmt:formatNumber value="${v.total}" type="number" minFractionDigits="2" maxFractionDigits="2"/></td>
+                        </tr>
+                    </c:forEach>
+                    <c:if test="${empty ventasRecientes}">
+                        <tr>
+                            <td colspan="5" style="text-align:center; padding: 24px;">Todavía no hay ventas registradas.</td>
+                        </tr>
+                    </c:if>
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
 
     <!-- Accesos rápidos -->
     <div class="dash-quick">
-        <a href="#" class="quick-card">
+        <a href="${pageContext.request.contextPath}/btn?action=gestionAutos" class="quick-card">
             <span class="quick-icon"></span>
             <span class="quick-label">Disponibilidad en el inventario</span>
         </a>
-        <a href="#" class="quick-card">
+        <a href="${pageContext.request.contextPath}/btn?action=gestionServicio" class="quick-card">
             <span class="quick-icon"></span>
             <span class="quick-label">Servicios recientes</span>
         </a>
-        <a href="historial.jsp" class="quick-card">
+        <a href="${pageContext.request.contextPath}/nav?action=historial" class="quick-card">
             <span class="quick-icon"></span>
             <span class="quick-label">Historial de ventas</span>
         </a>
     </div>
 </main>
 
-<!-- FOOTER con botón Atrás -->
+<!-- FOOTER -->
 <footer class="footer">
+    <span style="color: rgb(8, 8, 8); font-size: 0.85rem;">© 2026 SGCA · Todos los derechos reservados</span>
     <a href="javascript:history.back()" class="btn-back">
         <img src="${pageContext.request.contextPath}/Images/back.svg" alt="atras" />
         Atras
     </a>
 </footer>
 
+<!-- Chart.js (CDN) para las gráficas de barras y circular -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
 <script src="${pageContext.request.contextPath}/js/duenioJS/menuDesplegable.js"></script>
+<script>
+    const chartVentasLabels = ${chartVentasLabels};
+    const chartVentasValues = ${chartVentasValues};
+    const chartVehiculosLabels = ${chartVehiculosLabels};
+    const chartVehiculosValues = ${chartVehiculosValues};
+
+    if (window.Chart) {
+        new Chart(document.getElementById('chartVentas'), {
+            type: 'bar',
+            data: {
+                labels: chartVentasLabels,
+                datasets: [{
+                    label: 'Ventas',
+                    data: chartVentasValues,
+                    backgroundColor: '#1a2433',
+                    borderRadius: 6,
+                    maxBarThickness: 42
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false }, title: { display: true, text: 'Ventas por mes' } },
+                scales: { y: { beginAtZero: true, ticks: { precision: 0 } } }
+            }
+        });
+
+        new Chart(document.getElementById('chartVehiculos'), {
+            type: 'doughnut',
+            data: {
+                labels: chartVehiculosLabels,
+                datasets: [{
+                    data: chartVehiculosValues,
+                    backgroundColor: ['#1a2433', '#4a90e2', '#79aee6', '#b5e5a5', '#ffbaba', '#9e9e9e', '#c7cad0']
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 11 } } }, title: { display: true, text: 'Vehículos por categoría' } }
+            }
+        });
+    }
+</script>
 
 </body>
 </html>

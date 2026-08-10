@@ -99,7 +99,7 @@ p {
     padding: 10px 20px;
     font-weight: 600;
     font-size: 1rem;
-    font-family: inherit;
+    font-family: 'Google Sans Code', ui-monospace, monospace;
     cursor: pointer;
     transition: background-color 0.2s ease, transform 0.1s ease;
 }
@@ -113,7 +113,7 @@ p {
 }
 
 /* =========================================================
-   4. DISEÑO DE LA TABLA GLOBAL
+   4. DISEÑO DE LA TABLA GLOBAL (tarjeta clara, estilo "Historial de compras")
 ========================================================= */
 .table-card {
     width: 100%;
@@ -122,95 +122,144 @@ p {
 
 .table-wrapper {
     overflow-x: auto;
-    padding: 8px 8px 16px;
+    background: var(--color-white);
+    border: 1px solid var(--color-gray-300);
+    border-radius: 14px;
+    box-shadow: 0 1px 3px rgba(16, 24, 40, 0.06);
 }
 
 .gest-table {
     width: 100%;
-    text-align: center;
+    text-align: left;
     border-collapse: separate;
     border-spacing: 0;
-    border: 1px solid var(--color-gray-700);
-    border-radius: 8px;
-    overflow: hidden;
     font-family: inherit;
 }
 
-/* Celdas espaciosas */
+.gest-table th,
 .gest-table td {
-    border-right: 1px solid var(--color-gray-700);
-    border-bottom: 1px solid var(--color-gray-700);
-    padding: 24px 20px;
+    padding: 18px 20px;
     vertical-align: middle;
-    color: var(--color-text-strong);
-    font-size: 14px;
-    font-weight: 600;
-}
-.gest-table th{
-    border-right: 1px solid var(--color-gray-700);
-    border-bottom: 1px solid var(--color-gray-700);
-    padding: 24px 20px;
-    vertical-align: middle;
-    color: var(--color-text-strong);
-    font-size: 16px;
-    font-weight: 600;
+    text-align: left;
 }
 
-.gest-table th:last-child,
-.gest-table td:last-child {
-    border-right: none;
+/* Columna de numeración, angosta y centrada (números → Google Sans Code) */
+.gest-table th:first-child,
+.gest-table td:first-child {
+    width: 48px;
+    text-align: center;
+    color: var(--color-gray-600);
+    font-weight: 500;
+    font-family: 'Google Sans Code', ui-monospace, monospace;
 }
 
-.gest-table tr:last-child td {
-    border-bottom: none;
-}
-
-/* Encabezado con color propio, distinto de las filas (estilo Excel) */
+/* Encabezado gris claro, texto oscuro (no una barra de color sólido) */
 .gest-table thead {
-    background-color: var(--color-navy-dark);
+    background-color: var(--color-gray-50);
 }
 .gest-table th {
-    color: var(--color-white);
+    color: var(--color-gray-650);
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    border-bottom: 1px solid var(--color-gray-300);
 }
 
-/* Filas alternadas tipo Excel */
-.gest-table tbody tr:nth-child(odd) {
-    background-color: var(--color-gray-200);
+/* Filas blancas con una línea divisoria bien marcada (sin alternar colores) */
+.gest-table tbody tr {
+    background-color: var(--color-white);
+    transition: background-color 0.15s ease;
 }
-.gest-table tbody tr:nth-child(even) {
-    background-color: var(--color-gray-300);
+.gest-table tbody tr:hover {
+    background-color: var(--color-gray-50);
+}
+.gest-table tbody tr:not(:last-child) td {
+    border-bottom: 1.5px solid var(--color-gray-300);
+}
+.gest-table td {
+    color: var(--color-text-strong);
+    font-size: 14px;
+    font-weight: 500;
+    font-family: 'Google Sans Flex', system-ui, -apple-system, sans-serif;
+}
+
+/* Celda de nombre con avatar (clientes / empleados) */
+.nombre-cell {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-align: left;
+}
+
+.avatar-circle {
+    width: 38px;
+    height: 38px;
+    min-width: 38px;
+    border-radius: 50%;
+    background-color: var(--color-navy-dark);
+    color: var(--color-white);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    font-weight: 700;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.avatar-circle img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Nombre en negrita + subtítulo gris debajo (ej. "Toyota Camry" / "2024 - Sedán") */
+.celda-titulo {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+.celda-titulo .titulo-principal {
+    font-weight: 700;
+    color: var(--color-text-strong);
+}
+.celda-titulo .titulo-subtexto {
+    font-weight: 400;
+    font-size: 12.5px;
+    color: var(--color-gray-600);
 }
 
 /* Contenedor de Fotografía */
 .foto-placeholder {
-    width: 48px;
-    height: 48px;
-    border: 1px solid var(--color-gray-700);
-    margin: 0 auto;
-    background-color: transparent;
-    border-radius: 6px;
+    width: 44px;
+    height: 44px;
+    border: 1px solid var(--color-gray-150);
+    background-color: var(--color-gray-50);
+    border-radius: 8px;
 }
 
 .foto-thumb {
-    width: 48px;
-    height: 48px;
+    width: 44px;
+    height: 44px;
     object-fit: cover;
-    border-radius: 6px;
-    border: 1px solid var(--color-gray-700);
+    border-radius: 8px;
+    border: 1px solid var(--color-gray-150);
     display: block;
-    margin: 0 auto;
 }
 
 /* =========================================================
-   5. ESTADOS (BADGES INTERACTIVOS)
+   5. ESTADOS (BADGES INTERACTIVOS, estilo píldora con check)
 ========================================================= */
 .badge {
-    padding: 8px 24px;
-    border-radius: 20px;
-    font-size: 0.9rem;
-    font-weight:500;
-    font-family: 'Google sans code', monospace;
-    display: inline-block;
+    padding: 6px 16px;
+    border-radius: 999px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    font-family: 'Google Sans Code', ui-monospace, monospace;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
     transition: background-color 0.2s ease, transform 0.1s ease;
     cursor: pointer;
     user-select: none;
@@ -225,10 +274,7 @@ p {
     color: var(--color-gray-750);
 }
 .badge-inactive:hover {
-    background-color: var(--color-gray-450);
-    border-style: solid;
-    border-width: 1.5px;
-    border-color: black;
+    background-color: var(--color-gray-150);
 }
 
 .badge-active {
@@ -238,20 +284,24 @@ p {
 .badge-active:hover {
     background-color: var(--color-success-bg-hover);
 }
+.badge-active::before {
+    content: "✓";
+    font-weight: 700;
+}
 
 /* =========================================================
-   6. BOTONES DE ACCIONES
+   6. BOTONES DE ACCIONES (cuadrados sólidos, 3 tonos por estado)
 ========================================================= */
 .action-group {
     display: flex;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
-    gap: 12px;
+    gap: 10px;
 }
 
 .btn-icon {
-    width: 36px;
-    height: 36px;
+    width: 34px;
+    height: 34px;
     border: none;
     border-radius: 8px;
     display: flex;
@@ -261,11 +311,16 @@ p {
     transition: background-color 0.15s ease, transform 0.1s ease;
 }
 
+.btn-icon img {
+    width: 15px;
+    height: 15px;
+}
+
 .btn-icon:active {
     transform: scale(0.92);
 }
 
-/* Botón Editar */
+/* Botón Editar (azul, 3 tonos) */
 .btn-edit {
     background-color: var(--color-info-bg);
     color: var(--color-white);
@@ -273,7 +328,7 @@ p {
 .btn-edit:hover { background-color: var(--color-info-bg-hover); }
 .btn-edit:active { background-color: var(--color-info-bg-active); }
 
-/* Botón Eliminar */
+/* Botón Eliminar (rojo/rosa, 3 tonos) */
 .btn-delete {
     background-color: var(--color-danger-bg);
     color: var(--color-text-strong);
@@ -305,6 +360,7 @@ p {
     border-radius: 20px;
     font-size: 0.9rem;
     font-weight: 600;
+    font-family: 'Google Sans Code', ui-monospace, monospace;
     transition: background-color 0.2s ease;
 }
 
@@ -346,6 +402,49 @@ p {
 
 .modal-overlay.active .modal-box {
     transform: translateY(0);
+}
+
+/* --- Modal de confirmación (reemplaza confirm() del navegador) --- */
+.modal-confirm-box {
+    text-align: center;
+    max-width: 400px;
+}
+
+.modal-confirm-icon {
+    width: 56px;
+    height: 56px;
+    margin: 0 auto 16px;
+    border-radius: 50%;
+    background-color: var(--color-gray-100);
+    color: var(--color-danger-dark);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.6rem;
+    font-weight: 700;
+    font-family: 'Google Sans Code', ui-monospace, monospace;
+}
+
+.modal-confirm-icon.icono-guardar {
+    background-color: var(--color-success-bg);
+    color: var(--color-success-text);
+}
+
+.modal-confirm-title {
+    font-size: 1.15rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+.modal-confirm-msg {
+    color: var(--color-gray-650);
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
+
+.modal-confirm-actions {
+    justify-content: center;
+    margin-top: 24px;
 }
 
 .modal-title {
@@ -494,14 +593,28 @@ p {
     border-radius: 6px;
     cursor: pointer;
     font-weight: 600;
-    font-family: inherit;
+    font-family: 'Google Sans Code', ui-monospace, monospace;
     text-decoration: none;
     transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 .btn-modal-delete:hover {
-    background: var(--color-danger-dark);
-    color: var(--color-white);
+    background: var(--color-danger-bg-hover);
+    color: var(--color-danger-dark);
+}
+
+.btn-modal-delete:active {
+    background: var(--color-danger-bg);
+    color: var(--color-danger-dark);
+}
+
+/* Texto de error de validación (siempre en rojo, nunca negro) */
+.modal-error {
+    color: var(--color-danger-dark);
+    font-size: 0.78rem;
+    font-weight: 500;
+    margin-top: 4px;
+    min-height: 1em;
 }
 
 .modal-field {
@@ -563,7 +676,7 @@ p {
     border-radius: 6px;
     cursor: pointer;
     font-weight: 600;
-    font-family: inherit;
+    font-family: 'Google Sans Code', ui-monospace, monospace;
     transition: background-color 0.2s ease;
 }
 
@@ -579,7 +692,7 @@ p {
     border-radius: 6px;
     cursor: pointer;
     font-weight: 600;
-    font-family: inherit;
+    font-family: 'Google Sans Code', ui-monospace, monospace;
     transition: background-color 0.2s ease;
 }
 
@@ -602,6 +715,7 @@ p {
     border-radius: 8px;
     cursor: pointer;
     font-size: 0.9rem;
+    font-family: 'Google Sans Code', ui-monospace, monospace;
 }
 
 .btn-pagina:hover:not(:disabled) {

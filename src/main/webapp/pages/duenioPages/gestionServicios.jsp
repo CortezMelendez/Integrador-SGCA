@@ -67,6 +67,7 @@
             <table class="gest-table" id="tabla">
                 <thead>
                 <tr>
+                    <th>#</th>
                     <th>Fotografía</th>
                     <th>Nombre</th>
                     <th>Precio</th>
@@ -77,8 +78,9 @@
                 </tr>
                 </thead>
                 <tbody>
-                <c:forEach var="s" items="${listaServicios}">
+                <c:forEach var="s" items="${listaServicios}" varStatus="fila">
                     <tr>
+                        <td>${fila.count}</td>
                         <td>
                             <!-- No existe columna de imagen en ADMIN.SERVICIOS todavía, se muestra un placeholder -->
                             <div class="foto-placeholder"></div>
@@ -109,7 +111,7 @@
                 </c:forEach>
                 <c:if test="${empty listaServicios}">
                     <tr class="fila-vacia">
-                        <td colspan="7" style="text-align:center; padding: 24px;">No hay servicios registrados todavía.</td>
+                        <td colspan="8" style="text-align:center; padding: 24px;">No hay servicios registrados todavía.</td>
                     </tr>
                 </c:if>
                 </tbody>
@@ -194,6 +196,7 @@
                     Descripción
                 </label>
                 <textarea class="modal-input modal-textarea" placeholder="Ej: Alineación completa y balanceo de llantas..." id="mod-descripcion" name="descripcion"></textarea>
+                <span class="modal-error" id="err-descripcion"></span>
             </div>
 
             <div class="modal-row">
@@ -274,6 +277,7 @@
             <div class="modal-field">
                 <label class="modal-label">Descripción</label>
                 <textarea class="modal-input modal-textarea" id="edit-descripcion" name="descripcion"></textarea>
+                <span class="modal-error" id="edit-err-descripcion"></span>
             </div>
 
             <div class="modal-row">
@@ -293,7 +297,7 @@
 
             <div class="modal-actions">
                 <button type="button" class="btn-modal-cancel" onclick="cerrarModal('modalEditar')">Cerrar</button>
-                <button type="submit" class="btn-modal-save">Guardar cambios</button>
+                <button type="button" class="btn-modal-save" onclick="confirmarGuardarEdicion()">Guardar cambios</button>
             </div>
         </form>
     </div>
@@ -304,6 +308,19 @@
     <input type="hidden" name="accion" value="eliminar" />
     <input type="hidden" name="id_servicio" id="eliminar-id" />
 </form>
+
+<!-- Modal de confirmación (reemplaza los confirm() del navegador) -->
+<div class="modal-overlay" id="modalConfirmar" onclick="cerrarOverlay(event,'modalConfirmar')">
+    <div class="modal-box modal-confirm-box" onclick="event.stopPropagation()">
+        <div class="modal-confirm-icon" id="confirmIcono">!</div>
+        <h3 class="modal-confirm-title" id="confirmTitulo">Confirmar acción</h3>
+        <p class="modal-confirm-msg" id="confirmMensaje">¿Estás seguro?</p>
+        <div class="modal-actions modal-confirm-actions">
+            <button type="button" class="btn-modal-cancel" onclick="cerrarModal('modalConfirmar')">Cancelar</button>
+            <button type="button" class="btn-modal-save" id="confirmBtnAceptar">Confirmar</button>
+        </div>
+    </div>
+</div>
 
 <script src="${pageContext.request.contextPath}/js/duenioJS/gestionServicios.js"></script>
 </body>

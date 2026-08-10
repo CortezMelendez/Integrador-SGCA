@@ -97,10 +97,12 @@ public class VentasDao {
                 // Cliente
                 ClientesBean cliente = new ClientesBean();
                 cliente.setIdCliente(rs.getInt("id_cliente"));
+                cliente.setNombreCliente((rs.getString("nombre_cliente") + " " + rs.getString("ap_cliente")).trim());
 
                 // Agente
                 AgentesBean agente = new AgentesBean();
                 agente.setIdAgente(rs.getInt("id_agente"));
+                agente.setNombreCompletoUsuario((rs.getString("nombre_agente") + " " + rs.getString("ap_agente")).trim());
 
                 // Vehículo
                 VehiculosBean vehiculo = new VehiculosBean();

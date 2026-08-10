@@ -67,6 +67,7 @@
             <table class="gest-table" id="tabla">
                 <thead>
                 <tr>
+                    <th>#</th>
                     <th>Foto</th>
                     <th>Marca</th>
                     <th>Modelo</th>
@@ -80,8 +81,9 @@
                 </tr>
                 </thead>
                 <tbody>
-                <c:forEach var="v" items="${listaVehiculos}">
+                <c:forEach var="v" items="${listaVehiculos}" varStatus="fila">
                     <tr>
+                        <td>${fila.count}</td>
                         <td>
                             <c:choose>
                                 <c:when test="${not empty v.foto_Portada}">
@@ -108,26 +110,27 @@
                         <td class="acciones-cell">
                             <div class="action-group">
                                 <button type="button" class="btn-icon btn-edit" title="Editar"
-                                        onclick="abrirEditar(${v.id_Vehiculo}, '${v.marca.nombre}', '${v.modelos.nombre}', '${v.tipoVehiculo.nombre}', ${v.precio}, '${v.color}', '${v.placa}', ${v.anio}, ${v.id_Agente}, '${v.disponible == 1 ? 'Activo' : 'Inactivo'}', '${v.foto_Portada}', '<fmt:formatDate value="${v.fecha_registro}" pattern="dd/MM/yyyy"/>', '${pageContext.request.contextPath}/gestionAutos?accion=eliminar&id=${v.id_Vehiculo}')">
+                                        onclick="abrirEditar(${v.id_Vehiculo}, '${v.marca.nombre}', '${v.modelos.nombre}', '${v.tipoVehiculo.nombre}', ${v.precio}, '${v.color}', '${v.placa}', ${v.anio}, ${v.id_Agente}, '${v.disponible == 1 ? 'Activo' : 'Inactivo'}', '${v.foto_Portada}', '<fmt:formatDate value="${v.fecha_registro}" pattern="dd/MM/yyyy"/>')">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
                                 </button>
-                                <a class="btn-icon btn-delete" title="Eliminar"
-                                   href="${pageContext.request.contextPath}/gestionAutos?accion=eliminar&id=${v.id_Vehiculo}"
-                                   onclick="return confirm('¿Eliminar este auto? Esta acción no se puede deshacer.')">
+                                <button type="button" class="btn-icon btn-delete" title="Eliminar"
+                                        onclick="confirmarEliminarAuto(${v.id_Vehiculo})">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
-                                </a>
+                                </button>
                             </div>
                         </td>
                     </tr>
                 </c:forEach>
                 <c:if test="${empty listaVehiculos}">
-                    <tr>
-                        <td colspan="10" style="text-align:center; padding: 24px;">No hay autos registrados todavía.</td>
+                    <tr class="fila-vacia">
+                        <td colspan="11" style="text-align:center; padding: 24px;">No hay autos registrados todavía.</td>
                     </tr>
                 </c:if>
                 </tbody>
             </table>
         </div>
+        <!-- Controles de paginación (generados dinámicamente por JS) -->
+        <div class="paginacion" id="paginacion"></div>
     </div>
 
 </main>
@@ -356,16 +359,27 @@
 
             <p class="modal-updated" id="edit-fecha-actualizado"></p>
 
-            <div class="modal-actions modal-actions-edit">
-                <a class="btn-modal-delete" id="edit-eliminar-link" href="#" onclick="return confirm('¿Eliminar este auto? Esta acción no se puede deshacer.')">Eliminar</a>
-                <div class="modal-actions-right">
-                    <button type="button" class="btn-modal-cancel" onclick="cerrarModal('modalEditar')">Cancelar</button>
-                    <button type="submit" class="btn-modal-save">Guardar cambios</button>
-                </div>
+            <div class="modal-actions">
+                <button type="button" class="btn-modal-cancel" onclick="cerrarModal('modalEditar')">Cancelar</button>
+                <button type="button" class="btn-modal-save" onclick="confirmarGuardarEdicion()">Guardar cambios</button>
             </div>
         </form>
     </div>
 </div>
+
+<!-- Modal de confirmación (reemplaza los confirm() del navegador) -->
+<div class="modal-overlay" id="modalConfirmar" onclick="cerrarOverlay(event,'modalConfirmar')">
+    <div class="modal-box modal-confirm-box" onclick="event.stopPropagation()">
+        <div class="modal-confirm-icon" id="confirmIcono">!</div>
+        <h3 class="modal-confirm-title" id="confirmTitulo">Confirmar acción</h3>
+        <p class="modal-confirm-msg" id="confirmMensaje">¿Estás seguro?</p>
+        <div class="modal-actions modal-confirm-actions">
+            <button type="button" class="btn-modal-cancel" onclick="cerrarModal('modalConfirmar')">Cancelar</button>
+            <button type="button" class="btn-modal-save" id="confirmBtnAceptar">Confirmar</button>
+        </div>
+    </div>
+</div>
+
 <script src="${pageContext.request.contextPath}/js/duenioJS/gestionAutos.js"></script>
 </body>
 </html>

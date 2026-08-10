@@ -47,12 +47,12 @@
     --color-success-alt:    #1a8f4c;
 
     /* Estados: error / eliminar */
-    --color-danger-bg:      #ffbaba;
-    --color-danger-bg-hover:#ffd8d8;
+    --color-danger-bg: #ff2f2f;
+    --color-danger-bg-hover: #ff5b5b;
     --color-danger-bg-active:#df6666;
     --color-danger-border:  #d64545;
-    --color-danger-text:    #ff9d9d;
-    --color-danger-dark:    #450B0C;
+    --color-danger-text: #fa7474;
+    --color-danger-dark: #a6090b;
     --color-danger-dark-hover:#761315;
 
     /* Botón editar (azul) */

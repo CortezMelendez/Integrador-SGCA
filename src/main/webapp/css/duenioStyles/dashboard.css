@@ -5,6 +5,13 @@ body {
   color: var(--color-text-strong);
 }
 
+/* El footer base (styles.css) solo alinea a la derecha; aquí también
+   mostramos el aviso de derechos reservados a la izquierda */
+.footer {
+  justify-content: space-between;
+  padding: 0 40px;
+}
+
 /* =============================================
    CONTENIDO PRINCIPAL
 ============================================= */
@@ -222,6 +229,25 @@ body {
 
 .chart-placeholder-label {
   padding: 24px;
+}
+
+.chart-card canvas {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* =============================================
+   REGISTROS RECIENTES
+============================================= */
+.dash-recientes {
+  margin-bottom: var(--gap-md);
+}
+
+.dash-recientes-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--color-text-strong);
+  margin-bottom: 12px;
 }
 
 /* =============================================

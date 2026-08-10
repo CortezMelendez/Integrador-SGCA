@@ -24,8 +24,61 @@ document.addEventListener('keydown', e => {
     if (e.key === 'Escape') {
         cerrarModal('modalAgregar');
         cerrarModal('modalEditar');
+        cerrarModal('modalConfirmar');
     }
 });
+
+// =========================================================
+// MODAL DE CONFIRMACIÓN (reemplaza confirm() del navegador)
+// =========================================================
+let _confirmCallback = null;
+
+function pedirConfirmacion(mensaje, callback, tipo = 'normal') {
+    document.getElementById('confirmMensaje').textContent = mensaje;
+
+    const icono = document.getElementById('confirmIcono');
+    const titulo = document.getElementById('confirmTitulo');
+    const btnAceptar = document.getElementById('confirmBtnAceptar');
+
+    if (tipo === 'peligro') {
+        icono.textContent = '!';
+        icono.classList.remove('icono-guardar');
+        titulo.textContent = 'Confirmar eliminación';
+        btnAceptar.textContent = 'Eliminar';
+        btnAceptar.className = 'btn-modal-delete';
+    } else {
+        icono.textContent = '✓';
+        icono.classList.add('icono-guardar');
+        titulo.textContent = 'Confirmar cambios';
+        btnAceptar.textContent = 'Guardar';
+        btnAceptar.className = 'btn-modal-save';
+    }
+
+    _confirmCallback = callback;
+    abrirModal('modalConfirmar');
+}
+
+document.getElementById('confirmBtnAceptar') && (document.getElementById('confirmBtnAceptar').onclick = () => {
+    cerrarModal('modalConfirmar');
+    const callback = _confirmCallback;
+    _confirmCallback = null;
+    if (typeof callback === 'function') callback();
+});
+
+// Eliminar auto (icono de la tabla)
+function confirmarEliminarAuto(id) {
+    pedirConfirmacion('¿Deseas eliminar este auto? Esta acción no se puede deshacer.', () => {
+        window.location.href = `${CONTEXT_PATH}/gestionAutos?accion=eliminar&id=${id}`;
+    }, 'peligro');
+}
+
+// Guardar cambios del modal Editar
+function confirmarGuardarEdicion() {
+    if (!validarYPrepararEnvio('edit')) return;
+    pedirConfirmacion('¿Deseas guardar los cambios de este auto?', () => {
+        document.getElementById('formEditar').submit();
+    });
+}
 
 // Limpia el formulario de "Agregar" cada vez que se abre desde cero
 function resetearModalAgregar() {
@@ -39,7 +92,7 @@ function resetearModalAgregar() {
 }
 
 // Función para llenar datos en modal Editar
-function abrirEditar(id, marca, modelo, categoria, precio, color, placa, anio, idAgente, estado, foto, fechaActualizado, urlEliminar) {
+function abrirEditar(id, marca, modelo, categoria, precio, color, placa, anio, idAgente, estado, foto, fechaActualizado) {
     document.getElementById('edit-id').value = id;
     document.getElementById('edit-marca').value = marca;
     document.getElementById('edit-modelo').value = modelo;
@@ -77,20 +130,83 @@ function abrirEditar(id, marca, modelo, categoria, precio, color, placa, anio, i
     document.getElementById('edit-fecha-actualizado').textContent =
         fechaActualizado ? `Última actualización: ${fechaActualizado}` : '';
 
-    // Link de eliminar de este auto en particular
-    const eliminarLink = document.getElementById('edit-eliminar-link');
-    if (urlEliminar) eliminarLink.setAttribute('href', urlEliminar);
-
     limpiarErrores('edit');
     abrirModal('modalEditar');
 }
 
-// Función de filtrado en la tabla
+// Función de filtrado en la tabla (marca las filas que coinciden; la paginación decide cuáles mostrar)
 function filtrar(texto) {
+    const t = texto.toLowerCase();
     document.querySelectorAll('#tabla tbody tr').forEach(tr => {
-        tr.style.display = tr.textContent.toLowerCase().includes(texto.toLowerCase()) ? '' : 'none';
+        const coincide = tr.textContent.toLowerCase().includes(t);
+        tr.dataset.oculta = coincide ? 'false' : 'true';
     });
+    paginaActual = 1;
+    aplicarPaginacion();
 }
+
+// =========================================================
+// PAGINACIÓN (8 registros por página)
+// =========================================================
+const REGISTROS_POR_PAGINA = 8;
+let paginaActual = 1;
+
+function filasVisiblesPorFiltro() {
+    return [...document.querySelectorAll('#tabla tbody tr')]
+        .filter(tr => tr.dataset.oculta !== 'true' && !tr.classList.contains('fila-vacia'));
+}
+
+function aplicarPaginacion() {
+    const filas = filasVisiblesPorFiltro();
+    const totalPaginas = Math.max(1, Math.ceil(filas.length / REGISTROS_POR_PAGINA));
+
+    if (paginaActual > totalPaginas) paginaActual = totalPaginas;
+    if (paginaActual < 1) paginaActual = 1;
+
+    filas.forEach((fila, i) => {
+        const inicio = (paginaActual - 1) * REGISTROS_POR_PAGINA;
+        const fin = inicio + REGISTROS_POR_PAGINA;
+        fila.style.display = (i >= inicio && i < fin) ? '' : 'none';
+    });
+
+    document.querySelectorAll('#tabla tbody tr').forEach(tr => {
+        if (tr.dataset.oculta === 'true') tr.style.display = 'none';
+    });
+
+    renderizarControlesPaginacion(totalPaginas, filas.length);
+}
+
+function renderizarControlesPaginacion(totalPaginas, totalFilas) {
+    const contenedor = document.getElementById('paginacion');
+    if (!contenedor) return;
+
+    if (totalFilas === 0 || totalPaginas <= 1) {
+        contenedor.innerHTML = '';
+        return;
+    }
+
+    let html = '';
+    html += `<button type="button" class="btn-pagina" ${paginaActual === 1 ? 'disabled' : ''} onclick="irAPagina(${paginaActual - 1})">‹ Anterior</button>`;
+
+    for (let p = 1; p <= totalPaginas; p++) {
+        html += `<button type="button" class="btn-pagina ${p === paginaActual ? 'activo' : ''}" onclick="irAPagina(${p})">${p}</button>`;
+    }
+
+    html += `<button type="button" class="btn-pagina" ${paginaActual === totalPaginas ? 'disabled' : ''} onclick="irAPagina(${paginaActual + 1})">Siguiente ›</button>`;
+    contenedor.innerHTML = html;
+}
+
+function irAPagina(numero) {
+    paginaActual = numero;
+    aplicarPaginacion();
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('#tabla tbody tr').forEach(tr => {
+        if (!tr.classList.contains('fila-vacia')) tr.dataset.oculta = 'false';
+    });
+    aplicarPaginacion();
+});
 
 // Alternar estado Activo/Inactivo (Click en Badge) y persistirlo en la BD
 function toggleEstado(elemento, idVehiculo) {
@@ -122,7 +238,38 @@ function previsualizarFoto(input, boxId) {
     lector.readAsDataURL(file);
 }
 
-// --- Validación básica ---
+// --- Validación de campos (formato, no solo obligatorio) ---
+const RE_MARCA = /^[A-Za-zÀ-ÖØ-öø-ÿ\s]{2,30}$/;
+const RE_MODELO = /^[A-Za-z0-9À-ÖØ-öø-ÿ\s\-]{1,30}$/;
+const RE_COLOR = /^[A-Za-zÀ-ÖØ-öø-ÿ\s]{2,30}$/;
+const RE_PLACA = /^[A-Z0-9\-]{5,10}$/;
+const ANIO_MINIMO = 1980;
+const ANIO_MAXIMO = 2100;
+
+// Bloquea caracteres no permitidos mientras el usuario escribe
+function sanearMientrasEscribe() {
+    ['mod-marca', 'edit-marca', 'mod-color', 'edit-color'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.addEventListener('input', () => {
+            el.value = el.value.replace(/[^A-Za-zÀ-ÖØ-öø-ÿ\s]/g, '');
+        });
+    });
+
+    ['mod-modelo', 'edit-modelo'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.addEventListener('input', () => {
+            el.value = el.value.replace(/[^A-Za-z0-9À-ÖØ-öø-ÿ\s\-]/g, '');
+        });
+    });
+
+    ['mod-placa', 'edit-placa'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.addEventListener('input', () => {
+            el.value = el.value.toUpperCase().replace(/[^A-Z0-9\-]/g, '').slice(0, 10);
+        });
+    });
+}
+
 function limpiarErrores(prefijo) {
     document.querySelectorAll(`[id^="${prefijo === 'mod' ? 'err-' : 'edit-err-'}"]`)
         .forEach(el => el.textContent = '');
@@ -133,27 +280,53 @@ function validarCampos(prefijo, datos) {
     const errPrefix = prefijo === 'mod' ? 'err-' : 'edit-err-';
     let valido = true;
 
-    const requeridos = {
-        marca: 'La marca es obligatoria',
-        modelo: 'El modelo es obligatorio',
-        categoria: 'Selecciona una categoría',
-        precio: 'Ingresa un precio válido',
-        color: 'El color es obligatorio',
-        placa: 'La placa es obligatoria',
-        anio: 'Ingresa un año válido',
-        agente: 'Selecciona un agente'
+    const marcarError = (campo, mensaje) => {
+        const el = document.getElementById(errPrefix + campo);
+        if (el) el.textContent = mensaje;
+        valido = false;
     };
 
-    for (const campo in requeridos) {
-        const val = datos[campo];
-        const vacio = val === null || val === undefined || val === '' ||
-            ((campo === 'precio' || campo === 'anio' || campo === 'agente') && isNaN(Number(val)));
-        if (vacio) {
-            const errEl = document.getElementById(errPrefix + campo);
-            if (errEl) errEl.textContent = requeridos[campo];
-            valido = false;
-        }
+    if (!datos.marca) {
+        marcarError('marca', 'La marca es obligatoria.');
+    } else if (!RE_MARCA.test(datos.marca)) {
+        marcarError('marca', 'Solo se permiten letras y espacios.');
     }
+
+    if (!datos.modelo) {
+        marcarError('modelo', 'El modelo es obligatorio.');
+    } else if (!RE_MODELO.test(datos.modelo)) {
+        marcarError('modelo', 'Usa solo letras, números, espacios o guiones.');
+    }
+
+    if (!datos.categoria) {
+        marcarError('categoria', 'Selecciona una categoría.');
+    }
+
+    if (!datos.precio || isNaN(Number(datos.precio)) || Number(datos.precio) < 0) {
+        marcarError('precio', 'Ingresa un precio válido (mayor o igual a 0).');
+    }
+
+    if (!datos.color) {
+        marcarError('color', 'El color es obligatorio.');
+    } else if (!RE_COLOR.test(datos.color)) {
+        marcarError('color', 'Solo se permiten letras y espacios.');
+    }
+
+    if (!datos.placa) {
+        marcarError('placa', 'La placa es obligatoria.');
+    } else if (!RE_PLACA.test(datos.placa)) {
+        marcarError('placa', 'La placa debe tener entre 5 y 10 caracteres (letras, números o guiones).');
+    }
+
+    const anioNum = Number(datos.anio);
+    if (!datos.anio || isNaN(anioNum) || anioNum < ANIO_MINIMO || anioNum > ANIO_MAXIMO) {
+        marcarError('anio', `Ingresa un año entre ${ANIO_MINIMO} y ${ANIO_MAXIMO}.`);
+    }
+
+    if (!datos.agente || isNaN(Number(datos.agente))) {
+        marcarError('agente', 'Selecciona un agente.');
+    }
+
     return valido;
 }
 
@@ -171,10 +344,12 @@ function validarYPrepararEnvio(prefijo) {
         categoria: val(`${prefijo}-categoria`),
         precio: val(`${prefijo}-precio`),
         color: val(`${prefijo}-color`),
-        placa: val(`${prefijo}-placa`),
+        placa: val(`${prefijo}-placa`).toUpperCase(),
         anio: val(`${prefijo}-anio`),
         agente: val(`${prefijo}-agente`)
     };
 
     return validarCampos(prefijo, datos);
 }
+
+document.addEventListener('DOMContentLoaded', sanearMientrasEscribe);

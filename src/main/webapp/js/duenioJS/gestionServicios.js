@@ -24,8 +24,54 @@ document.addEventListener('keydown', e => {
     if (e.key === 'Escape') {
         cerrarModal('modalAgregar');
         cerrarModal('modalEditar');
+        cerrarModal('modalConfirmar');
     }
 });
+
+// =========================================================
+// MODAL DE CONFIRMACIÓN (reemplaza confirm() del navegador)
+// =========================================================
+let _confirmCallback = null;
+
+function pedirConfirmacion(mensaje, callback, tipo = 'normal') {
+    document.getElementById('confirmMensaje').textContent = mensaje;
+
+    const icono = document.getElementById('confirmIcono');
+    const titulo = document.getElementById('confirmTitulo');
+    const btnAceptar = document.getElementById('confirmBtnAceptar');
+
+    if (tipo === 'peligro') {
+        icono.textContent = '!';
+        icono.classList.remove('icono-guardar');
+        titulo.textContent = 'Confirmar eliminación';
+        btnAceptar.textContent = 'Eliminar';
+        btnAceptar.className = 'btn-modal-delete';
+    } else {
+        icono.textContent = '✓';
+        icono.classList.add('icono-guardar');
+        titulo.textContent = 'Confirmar cambios';
+        btnAceptar.textContent = 'Guardar';
+        btnAceptar.className = 'btn-modal-save';
+    }
+
+    _confirmCallback = callback;
+    abrirModal('modalConfirmar');
+}
+
+document.getElementById('confirmBtnAceptar') && (document.getElementById('confirmBtnAceptar').onclick = () => {
+    cerrarModal('modalConfirmar');
+    const callback = _confirmCallback;
+    _confirmCallback = null;
+    if (typeof callback === 'function') callback();
+});
+
+// Guardar cambios del modal Editar
+function confirmarGuardarEdicion() {
+    if (!validarYPrepararEnvio('edit')) return;
+    pedirConfirmacion('¿Deseas guardar los cambios de este servicio?', () => {
+        document.getElementById('formEditar').submit();
+    });
+}
 
 // Limpia el formulario de "Agregar" cada vez que se abre desde cero
 function resetearModalAgregar() {
@@ -67,11 +113,10 @@ function abrirEditar(id, nombre, descripcion, precio, idTipo, estado) {
 
 // --- ELIMINAR SERVICIO ---
 function eliminarServicio(id, nombre) {
-    const confirmar = confirm(`¿De verdad desea borrar el registro del servicio "${nombre}"?`);
-    if (!confirmar) return;
-
-    document.getElementById('eliminar-id').value = id;
-    document.getElementById('formEliminar').submit();
+    pedirConfirmacion(`¿Deseas eliminar el servicio "${nombre}"? Esta acción no se puede deshacer.`, () => {
+        document.getElementById('eliminar-id').value = id;
+        document.getElementById('formEliminar').submit();
+    }, 'peligro');
 }
 
 // --- BÚSQUEDA / FILTRADO (marca las filas que coinciden, la paginación decide cuáles mostrar) ---
@@ -160,10 +205,23 @@ function toggleEstado(elemento, idServicio) {
     }).catch(err => console.error('No se pudo actualizar el estado:', err));
 }
 
-// --- VALIDACIÓN BÁSICA ---
+// --- VALIDACIÓN DE CAMPOS (formato, no solo obligatorio) ---
+const RE_NOMBRE_SERVICIO = /^[A-Za-z0-9À-ÖØ-öø-ÿ\s.,\-\/]{3,60}$/;
+const RE_DESCRIPCION = /^[A-Za-z0-9À-ÖØ-öø-ÿ\s.,\-\/()]{0,300}$/;
+
 function limpiarErrores(prefijo) {
     document.querySelectorAll(`[id^="${prefijo === 'mod' ? 'err-' : 'edit-err-'}"]`)
         .forEach(el => el.textContent = '');
+}
+
+// Bloquea caracteres no permitidos mientras el usuario escribe el nombre del servicio
+function sanearMientrasEscribe() {
+    ['mod-nombre-servicio', 'edit-nombre'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.addEventListener('input', () => {
+            el.value = el.value.replace(/[^A-Za-z0-9À-ÖØ-öø-ÿ\s.,\-\/]/g, '');
+        });
+    });
 }
 
 function validarYPrepararEnvio(prefijo) {
@@ -177,24 +235,37 @@ function validarYPrepararEnvio(prefijo) {
     const nombre = val(`${prefijo}-nombre-servicio`) || val(`${prefijo}-nombre`);
     const tipo = val(`${prefijo}-tipo`);
     const precio = val(`${prefijo}-precio`);
+    const descripcion = val(`${prefijo}-descripcion`);
+
+    const marcarError = (campo, mensaje) => {
+        const elA = document.getElementById(`${errPrefix}${campo}`);
+        if (elA) elA.textContent = mensaje;
+    };
 
     let valido = true;
 
     if (!nombre) {
-        document.getElementById(`${errPrefix}nombre-servicio`) &&
-        (document.getElementById(`${errPrefix}nombre-servicio`).textContent = 'El nombre es obligatorio');
-        document.getElementById(`${errPrefix}nombre`) &&
-        (document.getElementById(`${errPrefix}nombre`).textContent = 'El nombre es obligatorio');
+        marcarError('nombre-servicio', 'El nombre es obligatorio.');
+        marcarError('nombre', 'El nombre es obligatorio.');
+        valido = false;
+    } else if (!RE_NOMBRE_SERVICIO.test(nombre)) {
+        marcarError('nombre-servicio', 'Nombre inválido (3 a 60 caracteres, sin símbolos raros).');
+        marcarError('nombre', 'Nombre inválido (3 a 60 caracteres, sin símbolos raros).');
         valido = false;
     }
+
     if (!tipo) {
-        const errTipo = document.getElementById(`${errPrefix}tipo`);
-        if (errTipo) errTipo.textContent = 'Selecciona un tipo de servicio';
+        marcarError('tipo', 'Selecciona un tipo de servicio.');
         valido = false;
     }
+
     if (!precio || isNaN(Number(precio)) || Number(precio) < 0) {
-        const errPrecio = document.getElementById(`${errPrefix}precio`);
-        if (errPrecio) errPrecio.textContent = 'Ingresa un precio válido';
+        marcarError('precio', 'Ingresa un precio válido (mayor o igual a 0).');
+        valido = false;
+    }
+
+    if (descripcion && !RE_DESCRIPCION.test(descripcion)) {
+        marcarError('descripcion', 'La descripción contiene caracteres no permitidos.');
         valido = false;
     }
 
@@ -213,4 +284,5 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!tr.classList.contains('fila-vacia')) tr.dataset.oculta = 'false';
     });
     aplicarPaginacion();
+    sanearMientrasEscribe();
 });
