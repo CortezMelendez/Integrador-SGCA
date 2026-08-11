@@ -2,6 +2,7 @@ package com.sgca.integradorsgca.controller;
 
 import com.sgca.integradorsgca.model.bean.UsuarioBean;
 import com.sgca.integradorsgca.model.bean.rolBean;
+import com.sgca.integradorsgca.model.dao.AgentesDao;
 import com.sgca.integradorsgca.model.dao.UsuarioDao;
 import com.sgca.integradorsgca.utils.PasswordUtils;
 import jakarta.servlet.ServletException;
@@ -21,6 +22,7 @@ import java.io.IOException;
 public class GestionUsuariosServlet extends HttpServlet {
 
     private final UsuarioDao usuarioDao = new UsuarioDao();
+    private final AgentesDao agentesDao = new AgentesDao();
 
     private static final int ID_ROL_AGENTE = 2;
 
@@ -33,12 +35,32 @@ public class GestionUsuariosServlet extends HttpServlet {
             if ("cambiarEstado".equals(accion)) {
                 int idUsuario = Integer.parseInt(req.getParameter("id"));
                 int estado = Integer.parseInt(req.getParameter("estado"));
-                usuarioDao.cambiarEstado(idUsuario, estado);
+                int idRol = Integer.parseInt(req.getParameter("idRol"));
+
+                if (idRol == ID_ROL_AGENTE && estado == 0 && agentesDao.contarClientesAsignados(idUsuario) > 0) {
+                    // No se puede dar de baja a un agente con clientes activos sin transferirlos antes.
+                    error = "clientes_activos";
+                } else {
+                    usuarioDao.cambiarEstado(idUsuario, estado);
+                }
 
             } else if ("eliminar".equals(accion)) {
-                int idUsuario = Integer.parseInt(req.getParameter("id"));
-                boolean ok = usuarioDao.eliminar(idUsuario);
-                if (!ok) error = "no_se_pudo_eliminar";
+                int idRol = Integer.parseInt(req.getParameter("idRol"));
+
+                if (idRol == ID_ROL_AGENTE) {
+                    // Un agente nunca se borra físicamente: su fila en AGENTES (y el
+                    // historial de ventas/vehículos ligado a él) sigue apuntando a
+                    // USUARIOS, así que un DELETE directo siempre viola la llave
+                    // foránea. "Eliminar" un agente equivale a darlo de baja.
+                    error = darDeBaja(req);
+                } else {
+                    int idUsuario = Integer.parseInt(req.getParameter("id"));
+                    boolean ok = usuarioDao.eliminar(idUsuario);
+                    if (!ok) error = "no_se_pudo_eliminar";
+                }
+
+            } else if ("darDeBaja".equals(accion)) {
+                error = darDeBaja(req);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -73,6 +95,35 @@ public class GestionUsuariosServlet extends HttpServlet {
         int idRol = Integer.parseInt(req.getParameter("idRol"));
         String base = idRol == ID_ROL_AGENTE ? "/btn?action=gestionEmpleados" : "/btn?action=gestionClientes";
         return error != null ? base + "&error=" + error : base;
+    }
+
+    /**
+     * Da de baja a un agente (idRol=2). Si tiene clientes activos, exige un
+     * agente receptor y transfiere los clientes antes de desactivarlo; si no
+     * tiene clientes, la baja se procesa directamente.
+     */
+    private String darDeBaja(HttpServletRequest req) throws Exception {
+        int idAgente = Integer.parseInt(req.getParameter("id"));
+        String idReceptorParam = req.getParameter("idReceptor");
+
+        int clientesActivos = agentesDao.contarClientesAsignados(idAgente);
+
+        if (clientesActivos == 0) {
+            boolean ok = agentesDao.bajaAgente(idAgente);
+            return ok ? null : "error_baja";
+        }
+
+        if (idReceptorParam == null || idReceptorParam.trim().isEmpty()) {
+            return "receptor_requerido";
+        }
+
+        int idReceptor = Integer.parseInt(idReceptorParam.trim());
+        if (idReceptor == idAgente) {
+            return "receptor_invalido";
+        }
+
+        boolean ok = agentesDao.darDeBajaConTransferencia(idAgente, idReceptor);
+        return ok ? null : "error_transferencia";
     }
 
     private String registrar(HttpServletRequest req) throws Exception {

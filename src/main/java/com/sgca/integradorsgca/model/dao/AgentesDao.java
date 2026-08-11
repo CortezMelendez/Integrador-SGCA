@@ -78,6 +78,113 @@ public class AgentesDao {
         }
     }
 
+    // Cuenta cuántos clientes tiene asignados un agente, dado su ID_USUARIO
+    public int contarClientesAsignados(int idUsuarioAgente) {
+        String sql = "SELECT COUNT(*) AS total FROM ADMIN.CLIENTES c " +
+                "INNER JOIN ADMIN.AGENTES a ON c.ID_AGENTE = a.ID_AGENTE " +
+                "WHERE a.ID_USUARIO = ?";
+
+        try (Connection con = Conexion.getConexion();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+
+            ps.setInt(1, idUsuarioAgente);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) return rs.getInt("total");
+            }
+        } catch (SQLException e) {
+            System.err.println("Error al contar clientes del agente: " + e.getMessage());
+        }
+        return 0;
+    }
+
+    /*
+      Da de baja a un agente que NO tiene clientes asignados: desactiva su
+      cuenta (ADMIN.USUARIOS) y su registro de agente (ADMIN.AGENTES) en una
+      sola transacción. No debe usarse si el agente tiene clientes activos;
+      para ese caso usar darDeBajaConTransferencia.
+     */
+    public boolean bajaAgente(int idUsuarioAgente) {
+        String sqlAgente = "UPDATE ADMIN.AGENTES SET ESTADO = 0 WHERE ID_USUARIO = ?";
+        String sqlUsuario = "UPDATE ADMIN.USUARIOS SET ESTADO = 0 WHERE ID_USUARIO = ?";
+
+        Connection con = null;
+        try {
+            con = Conexion.getConexion();
+            con.setAutoCommit(false);
+
+            try (PreparedStatement ps1 = con.prepareStatement(sqlAgente)) {
+                ps1.setInt(1, idUsuarioAgente);
+                ps1.executeUpdate();
+            }
+            try (PreparedStatement ps2 = con.prepareStatement(sqlUsuario)) {
+                ps2.setInt(1, idUsuarioAgente);
+                ps2.executeUpdate();
+            }
+
+            con.commit();
+            return true;
+        } catch (SQLException e) {
+            if (con != null) {
+                try { con.rollback(); } catch (SQLException ex) { ex.printStackTrace(); }
+            }
+            System.err.println("Error al dar de baja al agente: " + e.getMessage());
+            return false;
+        } finally {
+            if (con != null) {
+                try { con.setAutoCommit(true); con.close(); } catch (SQLException ex) { ex.printStackTrace(); }
+            }
+        }
+    }
+
+    /*
+      Transfiere todos los clientes de un agente a otro agente activo y, solo
+      si la transferencia se aplica correctamente, da de baja al agente de
+      origen (ADMIN.AGENTES y ADMIN.USUARIOS). Ambos agentes se identifican
+      por su ID_USUARIO. Todo ocurre en una sola transacción: si algo falla,
+      no queda ni la transferencia ni la baja a medias.
+     */
+    public boolean darDeBajaConTransferencia(int idUsuarioAgente, int idUsuarioReceptor) {
+        String sqlTransferir =
+                "UPDATE ADMIN.CLIENTES SET ID_AGENTE = (SELECT ID_AGENTE FROM ADMIN.AGENTES WHERE ID_USUARIO = ?) " +
+                        "WHERE ID_AGENTE = (SELECT ID_AGENTE FROM ADMIN.AGENTES WHERE ID_USUARIO = ?)";
+        String sqlAgente = "UPDATE ADMIN.AGENTES SET ESTADO = 0 WHERE ID_USUARIO = ?";
+        String sqlUsuario = "UPDATE ADMIN.USUARIOS SET ESTADO = 0 WHERE ID_USUARIO = ?";
+
+        Connection con = null;
+        try {
+            con = Conexion.getConexion();
+            con.setAutoCommit(false);
+
+            try (PreparedStatement ps1 = con.prepareStatement(sqlTransferir)) {
+                ps1.setInt(1, idUsuarioReceptor);
+                ps1.setInt(2, idUsuarioAgente);
+                ps1.executeUpdate();
+            }
+            try (PreparedStatement ps2 = con.prepareStatement(sqlAgente)) {
+                ps2.setInt(1, idUsuarioAgente);
+                ps2.executeUpdate();
+            }
+            try (PreparedStatement ps3 = con.prepareStatement(sqlUsuario)) {
+                ps3.setInt(1, idUsuarioAgente);
+                ps3.executeUpdate();
+            }
+
+            con.commit();
+            return true;
+        } catch (SQLException e) {
+            if (con != null) {
+                try { con.rollback(); } catch (SQLException ex) { ex.printStackTrace(); }
+            }
+            System.err.println("Error al transferir clientes y dar de baja al agente: " + e.getMessage());
+            return false;
+        } finally {
+            if (con != null) {
+                try { con.setAutoCommit(true); con.close(); } catch (SQLException ex) { ex.printStackTrace(); }
+            }
+        }
+    }
+
     /*
       Al cambiar el estado a 0, liberamos a sus clientes asignados para que
       queden disponibles ante todos los demás agentes activos del sistema (ID_AGENTE = NULL).
