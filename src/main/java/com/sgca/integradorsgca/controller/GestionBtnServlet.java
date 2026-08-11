@@ -21,12 +21,16 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @WebServlet("/btn")
 public class GestionBtnServlet extends HttpServlet {
 
     private static final String BASE_DUENIO = "/pages/duenioPages/";
+    private static final int ID_ROL_AGENTE = 2;
+    private static final int ID_ROL_CLIENTE = 3;
 
     private final VehiculosDao vehiculosDao = new VehiculosDao();
     private final TiposVehiculoDao tiposVehiculoDao = new TiposVehiculoDao();
@@ -34,9 +38,6 @@ public class GestionBtnServlet extends HttpServlet {
     private final ServiciosDao serviciosDao = new ServiciosDao();
     private final TiposServicioDao tiposServicioDao = new TiposServicioDao();
     private final UsuarioDao usuarioDao = new UsuarioDao();
-
-    private static final int ID_ROL_AGENTE = 2;
-    private static final int ID_ROL_CLIENTE = 3;
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -87,12 +88,24 @@ public class GestionBtnServlet extends HttpServlet {
 
                 case "gestionEmpleados":
                     List<UsuarioBean> listaEmpleados = usuarioDao.listarPorRol(ID_ROL_AGENTE);
+
+                    // Cuántos clientes activos tiene cada agente, para saber si al darlo
+                    // de baja hace falta pedir un agente receptor (modal "Transferir clientes").
+                    Map<Integer, Integer> clientesPorAgente = new HashMap<>();
+                    for (UsuarioBean empleado : listaEmpleados) {
+                        clientesPorAgente.put(
+                                empleado.getId_usuario(),
+                                agentesDao.contarClientesAsignados(empleado.getId_usuario()));
+                    }
+
                     request.setAttribute("listaUsuarios", listaEmpleados);
+                    request.setAttribute("clientesPorAgente", clientesPorAgente);
                     request.getRequestDispatcher(BASE_DUENIO + "gestionEmpleados.jsp").forward(request, response);
                     break;
 
                 case "gestionClientes":
                     List<UsuarioBean> listaClientes = usuarioDao.listarPorRol(ID_ROL_CLIENTE);
+
                     request.setAttribute("listaUsuarios", listaClientes);
                     request.getRequestDispatcher(BASE_DUENIO + "gestionClientes.jsp").forward(request, response);
                     break;
