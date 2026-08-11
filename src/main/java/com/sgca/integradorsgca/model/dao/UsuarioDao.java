@@ -300,6 +300,19 @@
                 return ps.executeUpdate() > 0;
             }
         }
+        public boolean actualizarPerfil(int idUsuario, String correo, String telefono) throws Exception {
+            String sql = "UPDATE ADMIN.USUARIOS SET correo = ?, telefono = ? WHERE id_usuario = ?";
+
+            try (Connection con = Conexion.getConexion();
+                 PreparedStatement ps = con.prepareStatement(sql)) {
+
+                ps.setString(1, correo);
+                ps.setString(2, telefono);
+                ps.setInt(3, idUsuario);
+
+                return ps.executeUpdate() > 0;
+            }
+        }
     
         // Metodo para autenticacion segura
         public UsuarioBean validarLogin(String correo, String passwordPlana) throws Exception {

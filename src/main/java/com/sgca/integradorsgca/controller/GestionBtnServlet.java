@@ -12,6 +12,7 @@ import com.sgca.integradorsgca.model.dao.TiposServicioDao;
 import com.sgca.integradorsgca.model.dao.TiposVehiculoDao;
 import com.sgca.integradorsgca.model.dao.UsuarioDao;
 import com.sgca.integradorsgca.model.dao.VehiculosDao;
+import com.sgca.integradorsgca.utils.SessionRegistry;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -34,9 +35,6 @@ public class GestionBtnServlet extends HttpServlet {
     private final TiposServicioDao tiposServicioDao = new TiposServicioDao();
     private final UsuarioDao usuarioDao = new UsuarioDao();
 
-    private static final int ID_ROL_AGENTE = 2;
-    private static final int ID_ROL_CLIENTE = 3;
-
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -57,11 +55,23 @@ public class GestionBtnServlet extends HttpServlet {
             return;
         }
 
+        request.setCharacterEncoding("UTF-8");
+
         String action = request.getParameter("action");
         if (action == null) action = "inicio";
 
         try {
             switch (action) {
+
+                case "actualizarPerfil":
+                    actualizarPerfil(request, response, usuario);
+                    return;
+
+                case "cerrarSesionTodos":
+                    SessionRegistry.invalidarTodas(usuario.getId_usuario());
+                    response.sendRedirect(request.getContextPath() + "/login.jsp?exito=sesion_cerrada");
+                    return;
+
                 case "gestionServicio":
                     List<ServiciosBean> listaServicios = serviciosDao.listar();
                     List<TiposServicioBean> listaTiposServicio = tiposServicioDao.listar();
@@ -73,14 +83,10 @@ public class GestionBtnServlet extends HttpServlet {
                     break;
 
                 case "gestionEmpleados":
-                    List<UsuarioBean> listaEmpleados = usuarioDao.listarPorRol(ID_ROL_AGENTE);
-                    request.setAttribute("listaUsuarios", listaEmpleados);
                     request.getRequestDispatcher(BASE_DUENIO + "gestionEmpleados.jsp").forward(request, response);
                     break;
 
                 case "gestionClientes":
-                    List<UsuarioBean> listaClientes = usuarioDao.listarPorRol(ID_ROL_CLIENTE);
-                    request.setAttribute("listaUsuarios", listaClientes);
                     request.getRequestDispatcher(BASE_DUENIO + "gestionClientes.jsp").forward(request, response);
                     break;
 
@@ -97,7 +103,13 @@ public class GestionBtnServlet extends HttpServlet {
                     break;
 
                 default:
-                    response.sendRedirect(request.getContextPath() + BASE_DUENIO + "indexDuenio.jsp");
+                    List<VehiculosBean> listaVehiculosInicio = vehiculosDao.listarDisponibles();
+                    List<TiposVehiculoBean> listaTiposInicio = tiposVehiculoDao.listar();
+
+                    request.setAttribute("vehiculos", listaVehiculosInicio);
+                    request.setAttribute("listaTipos", listaTiposInicio);
+
+                    request.getRequestDispatcher(BASE_DUENIO + "indexDuenio.jsp").forward(request, response);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -109,6 +121,50 @@ public class GestionBtnServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         doGet(request, response);
+    }
+
+    // Actualiza correo/teléfono del usuario en sesión (modal "Editar Perfil").
+    // Responde texto plano: 200 = éxito, 4xx/5xx = mensaje de error para mostrar en el modal.
+    private void actualizarPerfil(HttpServletRequest request, HttpServletResponse response, UsuarioBean usuario)
+            throws IOException {
+
+        response.setContentType("text/html; charset=UTF-8");
+
+        String correo = request.getParameter("correo");
+        String telefono = request.getParameter("telefono");
+
+        if (correo == null || correo.trim().isEmpty() || !correo.contains("@")) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.getWriter().println("Ingresa un correo electrónico válido.");
+            return;
+        }
+
+        if (telefono == null || telefono.trim().length() < 10) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.getWriter().println("Ingresa un teléfono válido (mínimo 10 dígitos).");
+            return;
+        }
+
+        try {
+            boolean actualizado = usuarioDao.actualizarPerfil(
+                    usuario.getId_usuario(), correo.trim(), telefono.trim());
+
+            if (actualizado) {
+                // Refrescamos los datos en la sesión para que se reflejen de inmediato
+                usuario.setCorreo(correo.trim());
+                usuario.setTelefono(telefono.trim());
+                request.getSession().setAttribute("usuarioLogueado", usuario);
+
+                response.getWriter().println("Perfil actualizado correctamente.");
+            } else {
+                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                response.getWriter().println("No se pudo actualizar el perfil. Intenta de nuevo.");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            response.getWriter().println("Ocurrió un error en el servidor. Intenta más tarde.");
+        }
     }
 
     private String obtenerNombreRol(UsuarioBean usuario) {
