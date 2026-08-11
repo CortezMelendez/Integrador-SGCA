@@ -1,0 +1,392 @@
+/* =============================================
+   MODAL PERFIL (ver / editar)
+   Usa .modal-overlay / .modal-box / .modal-cerrar
+   ya definidos en serviciosModal.css
+============================================= */
+
+.modal-box-perfil {
+
+    max-width: 420px;
+    max-height: 85vh;
+
+    overflow-y: auto;
+
+    padding: 24px 28px 28px;
+
+}
+
+.perfil-paso.oculto {
+
+    display: none;
+
+}
+
+
+
+/* ---------- Encabezado ---------- */
+
+.perfil-header {
+
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+
+    margin-bottom: 4px;
+
+}
+
+.perfil-header h2 {
+
+    margin: 0;
+    font-size: 1.3rem;
+    font-weight: 700;
+
+}
+
+
+
+/* ---------- Identidad (vista) ---------- */
+
+.perfil-identidad {
+
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    padding: 16px 0;
+    border-bottom: 1px solid var(--color-gray-100);
+
+    margin-bottom: 16px;
+
+}
+
+.perfil-identidad-datos {
+
+    flex: 1;
+    min-width: 0;
+
+}
+
+.perfil-nombre {
+
+    margin: 0;
+    font-size: 1.05rem;
+    font-weight: 700;
+
+}
+
+.perfil-folio,
+.perfil-correo-chico {
+
+    margin: 2px 0 0;
+    font-size: .8rem;
+    color: var(--color-gray-700);
+
+}
+
+.perfil-btn-editar {
+
+    flex-shrink: 0;
+
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    border: none;
+
+    background: var(--btn-active);
+    color: var(--color-white);
+
+    font-size: .95rem;
+    cursor: pointer;
+
+}
+
+.perfil-btn-editar:hover {
+
+    opacity: .9;
+
+}
+
+
+
+/* ---------- Secciones de la vista ---------- */
+
+.perfil-seccion {
+
+    margin-bottom: 18px;
+
+}
+
+.perfil-seccion h4 {
+
+    margin: 0 0 10px;
+    font-size: .85rem;
+    font-weight: 700;
+    color: var(--color-gray-700);
+    text-transform: uppercase;
+    letter-spacing: .02em;
+
+}
+
+.perfil-grid {
+
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+
+}
+
+.perfil-grid-1 {
+
+    grid-template-columns: 1fr;
+
+}
+
+.perfil-campo {
+
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+
+    background: var(--color-gray-50);
+    border-radius: 8px;
+
+    padding: 8px 12px;
+
+}
+
+.perfil-label {
+
+    font-size: .72rem;
+    color: var(--color-gray-700);
+
+}
+
+.perfil-valor {
+
+    font-size: .9rem;
+    font-weight: 600;
+    word-break: break-word;
+
+}
+
+
+
+/* ---------- Botón atrás (vista) ---------- */
+
+.btn-atras-perfil {
+
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+
+    background: var(--color-gray-750);
+    color: var(--color-white);
+
+    border: none;
+    border-radius: 20px;
+
+    padding: 8px 16px;
+
+    font-size: .85rem;
+    font-weight: 600;
+    cursor: pointer;
+
+}
+
+.btn-atras-perfil:hover {
+
+    background: var(--color-gray-700);
+
+}
+
+
+
+/* =============================================
+   FORMULARIO DE EDICIÓN
+============================================= */
+
+.perfil-form-row {
+
+    display: flex;
+    gap: 12px;
+
+}
+
+.perfil-form-row .perfil-campo-edit {
+
+    flex: 1;
+    min-width: 0;
+
+}
+
+.perfil-campo-edit {
+
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+
+    margin-bottom: 12px;
+
+}
+
+.perfil-form-label {
+
+    font-size: .78rem;
+    font-weight: 600;
+
+}
+
+.perfil-input {
+
+    width: 100%;
+    box-sizing: border-box;
+
+    background: var(--color-hero-bg);
+    border: 1px solid var(--color-gray-100);
+    border-radius: 8px;
+
+    padding: 10px 12px;
+
+    font-family: inherit;
+    font-size: .88rem;
+    color: var(--color-text-body);
+
+    outline: none;
+
+}
+
+.perfil-input:focus {
+
+    border-color: var(--btn-active);
+
+}
+
+.perfil-input-bloqueado {
+
+    background: var(--color-gray-100);
+    color: var(--color-gray-700);
+    cursor: not-allowed;
+
+}
+
+.perfil-nota {
+
+    margin: -6px 0 12px;
+    font-size: .75rem;
+    color: var(--color-gray-700);
+
+}
+
+.perfil-divisor {
+
+    border: none;
+    border-top: 1px solid var(--color-gray-100);
+    margin: 8px 0 14px;
+
+}
+
+.perfil-subtitulo {
+
+    margin: 0 0 12px;
+    font-size: .82rem;
+    font-weight: 700;
+    color: var(--color-gray-700);
+
+}
+
+.perfil-error {
+
+    margin: 0;
+    min-height: 1em;
+    font-size: .8rem;
+    color: var(--color-danger-dark);
+
+}
+
+.perfil-exito {
+
+    margin: 0;
+    min-height: 1em;
+    font-size: .8rem;
+    font-weight: 600;
+    color: var(--color-success-text);
+
+}
+
+.perfil-acciones {
+
+    display: flex;
+    gap: 12px;
+    margin-top: 14px;
+
+}
+
+.btn-perfil-cancelar {
+
+    flex: 1;
+
+    background: var(--color-gray-100);
+    color: var(--color-text-body);
+
+    border: none;
+    border-radius: 8px;
+
+    padding: 12px;
+
+    font-size: .88rem;
+    font-weight: 600;
+    cursor: pointer;
+
+}
+
+.btn-perfil-cancelar:hover {
+
+    background: var(--color-gray-150);
+
+}
+
+.btn-perfil-guardar {
+
+    flex: 1;
+
+    background: var(--btn-active);
+    color: var(--color-white);
+
+    border: none;
+    border-radius: 8px;
+
+    padding: 12px;
+
+    font-size: .88rem;
+    font-weight: 700;
+    cursor: pointer;
+
+}
+
+.btn-perfil-guardar:hover {
+
+    opacity: .9;
+
+}
+
+
+
+/* ---------- Responsive ---------- */
+
+@media (max-width: 480px) {
+
+    .perfil-form-row {
+
+        flex-direction: column;
+        gap: 0;
+
+    }
+
+    .perfil-grid {
+
+        grid-template-columns: 1fr;
+
+    }
+
+}

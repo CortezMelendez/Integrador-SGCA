@@ -19,7 +19,6 @@ public class TokRecDao {
             ps.setInt(1, tokenBean.getIdUsuario());
             ps.setString(2, tokenBean.getToken());
             ps.setInt(3, tokenBean.getUsado());
-
             return ps.executeUpdate() > 0;
         } catch (SQLException e) {
             // Se deja subir la excepción real para poder mostrarla en EmailService
