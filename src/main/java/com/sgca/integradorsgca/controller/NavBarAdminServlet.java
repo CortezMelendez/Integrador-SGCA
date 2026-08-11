@@ -72,6 +72,7 @@ public class NavBarAdminServlet extends HttpServlet {
                 break;
 
             case "historial":
+                cargarHistorial(request);
                 request.getRequestDispatcher(BASE_DUENIO + "historial.jsp").forward(request, response);
                 break;
 
@@ -167,6 +168,23 @@ public class NavBarAdminServlet extends HttpServlet {
         } catch (Exception e) {
             e.printStackTrace();
             request.setAttribute("ventasRecientes", new ArrayList<VentasBean>());
+        }
+    }
+
+    /**
+     * Historial completo de ventas y servicios (Módulo 6 del DFR): trae todas
+     * las ventas con su cliente, agente, vehículo y servicios contratados
+     * para que el dueño pueda consultarlas y filtrarlas por placa en
+     * historial.jsp. Si la consulta falla, la tabla simplemente queda vacía
+     * en vez de tumbar la página.
+     */
+    private void cargarHistorial(HttpServletRequest request) {
+        try {
+            List<VentasBean> ventas = ventasDao.listar();
+            request.setAttribute("listaVentas", ventas);
+        } catch (Exception e) {
+            e.printStackTrace();
+            request.setAttribute("listaVentas", new ArrayList<VentasBean>());
         }
     }
 

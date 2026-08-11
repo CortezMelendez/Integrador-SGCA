@@ -35,6 +35,9 @@ public class GestionBtnServlet extends HttpServlet {
     private final TiposServicioDao tiposServicioDao = new TiposServicioDao();
     private final UsuarioDao usuarioDao = new UsuarioDao();
 
+    private static final int ID_ROL_AGENTE = 2;
+    private static final int ID_ROL_CLIENTE = 3;
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -83,10 +86,14 @@ public class GestionBtnServlet extends HttpServlet {
                     break;
 
                 case "gestionEmpleados":
+                    List<UsuarioBean> listaEmpleados = usuarioDao.listarPorRol(ID_ROL_AGENTE);
+                    request.setAttribute("listaUsuarios", listaEmpleados);
                     request.getRequestDispatcher(BASE_DUENIO + "gestionEmpleados.jsp").forward(request, response);
                     break;
 
                 case "gestionClientes":
+                    List<UsuarioBean> listaClientes = usuarioDao.listarPorRol(ID_ROL_CLIENTE);
+                    request.setAttribute("listaUsuarios", listaClientes);
                     request.getRequestDispatcher(BASE_DUENIO + "gestionClientes.jsp").forward(request, response);
                     break;
 
