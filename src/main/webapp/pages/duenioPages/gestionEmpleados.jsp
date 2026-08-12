@@ -215,7 +215,7 @@
 
             <div class="modal-actions">
                 <button type="button" class="btn-modal-cancel" onclick="cerrarModal('modalAgregar')">Cancelar</button>
-                <button type="submit" class="btn-modal-save">Guardar cambios</button>
+                <button type="button" class="btn-modal-save" onclick="confirmarGuardarAgregar()">Guardar cambios</button>
             </div>
         </form>
     </div>
@@ -375,6 +375,10 @@
                 error_transferencia: 'No se pudo transferir los clientes. Intenta de nuevo.',
                 error_baja: 'No se pudo dar de baja al empleado. Intenta de nuevo.',
                 no_se_pudo_eliminar: 'No se pudo eliminar el empleado.',
+                duplicado_correo: 'Ya existe un usuario registrado con ese correo.',
+                duplicado_rfc: 'Ya existe un usuario registrado con ese RFC.',
+                duplicado_curp: 'Ya existe un usuario registrado con ese CURP.',
+                duplicado_telefono: 'Ya existe un usuario registrado con ese teléfono.',
                 password_invalido: 'La contraseña debe tener al menos 8 caracteres.',
                 error_vinculo_agente: 'El empleado se creó, pero no se pudo vincular como agente. Contacta soporte.',
                 error_servidor: 'Ocurrió un error en el servidor. Intenta de nuevo.'

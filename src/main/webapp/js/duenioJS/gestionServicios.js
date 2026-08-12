@@ -73,6 +73,14 @@ function confirmarGuardarEdicion() {
     });
 }
 
+// Agregar servicio (modal Agregar)
+function confirmarGuardarAgregar() {
+    if (!validarYPrepararEnvio('mod')) return;
+    pedirConfirmacion('¿Deseas agregar este servicio?', () => {
+        document.getElementById('formAgregar').submit();
+    });
+}
+
 // Limpia el formulario de "Agregar" cada vez que se abre desde cero
 function resetearModalAgregar() {
     document.getElementById('formAgregar').reset();

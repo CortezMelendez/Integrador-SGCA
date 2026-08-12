@@ -196,6 +196,28 @@ public class ServiciosDao {
 
     /*
      * =====================================
+     * VERIFICAR NOMBRE DUPLICADO
+     * =====================================
+     */
+    public boolean existeNombre(String nombre, Integer idServicioExcluir) throws Exception {
+
+        String sql = "SELECT 1 FROM ADMIN.SERVICIOS WHERE UPPER(nombre) = UPPER(?)"
+                + (idServicioExcluir != null ? " AND id_servicio != ?" : "");
+
+        try (Connection con = Conexion.getConexion();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+
+            ps.setString(1, nombre);
+            if (idServicioExcluir != null) ps.setInt(2, idServicioExcluir);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next();
+            }
+        }
+    }
+
+    /*
+     * =====================================
      * CAMBIAR ESTADO
      * =====================================
      */

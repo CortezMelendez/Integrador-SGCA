@@ -98,6 +98,14 @@ function confirmarGuardarEdicion() {
   });
 }
 
+// Agregar cliente (modal Agregar)
+function confirmarGuardarAgregar() {
+  if (!validarYPrepararEnvio('mod')) return;
+  pedirConfirmacion('¿Deseas agregar este cliente?', () => {
+    document.getElementById('formAgregar').submit();
+  });
+}
+
 function resetearModalAgregar() {
   document.getElementById('formAgregar').reset();
   limpiarErrores('mod');

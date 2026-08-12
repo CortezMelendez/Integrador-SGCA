@@ -271,7 +271,7 @@
 
             <div class="modal-actions">
                 <button type="button" class="btn-modal-cancel" onclick="cerrarModal('modalAgregar')">Cancelar</button>
-                <button type="submit" class="btn-modal-save">Guardar cambios</button>
+                <button type="button" class="btn-modal-save" onclick="confirmarGuardarAgregar()">Guardar cambios</button>
             </div>
         </form>
     </div>
@@ -422,6 +422,19 @@
         </div>
     </div>
 </div>
+
+<c:if test="${not empty param.error}">
+    <script>
+        window.addEventListener('DOMContentLoaded', () => {
+            const mensajes = {
+                duplicado_placa: 'Ya existe un vehículo registrado con esa placa.',
+                error_servidor: 'Ocurrió un error en el servidor. Intenta de nuevo.'
+            };
+            const codigo = '${param.error}';
+            alert(mensajes[codigo] || 'No se pudo guardar el vehículo. Intenta de nuevo.');
+        });
+    </script>
+</c:if>
 
 <script>
     // Galería de imágenes extra de cada vehículo (id → [{idImagen, ruta}]), para el modal Editar.

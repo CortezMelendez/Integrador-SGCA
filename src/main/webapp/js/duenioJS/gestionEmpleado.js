@@ -179,6 +179,14 @@ function confirmarGuardarEdicion() {
     });
 }
 
+// Agregar empleado (modal Agregar)
+function confirmarGuardarAgregar() {
+    if (!validarYPrepararEnvio('mod')) return;
+    pedirConfirmacion('¿Deseas agregar este empleado?', () => {
+        document.getElementById('formAgregar').submit();
+    });
+}
+
 function resetearModalAgregar() {
     document.getElementById('formAgregar').reset();
     limpiarErrores('mod');

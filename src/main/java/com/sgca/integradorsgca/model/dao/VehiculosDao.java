@@ -135,6 +135,27 @@ public class VehiculosDao {
         }
     }
 
+    // Indica si ya existe otro vehículo con esa placa (idVehiculoExcluir = null en alta,
+    // o el propio ID en edición para no chocar contra sí mismo).
+    public boolean existePlaca(String placa, Integer idVehiculoExcluir) {
+        String sql = "SELECT 1 FROM ADMIN.VEHICULOS WHERE UPPER(PLACA) = UPPER(?)"
+                + (idVehiculoExcluir != null ? " AND ID_VEHICULO != ?" : "");
+
+        try (Connection con = Conexion.getConexion();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+
+            ps.setString(1, placa);
+            if (idVehiculoExcluir != null) ps.setInt(2, idVehiculoExcluir);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next();
+            }
+        } catch (SQLException e) {
+            System.err.println("Error al verificar placa duplicada: " + e.getMessage());
+            return false;
+        }
+    }
+
     // Cambia únicamente el estado Activo(1)/Inactivo(0) de un vehículo
     public void cambiarEstado(int idVehiculo, int disponible) {
         String sql = "UPDATE ADMIN.VEHICULOS SET DISPONIBLE = ? WHERE ID_VEHICULO = ?";

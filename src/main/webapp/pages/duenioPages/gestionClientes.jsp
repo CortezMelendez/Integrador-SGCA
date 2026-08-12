@@ -223,7 +223,7 @@
 
         <div class="modal-actions">
           <button type="button" class="btn-modal-cancel" onclick="cerrarModal('modalAgregar')">Cancelar</button>
-          <button type="submit" class="btn-modal-save">Guardar cambios</button>
+          <button type="button" class="btn-modal-save" onclick="confirmarGuardarAgregar()">Guardar cambios</button>
         </div>
       </form>
     </div>
@@ -346,7 +346,20 @@
   </div>
 
   <c:if test="${not empty param.error}">
-    <script>window.addEventListener('DOMContentLoaded', () => alert('No se pudo guardar el cliente. Verifica que el correo, RFC, CURP y teléfono no estén ya registrados.'));</script>
+    <script>
+      window.addEventListener('DOMContentLoaded', () => {
+        const mensajes = {
+          duplicado_correo: 'Ya existe un usuario registrado con ese correo.',
+          duplicado_rfc: 'Ya existe un usuario registrado con ese RFC.',
+          duplicado_curp: 'Ya existe un usuario registrado con ese CURP.',
+          duplicado_telefono: 'Ya existe un usuario registrado con ese teléfono.',
+          password_invalido: 'La contraseña debe tener al menos 8 caracteres.',
+          error_servidor: 'Ocurrió un error en el servidor. Intenta de nuevo.'
+        };
+        const codigo = '${param.error}';
+        alert(mensajes[codigo] || 'No se pudo guardar el cliente. Verifica que el correo, RFC, CURP y teléfono no estén ya registrados.');
+      });
+    </script>
   </c:if>
 
   <script src="${pageContext.request.contextPath}/js/duenioJS/gestionClientes.js"></script>

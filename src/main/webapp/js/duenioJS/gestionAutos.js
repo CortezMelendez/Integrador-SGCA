@@ -80,6 +80,14 @@ function confirmarGuardarEdicion() {
     });
 }
 
+// Agregar auto (modal Agregar)
+function confirmarGuardarAgregar() {
+    if (!validarYPrepararEnvio('mod')) return;
+    pedirConfirmacion('¿Deseas agregar este auto?', () => {
+        document.getElementById('formAgregar').submit();
+    });
+}
+
 // Limpia el formulario de "Agregar" cada vez que se abre desde cero
 function resetearModalAgregar() {
     document.getElementById('formAgregar').reset();

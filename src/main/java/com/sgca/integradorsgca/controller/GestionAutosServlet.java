@@ -75,31 +75,47 @@ public class GestionAutosServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         req.setCharacterEncoding("UTF-8");
         String accion = req.getParameter("accion");
+        String error = null;
 
         try {
             if ("registrar".equals(accion)) {
-                registrar(req);
+                error = registrar(req);
             } else if ("actualizar".equals(accion)) {
-                actualizar(req);
+                error = actualizar(req);
             }
         } catch (Exception e) {
             System.err.println("Error al procesar auto: " + e.getMessage());
             e.printStackTrace();
+            error = "error_servidor";
         }
 
-        resp.sendRedirect(req.getContextPath() + REDIRECT_LISTA);
+        String destino = REDIRECT_LISTA + (error != null ? "&error=" + error : "");
+        resp.sendRedirect(req.getContextPath() + destino);
     }
 
-    private void registrar(HttpServletRequest req) throws IOException, ServletException {
+    // Devuelve el código de error a mostrar en el modal (null si todo salió bien)
+    private String registrar(HttpServletRequest req) throws IOException, ServletException {
+        String placa = req.getParameter("placa");
+        if (placa != null && vehiculosDao.existePlaca(placa.trim(), null)) {
+            return "duplicado_placa";
+        }
+
         VehiculosBean veh = construirDesdeRequest(req, 0);
         int idVehiculoNuevo = vehiculosDao.registrar(veh);
         if (idVehiculoNuevo > 0) {
             guardarImagenesExtra(req, idVehiculoNuevo, MAX_IMAGENES_EXTRA);
         }
+        return null;
     }
 
-    private void actualizar(HttpServletRequest req) throws IOException, ServletException {
+    private String actualizar(HttpServletRequest req) throws IOException, ServletException {
         int idVehiculo = Integer.parseInt(req.getParameter("id_Vehiculo"));
+
+        String placa = req.getParameter("placa");
+        if (placa != null && vehiculosDao.existePlaca(placa.trim(), idVehiculo)) {
+            return "duplicado_placa";
+        }
+
         VehiculosBean veh = construirDesdeRequest(req, idVehiculo);
         vehiculosDao.actualizar(veh);
 
@@ -115,6 +131,7 @@ public class GestionAutosServlet extends HttpServlet {
         int actuales = vehImgDao.listarPorVehiculo(idVehiculo).size();
         int espacioDisponible = Math.max(0, MAX_IMAGENES_EXTRA - actuales);
         guardarImagenesExtra(req, idVehiculo, espacioDisponible);
+        return null;
     }
 
     // Arma el bean a partir de los campos del formulario (marca/modelo/categoría en texto libre)

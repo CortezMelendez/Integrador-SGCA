@@ -230,7 +230,7 @@
 
             <div class="modal-actions">
                 <button type="button" class="btn-modal-cancel" onclick="cerrarModal('modalAgregar')">Cerrar</button>
-                <button type="submit" class="btn-modal-save">Añadir Servicio</button>
+                <button type="button" class="btn-modal-save" onclick="confirmarGuardarAgregar()">Añadir Servicio</button>
             </div>
         </form>
     </div>
@@ -337,6 +337,19 @@
         </div>
     </div>
 </div>
+
+<c:if test="${not empty param.error}">
+    <script>
+        window.addEventListener('DOMContentLoaded', () => {
+            const mensajes = {
+                duplicado_nombre: 'Ya existe un servicio registrado con ese nombre.',
+                error_servidor: 'Ocurrió un error en el servidor. Intenta de nuevo.'
+            };
+            const codigo = '${param.error}';
+            alert(mensajes[codigo] || 'No se pudo guardar el servicio. Intenta de nuevo.');
+        });
+    </script>
+</c:if>
 
 <script src="${pageContext.request.contextPath}/js/duenioJS/gestionServicios.js"></script>
 </body>
