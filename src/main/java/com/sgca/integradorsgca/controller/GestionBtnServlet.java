@@ -6,6 +6,7 @@ import com.sgca.integradorsgca.model.bean.ServiciosBean;
 import com.sgca.integradorsgca.model.bean.TiposServicioBean;
 import com.sgca.integradorsgca.model.bean.TiposVehiculoBean;
 import com.sgca.integradorsgca.model.bean.UsuarioBean;
+import com.sgca.integradorsgca.model.bean.VehImgBean;
 import com.sgca.integradorsgca.model.bean.VehiculosBean;
 import com.sgca.integradorsgca.model.dao.AgentesDao;
 import com.sgca.integradorsgca.model.dao.ClientesDao;
@@ -13,6 +14,7 @@ import com.sgca.integradorsgca.model.dao.ServiciosDao;
 import com.sgca.integradorsgca.model.dao.TiposServicioDao;
 import com.sgca.integradorsgca.model.dao.TiposVehiculoDao;
 import com.sgca.integradorsgca.model.dao.UsuarioDao;
+import com.sgca.integradorsgca.model.dao.VehImgDao;
 import com.sgca.integradorsgca.model.dao.VehiculosDao;
 import com.sgca.integradorsgca.utils.SessionRegistry;
 import jakarta.servlet.ServletException;
@@ -38,6 +40,7 @@ public class GestionBtnServlet extends HttpServlet {
     private final TiposVehiculoDao tiposVehiculoDao = new TiposVehiculoDao();
     private final AgentesDao agentesDao = new AgentesDao();
     private final ClientesDao clientesDao = new ClientesDao();
+    private final VehImgDao vehImgDao = new VehImgDao();
     private final ServiciosDao serviciosDao = new ServiciosDao();
     private final TiposServicioDao tiposServicioDao = new TiposServicioDao();
     private final UsuarioDao usuarioDao = new UsuarioDao();
@@ -140,9 +143,21 @@ public class GestionBtnServlet extends HttpServlet {
                     List<TiposVehiculoBean> listaTipos = tiposVehiculoDao.listar();
                     List<AgentesBean> listaAgentes = agentesDao.listar();
 
+                    // Imágenes adicionales (galería) y descripción de cada vehículo, para poder
+                    // mostrarlas/editarlas desde el modal Editar sin peticiones extra. La descripción
+                    // va aparte del onclick de "Editar" para no romper el JS si tiene saltos de línea.
+                    Map<Integer, List<VehImgBean>> imagenesPorVehiculo = new HashMap<>();
+                    Map<Integer, String> descripcionPorVehiculo = new HashMap<>();
+                    for (VehiculosBean v : listaVehiculos) {
+                        imagenesPorVehiculo.put(v.getId_Vehiculo(), vehImgDao.listarPorVehiculo(v.getId_Vehiculo()));
+                        descripcionPorVehiculo.put(v.getId_Vehiculo(), v.getDescripcion());
+                    }
+
                     request.setAttribute("listaVehiculos", listaVehiculos);
                     request.setAttribute("listaTipos", listaTipos);
                     request.setAttribute("listaAgentes", listaAgentes);
+                    request.setAttribute("imagenesJsonPorVehiculo", aJsonImagenes(imagenesPorVehiculo));
+                    request.setAttribute("descripcionJsonPorVehiculo", aJsonTextos(descripcionPorVehiculo));
 
                     request.getRequestDispatcher(BASE_DUENIO + "gestionAutos.jsp").forward(request, response);
                     break;
@@ -234,6 +249,57 @@ public class GestionBtnServlet extends HttpServlet {
         }
         json.append("}");
         return json.toString();
+    }
+
+    // Serializa la galería de imágenes extra de cada vehículo a JSON plano, para que
+    // el modal Editar de gestionAutos.jsp la consuma en el cliente sin peticiones extra.
+    private String aJsonImagenes(Map<Integer, List<VehImgBean>> imagenesPorVehiculo) {
+        StringBuilder json = new StringBuilder("{");
+        boolean primerVehiculo = true;
+        for (Map.Entry<Integer, List<VehImgBean>> entrada : imagenesPorVehiculo.entrySet()) {
+            if (!primerVehiculo) json.append(",");
+            primerVehiculo = false;
+            json.append("\"").append(entrada.getKey()).append("\":[");
+
+            boolean primeraImagen = true;
+            for (VehImgBean img : entrada.getValue()) {
+                if (!primeraImagen) json.append(",");
+                primeraImagen = false;
+                json.append("{\"idImagen\":").append(img.getIdImagen())
+                        .append(",\"ruta\":\"").append(escapeJson(img.getRutaImagen()))
+                        .append("\"}");
+            }
+            json.append("]");
+        }
+        json.append("}");
+        return json.toString();
+    }
+
+    // Serializa un Map<Integer, String> a JSON plano (id → texto), preservando los
+    // saltos de línea como "\n" en vez de aplastarlos, para textos largos como la
+    // descripción de un vehículo que el dueño escribió en un <textarea>.
+    private String aJsonTextos(Map<Integer, String> textoPorId) {
+        StringBuilder json = new StringBuilder("{");
+        boolean primero = true;
+        for (Map.Entry<Integer, String> entrada : textoPorId.entrySet()) {
+            if (!primero) json.append(",");
+            primero = false;
+            json.append("\"").append(entrada.getKey()).append("\":\"")
+                    .append(escapeJsonConSaltos(entrada.getValue())).append("\"");
+        }
+        json.append("}");
+        return json.toString();
+    }
+
+    private String escapeJsonConSaltos(String valor) {
+        if (valor == null) return "";
+        return valor.replace("\\", "\\\\")
+                .replace("\"", "\\\"")
+                .replace("\r\n", "\\n")
+                .replace("\n", "\\n")
+                .replace("\r", "\\n")
+                .replace("<", "\\u003c")
+                .replace(">", "\\u003e");
     }
 
     private String escapeJson(String valor) {
