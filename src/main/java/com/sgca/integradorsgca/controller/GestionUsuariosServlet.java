@@ -1,5 +1,6 @@
 package com.sgca.integradorsgca.controller;
 
+import com.sgca.integradorsgca.model.bean.AgentesBean;
 import com.sgca.integradorsgca.model.bean.UsuarioBean;
 import com.sgca.integradorsgca.model.bean.rolBean;
 import com.sgca.integradorsgca.model.dao.AgentesDao;
@@ -12,6 +13,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
+import java.sql.SQLException;
 
 /**
  * CRUD de usuarios (ADMIN.USUARIOS) usado por gestionEmpleados.jsp y
@@ -139,7 +141,30 @@ public class GestionUsuariosServlet extends HttpServlet {
         usuario.setPassword(PasswordUtils.hashPassword(passwordPlano.trim()));
 
         boolean ok = usuarioDao.registrar(usuario);
-        return ok ? null : "error_registro";
+        if (!ok) return "error_registro";
+
+        // Si es empleado (idRol=2), también se crea su fila en ADMIN.AGENTES:
+        // VENTAS y VEHICULOS referencian AGENTES, no USUARIOS directamente,
+        // así que sin esta fila el empleado no puede operar como agente.
+        if (usuario.getRol().getId_Rol() == ID_ROL_AGENTE) {
+
+            UsuarioBean creado = usuarioDao.obtenerPorCorreo(usuario.getCorreo());
+            if (creado == null) return "error_vinculo_agente";
+
+            AgentesBean agente = new AgentesBean();
+            agente.setIdUsuario(creado.getId_usuario());
+            agente.setEstado(usuario.getEstado());
+
+            try {
+                boolean agenteOk = agentesDao.registrar(agente);
+                if (!agenteOk) return "error_vinculo_agente";
+            } catch (SQLException e) {
+                e.printStackTrace();
+                return "error_vinculo_agente";
+            }
+        }
+
+        return null;
     }
 
     private String actualizar(HttpServletRequest req) throws Exception {

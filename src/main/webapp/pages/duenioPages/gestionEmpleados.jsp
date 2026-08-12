@@ -376,6 +376,7 @@
                 error_baja: 'No se pudo dar de baja al empleado. Intenta de nuevo.',
                 no_se_pudo_eliminar: 'No se pudo eliminar el empleado.',
                 password_invalido: 'La contraseña debe tener al menos 8 caracteres.',
+                error_vinculo_agente: 'El empleado se creó, pero no se pudo vincular como agente. Contacta soporte.',
                 error_servidor: 'Ocurrió un error en el servidor. Intenta de nuevo.'
             };
             const codigo = '${param.error}';

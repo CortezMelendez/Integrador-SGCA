@@ -42,7 +42,7 @@ public class AgentesDao {
         return lista;
     }
 
-    public boolean registrar(AgentesBean agente) {
+    public boolean registrar(AgentesBean agente) throws SQLException {
         String sql = "INSERT INTO ADMIN.AGENTES (ID_USUARIO, FECHA_INGRESO, ESTADO) VALUES (?, SYSDATE, ?)";
 
         try (Connection con = Conexion.getConexion();
@@ -54,8 +54,10 @@ public class AgentesDao {
             return ps.executeUpdate() > 0;
 
         } catch (SQLException e) {
+            // Se deja subir la excepción real para que el caller pueda distinguir
+            // este fallo del resto (en vez de esconderla detrás de un simple "false")
             System.err.println("Error al registrar agente: " + e.getMessage());
-            return false;
+            throw e;
         }
     }
 
