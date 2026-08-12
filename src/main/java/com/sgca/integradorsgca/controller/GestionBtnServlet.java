@@ -113,14 +113,25 @@ public class GestionBtnServlet extends HttpServlet {
                 case "gestionClientes":
                     List<UsuarioBean> listaClientes = usuarioDao.listarPorRol(ID_ROL_CLIENTE);
 
-                    // Nombre del agente asesor asignado a cada cliente (por ID_USUARIO del cliente).
+                    // Nombre del agente asesor asignado a cada cliente, su ID_CLIENTE y su
+                    // ID_AGENTE actual (todos indexados por ID_USUARIO del cliente), para poder
+                    // mostrar y reasignar el asesor desde el modal de la columna "Asesor".
                     Map<Integer, String> asesorPorCliente = new HashMap<>();
+                    Map<Integer, Integer> idClientePorUsuario = new HashMap<>();
+                    Map<Integer, Integer> idAgentePorUsuario = new HashMap<>();
                     for (ClientesBean c : clientesDao.listar()) {
                         asesorPorCliente.put(c.getIdUsuario(), c.getNombreAgente());
+                        idClientePorUsuario.put(c.getIdUsuario(), c.getIdCliente());
+                        if (c.getIdAgente() != null) {
+                            idAgentePorUsuario.put(c.getIdUsuario(), c.getIdAgente());
+                        }
                     }
 
                     request.setAttribute("listaUsuarios", listaClientes);
                     request.setAttribute("asesorPorCliente", asesorPorCliente);
+                    request.setAttribute("idClientePorUsuario", idClientePorUsuario);
+                    request.setAttribute("idAgentePorUsuario", idAgentePorUsuario);
+                    request.setAttribute("listaAgentes", agentesDao.listar());
                     request.getRequestDispatcher(BASE_DUENIO + "gestionClientes.jsp").forward(request, response);
                     break;
 

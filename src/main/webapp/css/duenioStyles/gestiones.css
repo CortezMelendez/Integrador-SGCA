@@ -881,6 +881,26 @@ p {
     border-color: var(--color-navy-dark);
 }
 
+.btn-asesor {
+    border: 1px solid var(--btn-back-bg);
+    background: var(--color-gray-100);
+    color: var(--color-text-strong);
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-family: 'Google Sans Code', ui-monospace, monospace;
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+    white-space: nowrap;
+    text-align: left;
+}
+
+.btn-asesor:hover {
+    background: var(--color-gray-150);
+    border-color: var(--color-navy-dark);
+}
+
 /* Modal "Ver clientes" del agente: lista con filtro de búsqueda */
 .clientes-agente-lista {
     list-style: none;

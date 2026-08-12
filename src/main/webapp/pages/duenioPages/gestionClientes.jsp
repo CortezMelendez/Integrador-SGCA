@@ -82,6 +82,8 @@
             <c:forEach var="u" items="${listaUsuarios}" varStatus="fila">
               <c:set var="nombreCompleto" value="${u.nombre} ${u.apellidoPaterno} ${u.apellidoMaterno}" />
               <c:set var="nombreAsesor" value="${asesorPorCliente[u.id_usuario]}" />
+              <c:set var="idClienteRow" value="${idClientePorUsuario[u.id_usuario]}" />
+              <c:set var="idAgenteRow" value="${idAgentePorUsuario[u.id_usuario]}" />
               <tr>
                 <td>${fila.count}</td>
                 <td>
@@ -95,12 +97,15 @@
                 <td>${u.curp}</td>
                 <td>${u.correo}</td>
                 <td>
-                  <c:choose>
-                    <c:when test="${empty nombreAsesor or nombreAsesor == 'Sin Agente Asignado'}">
-                      <span class="asesor-sin-asignar">Sin asesor asignado</span>
-                    </c:when>
-                    <c:otherwise>${nombreAsesor}</c:otherwise>
-                  </c:choose>
+                  <button type="button" class="btn-asesor" title="Asignar asesor"
+                          onclick="abrirModalAsesor(this, ${idClienteRow}, ${empty idAgenteRow ? 0 : idAgenteRow})">
+                    <c:choose>
+                      <c:when test="${empty nombreAsesor or nombreAsesor == 'Sin Agente Asignado'}">
+                        <span class="asesor-sin-asignar">Sin asesor asignado</span>
+                      </c:when>
+                      <c:otherwise>${nombreAsesor}</c:otherwise>
+                    </c:choose>
+                  </button>
                 </td>
                 <td><fmt:formatDate value="${u.fechaRegistro}" pattern="dd/MM/yyyy"/></td>
                 <td>
@@ -296,6 +301,34 @@
           <button type="button" class="btn-modal-save" onclick="confirmarGuardarEdicion()">Guardar cambios</button>
         </div>
       </form>
+    </div>
+  </div>
+
+  <!-- Modal Asignar Asesor -->
+  <div class="modal-overlay" id="modalAsesor" onclick="cerrarOverlay(event,'modalAsesor')">
+    <div class="modal-box" onclick="event.stopPropagation()">
+      <div class="modal-header-bar">Asignar asesor</div>
+      <p class="modal-subtitle">Selecciona el asesor que atenderá a este cliente.</p>
+
+      <input type="hidden" id="asesor-idCliente" />
+
+      <div class="modal-field">
+        <label class="modal-label">Asesor</label>
+        <select class="modal-select" id="asesor-select">
+          <option value="">Sin asesor asignado</option>
+          <c:forEach var="a" items="${listaAgentes}">
+            <c:if test="${a.estado == 1}">
+              <option value="${a.idAgente}">${a.nombreCompletoUsuario}</option>
+            </c:if>
+          </c:forEach>
+        </select>
+        <span class="modal-error" id="err-asesor"></span>
+      </div>
+
+      <div class="modal-actions">
+        <button type="button" class="btn-modal-cancel" onclick="cerrarModal('modalAsesor')">Cancelar</button>
+        <button type="button" class="btn-modal-save" onclick="guardarAsesor()">Guardar</button>
+      </div>
     </div>
   </div>
 

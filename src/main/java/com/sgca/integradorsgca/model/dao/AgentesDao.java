@@ -81,6 +81,22 @@ public class AgentesDao {
         }
     }
 
+    // Quita el agente asignado a un cliente (queda libre para todos los agentes activos)
+    public boolean liberarCliente(int idCliente) {
+        String sql = "UPDATE ADMIN.CLIENTES SET ID_AGENTE = NULL WHERE ID_CLIENTE = ?";
+
+        try (Connection con = Conexion.getConexion();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+
+            ps.setInt(1, idCliente);
+
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.err.println("Error al liberar al cliente: " + e.getMessage());
+            return false;
+        }
+    }
+
     // Cuenta cuántos clientes tiene asignados un agente, dado su ID_USUARIO
     public int contarClientesAsignados(int idUsuarioAgente) {
         String sql = "SELECT COUNT(*) AS total FROM ADMIN.CLIENTES c " +
