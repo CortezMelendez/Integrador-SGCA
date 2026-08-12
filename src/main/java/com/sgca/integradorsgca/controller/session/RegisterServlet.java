@@ -1,6 +1,8 @@
 package com.sgca.integradorsgca.controller.session;
+import com.sgca.integradorsgca.model.bean.ClientesBean;
 import com.sgca.integradorsgca.model.bean.UsuarioBean;
 import com.sgca.integradorsgca.model.bean.rolBean;
+import com.sgca.integradorsgca.model.dao.ClientesDao;
 import com.sgca.integradorsgca.model.dao.UsuarioDao;
 import com.sgca.integradorsgca.utils.PasswordUtils;
 
@@ -15,6 +17,7 @@ import java.sql.SQLException;
 public class RegisterServlet extends HttpServlet {
 
     private final UsuarioDao usuarioDao = new UsuarioDao();
+    private final ClientesDao clientesDao = new ClientesDao();
 
     // Cambia este ID por el que tenga el rol CLIENTE en tu BD
     private static final int ID_ROL_CLIENTE = 3;
@@ -119,6 +122,46 @@ public class RegisterServlet extends HttpServlet {
                 System.out.println("=======================================");
                 System.out.println("USUARIO REGISTRADO CORRECTAMENTE");
                 System.out.println("=======================================");
+
+                // El usuario ya quedó en ADMIN.USUARIOS; falta vincularlo en
+                // ADMIN.CLIENTES (sin agente asignado) para que pueda comprar,
+                // ver "Mis compras", etc. Se busca por correo para obtener el
+                // ID_USUARIO recién generado, ya que usuarioDao.registrar() no lo regresa.
+                UsuarioBean creado = usuarioDao.obtenerPorCorreo(correo);
+
+                if (creado == null) {
+                    request.setAttribute(
+                            "error",
+                            "Tu cuenta se creó, pero no se pudo recuperar para vincularla como cliente. Contacta soporte.");
+                    request.getRequestDispatcher("/register.jsp")
+                            .forward(request, response);
+                    return;
+                }
+
+                ClientesBean cliente = new ClientesBean();
+                cliente.setIdUsuario(creado.getId_usuario());
+                cliente.setIdAgente(null);
+
+                try {
+                    boolean clienteRegistrado = clientesDao.registrar(cliente);
+
+                    if (!clienteRegistrado) {
+                        request.setAttribute(
+                                "error",
+                                "Tu cuenta se creó, pero no se pudo vincular como cliente. Contacta soporte.");
+                        request.getRequestDispatcher("/register.jsp")
+                                .forward(request, response);
+                        return;
+                    }
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                    request.setAttribute(
+                            "error",
+                            "Tu cuenta se creó, pero no se pudo vincular como cliente. Contacta soporte.");
+                    request.getRequestDispatcher("/register.jsp")
+                            .forward(request, response);
+                    return;
+                }
 
                 response.sendRedirect(request.getContextPath() + "/login.jsp");
 

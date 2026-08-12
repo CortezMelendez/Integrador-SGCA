@@ -14,7 +14,7 @@ public class ClientesDao {
     //lista general para mostrar al cliente
     public List<ClientesBean> listar() {
         List<ClientesBean> lista = new ArrayList<>();
-        String sql = "SELECT c.ID_CLIENTE, c.ID_USUARIO, c.ID_AGENTE, c.FECHA_REGISTRO, "
+        String sql = "SELECT c.ID_CLIENTE, c.ID_USUARIO, c.ID_AGENTE, c.FECHA_ALTA AS FECHA_REGISTRO, "
                 + "(u.NOMBRE || ' ' || u.APELLIDO_PATERNO || ' ' || NVL(u.APELLIDO_MATERNO, '')) AS NOMBRE_CLIENTE, "
                 + "u.CORREO AS CORREO_CLIENTE, "
                 + "NVL((ua.NOMBRE || ' ' || ua.APELLIDO_PATERNO), 'Sin Agente Asignado') AS NOMBRE_AGENTE "
@@ -53,7 +53,7 @@ public class ClientesDao {
     // Resuelve el ID_CLIENTE a partir del ID_USUARIO de la sesión (usuario logueado con rol CLIENTE)
     public ClientesBean buscarPorIdUsuario(int idUsuario) {
         ClientesBean cliente = null;
-        String sql = "SELECT c.ID_CLIENTE, c.ID_USUARIO, c.ID_AGENTE, c.FECHA_REGISTRO "
+        String sql = "SELECT c.ID_CLIENTE, c.ID_USUARIO, c.ID_AGENTE, c.FECHA_ALTA AS FECHA_REGISTRO "
                 + "FROM ADMIN.CLIENTES c "
                 + "WHERE c.ID_USUARIO = ?";
 
@@ -82,7 +82,7 @@ public class ClientesDao {
 
     public List<ClientesBean> listarClientesDisponibles() {
         List<ClientesBean> lista = new ArrayList<>();
-        String sql = "SELECT c.ID_CLIENTE, c.ID_USUARIO, c.FECHA_REGISTRO, "
+        String sql = "SELECT c.ID_CLIENTE, c.ID_USUARIO, c.FECHA_ALTA AS FECHA_REGISTRO, "
                 + "(u.NOMBRE || ' ' || u.APELLIDO_PATERNO || ' ' || NVL(u.APELLIDO_MATERNO, '')) AS NOMBRE_CLIENTE, "
                 + "u.CORREO AS CORREO_CLIENTE "
                 + "FROM ADMIN.CLIENTES c "
@@ -116,8 +116,8 @@ public class ClientesDao {
      Registra un nuevo cliente asociándolo a un ID_USUARIO.
      Puede recibir un ID_AGENTE o registrarse como nulo (disponible).
      */
-    public boolean registrar(ClientesBean cliente) {
-        String sql = "INSERT INTO ADMIN.CLIENTES (ID_USUARIO, ID_AGENTE, FECHA_REGISTRO) VALUES (?, ?, SYSDATE)";
+    public boolean registrar(ClientesBean cliente) throws SQLException {
+        String sql = "INSERT INTO ADMIN.CLIENTES (ID_USUARIO, ID_AGENTE, FECHA_ALTA) VALUES (?, ?, SYSDATE)";
 
         try (Connection con = Conexion.getConexion();
              PreparedStatement ps = con.prepareStatement(sql)) {
@@ -133,8 +133,10 @@ public class ClientesDao {
             return ps.executeUpdate() > 0;
 
         } catch (SQLException e) {
+            // Se deja subir la excepción real para poder mostrarla en RegisterServlet
+            // en vez de esconderla detrás de un simple "false"
             System.err.println("Error al registrar cliente: " + e.getMessage());
-            return false;
+            throw e;
         }
     }
 
