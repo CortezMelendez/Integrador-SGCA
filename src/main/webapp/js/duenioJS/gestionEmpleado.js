@@ -43,8 +43,52 @@ document.addEventListener('keydown', e => {
         cerrarModal('modalEditar');
         cerrarModal('modalConfirmar');
         cerrarModal('modalTransferir');
+        cerrarModal('modalClientesAgente');
     }
 });
+
+// -------------------------------
+// Modal "Ver clientes" del agente (columna Clientes de la tabla)
+// -------------------------------
+let _clientesAgenteActual = [];
+
+function verClientesAgente(idAgente, nombreAgente) {
+    _clientesAgenteActual = (typeof CLIENTES_POR_AGENTE !== 'undefined' && CLIENTES_POR_AGENTE[idAgente]) || [];
+
+    document.getElementById('clientesAgenteNombre').textContent = nombreAgente || '';
+    document.getElementById('clientesAgenteBuscador').value = '';
+    renderClientesAgente(_clientesAgenteActual);
+
+    abrirModal('modalClientesAgente');
+    // El foco en el buscador facilita filtrar de inmediato cuando hay muchos clientes
+    setTimeout(() => document.getElementById('clientesAgenteBuscador').focus(), 50);
+}
+
+function renderClientesAgente(lista) {
+    const contenedor = document.getElementById('clientesAgenteLista');
+    contenedor.innerHTML = '';
+
+    if (!lista.length) {
+        contenedor.innerHTML = '<li class="clientes-agente-vacio">Este agente no tiene clientes asignados.</li>';
+        return;
+    }
+
+    lista.forEach(c => {
+        const li = document.createElement('li');
+        li.className = 'clientes-agente-item';
+        li.innerHTML = `<span class="clientes-agente-nombre"></span><span class="clientes-agente-correo"></span>`;
+        li.querySelector('.clientes-agente-nombre').textContent = c.nombre || '';
+        li.querySelector('.clientes-agente-correo').textContent = c.correo || '';
+        contenedor.appendChild(li);
+    });
+}
+
+function filtrarClientesAgente(texto) {
+    const t = texto.toLowerCase();
+    const filtrados = _clientesAgenteActual.filter(c =>
+        (c.nombre || '').toLowerCase().includes(t) || (c.correo || '').toLowerCase().includes(t));
+    renderClientesAgente(filtrados);
+}
 
 // -------------------------------
 // Modal de confirmación (reemplaza confirm() del navegador)

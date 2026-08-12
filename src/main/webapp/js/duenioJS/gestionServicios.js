@@ -78,7 +78,31 @@ function resetearModalAgregar() {
     document.getElementById('formAgregar').reset();
     document.getElementById('mod-tipo').value = '';
     document.querySelectorAll('#mod-tipo-group .tipo-btn').forEach(b => b.classList.remove('activo'));
+
+    const preview = document.getElementById('mod-foto-preview');
+    const placeholder = document.getElementById('mod-foto-placeholder');
+    preview.removeAttribute('src');
+    preview.style.display = 'none';
+    placeholder.style.display = 'flex';
+
     limpiarErrores('mod');
+}
+
+// Vista previa de la imagen elegida en el <input type="file"> (Agregar / Editar)
+function previsualizarFoto(input, boxId) {
+    const box = document.getElementById(boxId);
+    const preview = box.querySelector('.modal-photo-preview');
+    const placeholder = box.querySelector('.upload-placeholder');
+    const file = input.files && input.files[0];
+    if (!file) return;
+
+    const lector = new FileReader();
+    lector.onload = e => {
+        preview.src = e.target.result;
+        preview.style.display = 'block';
+        placeholder.style.display = 'none';
+    };
+    lector.readAsDataURL(file);
 }
 
 // --- SELECCIÓN DE "TIPO DE SERVICIO" (botones tipo Único/Mensual/Anual) ---
@@ -92,7 +116,7 @@ function seleccionarTipo(prefijo, id, boton) {
 }
 
 // --- LLENAR MODAL EDITAR CON LOS DATOS DE LA FILA ---
-function abrirEditar(id, nombre, descripcion, precio, idTipo, estado) {
+function abrirEditar(id, nombre, descripcion, precio, idTipo, estado, foto) {
     document.getElementById('edit-id').value = id;
     document.getElementById('edit-nombre').value = nombre;
     document.getElementById('edit-descripcion').value = descripcion;
@@ -106,6 +130,23 @@ function abrirEditar(id, nombre, descripcion, precio, idTipo, estado) {
     const selEstado = document.getElementById('edit-estado');
     const valorEstado = estado === 'Activo' ? '1' : '0';
     [...selEstado.options].forEach(o => o.selected = o.value === valorEstado);
+
+    // Limpia el <input type="file">: si el usuario no elige una nueva imagen,
+    // se conserva la que ya tenía (ver campo oculto foto_actual)
+    document.getElementById('edit-foto-input').value = '';
+    document.getElementById('edit-foto-actual').value = foto || '';
+
+    const preview = document.getElementById('edit-foto-preview');
+    const placeholder = document.getElementById('edit-foto-placeholder');
+    if (foto && foto.trim() !== '') {
+        preview.src = `${CONTEXT_PATH}/${foto}`;
+        preview.style.display = 'block';
+        placeholder.style.display = 'none';
+    } else {
+        preview.removeAttribute('src');
+        preview.style.display = 'none';
+        placeholder.style.display = 'flex';
+    }
 
     limpiarErrores('edit');
     abrirModal('modalEditar');

@@ -1,12 +1,14 @@
 package com.sgca.integradorsgca.controller;
 
 import com.sgca.integradorsgca.model.bean.AgentesBean;
+import com.sgca.integradorsgca.model.bean.ClientesBean;
 import com.sgca.integradorsgca.model.bean.ServiciosBean;
 import com.sgca.integradorsgca.model.bean.TiposServicioBean;
 import com.sgca.integradorsgca.model.bean.TiposVehiculoBean;
 import com.sgca.integradorsgca.model.bean.UsuarioBean;
 import com.sgca.integradorsgca.model.bean.VehiculosBean;
 import com.sgca.integradorsgca.model.dao.AgentesDao;
+import com.sgca.integradorsgca.model.dao.ClientesDao;
 import com.sgca.integradorsgca.model.dao.ServiciosDao;
 import com.sgca.integradorsgca.model.dao.TiposServicioDao;
 import com.sgca.integradorsgca.model.dao.TiposVehiculoDao;
@@ -35,6 +37,7 @@ public class GestionBtnServlet extends HttpServlet {
     private final VehiculosDao vehiculosDao = new VehiculosDao();
     private final TiposVehiculoDao tiposVehiculoDao = new TiposVehiculoDao();
     private final AgentesDao agentesDao = new AgentesDao();
+    private final ClientesDao clientesDao = new ClientesDao();
     private final ServiciosDao serviciosDao = new ServiciosDao();
     private final TiposServicioDao tiposServicioDao = new TiposServicioDao();
     private final UsuarioDao usuarioDao = new UsuarioDao();
@@ -90,23 +93,34 @@ public class GestionBtnServlet extends HttpServlet {
                     List<UsuarioBean> listaEmpleados = usuarioDao.listarPorRol(ID_ROL_AGENTE);
 
                     // Cuántos clientes activos tiene cada agente, para saber si al darlo
-                    // de baja hace falta pedir un agente receptor (modal "Transferir clientes").
+                    // de baja hace falta pedir un agente receptor (modal "Transferir clientes"),
+                    // y el detalle (nombre/correo) para el modal "Ver clientes" de la columna Clientes.
                     Map<Integer, Integer> clientesPorAgente = new HashMap<>();
+                    Map<Integer, List<ClientesBean>> detalleClientesPorAgente = new HashMap<>();
                     for (UsuarioBean empleado : listaEmpleados) {
-                        clientesPorAgente.put(
-                                empleado.getId_usuario(),
-                                agentesDao.contarClientesAsignados(empleado.getId_usuario()));
+                        List<ClientesBean> clientesDelAgente =
+                                agentesDao.listarClientesAsignados(empleado.getId_usuario());
+                        clientesPorAgente.put(empleado.getId_usuario(), clientesDelAgente.size());
+                        detalleClientesPorAgente.put(empleado.getId_usuario(), clientesDelAgente);
                     }
 
                     request.setAttribute("listaUsuarios", listaEmpleados);
                     request.setAttribute("clientesPorAgente", clientesPorAgente);
+                    request.setAttribute("clientesJsonPorAgente", aJson(detalleClientesPorAgente));
                     request.getRequestDispatcher(BASE_DUENIO + "gestionEmpleados.jsp").forward(request, response);
                     break;
 
                 case "gestionClientes":
                     List<UsuarioBean> listaClientes = usuarioDao.listarPorRol(ID_ROL_CLIENTE);
 
+                    // Nombre del agente asesor asignado a cada cliente (por ID_USUARIO del cliente).
+                    Map<Integer, String> asesorPorCliente = new HashMap<>();
+                    for (ClientesBean c : clientesDao.listar()) {
+                        asesorPorCliente.put(c.getIdUsuario(), c.getNombreAgente());
+                    }
+
                     request.setAttribute("listaUsuarios", listaClientes);
+                    request.setAttribute("asesorPorCliente", asesorPorCliente);
                     request.getRequestDispatcher(BASE_DUENIO + "gestionClientes.jsp").forward(request, response);
                     break;
 
@@ -185,6 +199,40 @@ public class GestionBtnServlet extends HttpServlet {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             response.getWriter().println("Ocurrió un error en el servidor. Intenta más tarde.");
         }
+    }
+
+    // Serializa el detalle de clientes por agente a JSON plano, para que el modal
+    // "Ver clientes" (gestionEmpleados.jsp) lo consuma en el cliente sin peticiones extra.
+    private String aJson(Map<Integer, List<ClientesBean>> detallePorAgente) {
+        StringBuilder json = new StringBuilder("{");
+        boolean primerAgente = true;
+        for (Map.Entry<Integer, List<ClientesBean>> entrada : detallePorAgente.entrySet()) {
+            if (!primerAgente) json.append(",");
+            primerAgente = false;
+            json.append("\"").append(entrada.getKey()).append("\":[");
+
+            boolean primerCliente = true;
+            for (ClientesBean cliente : entrada.getValue()) {
+                if (!primerCliente) json.append(",");
+                primerCliente = false;
+                json.append("{\"nombre\":\"").append(escapeJson(cliente.getNombreCliente()))
+                        .append("\",\"correo\":\"").append(escapeJson(cliente.getCorreoCliente()))
+                        .append("\"}");
+            }
+            json.append("]");
+        }
+        json.append("}");
+        return json.toString();
+    }
+
+    private String escapeJson(String valor) {
+        if (valor == null) return "";
+        return valor.replace("\\", "\\\\")
+                .replace("\"", "\\\"")
+                .replace("\n", " ")
+                .replace("\r", " ")
+                .replace("<", "\\u003c")
+                .replace(">", "\\u003e");
     }
 
     private String obtenerNombreRol(UsuarioBean usuario) {

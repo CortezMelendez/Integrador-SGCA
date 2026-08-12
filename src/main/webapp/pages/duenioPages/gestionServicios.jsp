@@ -82,8 +82,14 @@
                     <tr>
                         <td>${fila.count}</td>
                         <td>
-                            <!-- No existe columna de imagen en ADMIN.SERVICIOS todavía, se muestra un placeholder -->
-                            <div class="foto-placeholder"></div>
+                            <c:choose>
+                                <c:when test="${not empty s.foto}">
+                                    <img class="foto-thumb" src="${pageContext.request.contextPath}/${s.foto}" alt="${s.nombre}" />
+                                </c:when>
+                                <c:otherwise>
+                                    <div class="foto-placeholder"></div>
+                                </c:otherwise>
+                            </c:choose>
                         </td>
                         <td>${s.nombre}</td>
                         <td><div class="precio">$<fmt:formatNumber value="${s.precio}" type="number" minFractionDigits="2" maxFractionDigits="2"/></div></td>
@@ -98,7 +104,7 @@
                         <td class="acciones-cell">
                             <div class="action-group">
                                 <button type="button" class="btn-icon btn-edit" title="Editar"
-                                        onclick="abrirEditar(${s.id_servicio}, '${s.nombre}', '${s.descripcion}', ${s.precio}, ${s.tipoServicio.id_tipo_servicio}, '${s.estado == 1 ? 'Activo' : 'Inactivo'}')">
+                                        onclick="abrirEditar(${s.id_servicio}, '${s.nombre}', '${s.descripcion}', ${s.precio}, ${s.tipoServicio.id_tipo_servicio}, '${s.estado == 1 ? 'Activo' : 'Inactivo'}', '${s.foto}')">
                                     <img src="${pageContext.request.contextPath}/Images/edit.svg" alt="Editar" width="18" />
                                 </button>
                                 <button type="button" class="btn-icon btn-delete" title="Eliminar"
@@ -140,6 +146,7 @@
     <div class="modal-box modal-box-lg modal-servicio" onclick="event.stopPropagation()">
         <form id="formAgregar" method="POST"
               action="${pageContext.request.contextPath}/servicios"
+              enctype="multipart/form-data"
               onsubmit="return validarYPrepararEnvio('mod')">
             <input type="hidden" name="accion" value="agregar" />
 
@@ -212,12 +219,8 @@
                 <div class="modal-field">
                     <label class="modal-label">Imagen del Servicio</label>
                     <div class="modal-photo-upload" id="mod-foto-box" onclick="document.getElementById('mod-foto-input').click()">
-                        <!-- El campo de imagen no se envía todavía: ADMIN.SERVICIOS no tiene columna de imagen.
-                             Cuando exista, quitar disabled del input y mandarlo con enctype multipart/form-data -->
-                        <input type="file" id="mod-foto-input" accept="image/jpg,image/png" hidden disabled />
+                        <input type="file" id="mod-foto-input" name="foto" accept="image/jpg,image/jpeg,image/png" hidden onchange="previsualizarFoto(this,'mod-foto-box')" />
                         <div class="upload-placeholder" id="mod-foto-placeholder">
-                            <!-- ICONO: nube de subida (descargar de Figma) -->
-                            <!-- <img src="RUTA_ICONO_UPLOAD" class="modal-label-icon" alt="" /> -->
                             <span>Haga clic para subir o arrastre y suelte una imagen (JPG, PNG)</span>
                         </div>
                         <img class="modal-photo-preview" id="mod-foto-preview" style="display:none" alt="Vista previa" />
@@ -240,9 +243,11 @@
     <div class="modal-box modal-box-lg modal-servicio" onclick="event.stopPropagation()">
         <form id="formEditar" method="POST"
               action="${pageContext.request.contextPath}/servicios"
+              enctype="multipart/form-data"
               onsubmit="return validarYPrepararEnvio('edit')">
             <input type="hidden" name="accion" value="editar" />
             <input type="hidden" name="id_servicio" id="edit-id" />
+            <input type="hidden" name="foto_actual" id="edit-foto-actual" />
 
             <div class="modal-header-bar modal-header-servicio">
                 <div class="modal-header-title-group">
@@ -292,6 +297,17 @@
                         <option value="1">Activo</option>
                         <option value="0">Inactivo</option>
                     </select>
+                </div>
+            </div>
+
+            <div class="modal-field">
+                <label class="modal-label">Imagen del Servicio</label>
+                <div class="modal-photo-upload" id="edit-foto-box" onclick="document.getElementById('edit-foto-input').click()">
+                    <input type="file" id="edit-foto-input" name="foto" accept="image/jpg,image/jpeg,image/png" hidden onchange="previsualizarFoto(this,'edit-foto-box')" />
+                    <div class="upload-placeholder" id="edit-foto-placeholder">
+                        <span>Haga clic para subir o arrastre y suelte una imagen (JPG, PNG)</span>
+                    </div>
+                    <img class="modal-photo-preview" id="edit-foto-preview" style="display:none" alt="Vista previa" />
                 </div>
             </div>
 

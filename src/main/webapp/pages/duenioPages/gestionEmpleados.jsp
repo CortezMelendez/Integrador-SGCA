@@ -72,6 +72,7 @@
                     <th>Teléfono</th>
                     <th>CURP</th>
                     <th>Correo</th>
+                    <th>Clientes</th>
                     <th>Fecha de registro</th>
                     <th>Estado</th>
                     <th>Acciones</th>
@@ -92,6 +93,12 @@
                         <td>${u.telefono}</td>
                         <td>${u.curp}</td>
                         <td>${u.correo}</td>
+                        <td>
+                            <button type="button" class="btn-ver-clientes"
+                                    onclick="verClientesAgente(${u.id_usuario}, '${nombreCompleto}')">
+                                ${clientesPorAgente[u.id_usuario]} cliente(s)
+                            </button>
+                        </td>
                         <td><fmt:formatDate value="${u.fechaRegistro}" pattern="dd/MM/yyyy"/></td>
                         <td>
                   <span class="badge ${u.estado == 1 ? 'badge-active' : 'badge-inactive'}"
@@ -115,7 +122,7 @@
                 </c:forEach>
                 <c:if test="${empty listaUsuarios}">
                     <tr>
-                        <td colspan="9" style="text-align:center; padding: 24px;">No hay empleados registrados todavía.</td>
+                        <td colspan="10" style="text-align:center; padding: 24px;">No hay empleados registrados todavía.</td>
                     </tr>
                 </c:if>
                 </tbody>
@@ -331,6 +338,32 @@
         </div>
     </div>
 </div>
+
+<!-- Modal "Ver clientes" del agente: lista con filtro de búsqueda, igual al de la tabla -->
+<div class="modal-overlay" id="modalClientesAgente" onclick="cerrarOverlay(event,'modalClientesAgente')">
+    <div class="modal-box" onclick="event.stopPropagation()">
+        <div class="modal-header-bar">
+            Clientes de <span id="clientesAgenteNombre">&nbsp;</span>
+        </div>
+        <div class="gest-search-inline" style="margin-top:16px;">
+            <input class="gest-input" type="text" id="clientesAgenteBuscador"
+                   placeholder="Buscar cliente por nombre o correo..."
+                   oninput="filtrarClientesAgente(this.value)" />
+            <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+        </div>
+        <ul class="clientes-agente-lista" id="clientesAgenteLista"></ul>
+        <div class="modal-actions">
+            <button type="button" class="btn-modal-cancel" onclick="cerrarModal('modalClientesAgente')">Cerrar</button>
+        </div>
+    </div>
+</div>
+
+<!-- Detalle de clientes por agente (JSON), consumido por verClientesAgente() en gestionEmpleado.js -->
+<script>
+    const CLIENTES_POR_AGENTE = ${clientesJsonPorAgente};
+</script>
 
 <c:if test="${not empty param.error}">
     <script>

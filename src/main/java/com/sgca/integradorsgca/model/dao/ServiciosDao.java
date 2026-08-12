@@ -29,7 +29,8 @@ public class ServiciosDao {
                     s.descripcion,
                     s.precio,
                     s.estado,
-                    s.fecha_registro
+                    s.fecha_registro,
+                    s.foto
                 FROM ADMIN.SERVICIOS s
                 INNER JOIN ADMIN.TIPOS_SERVICIO ts
                 ON s.id_tipo_servicio = ts.id_tipo_servicio
@@ -56,6 +57,7 @@ public class ServiciosDao {
                 servicio.setPrecio(rs.getDouble("precio"));
                 servicio.setEstado(rs.getInt("estado"));
                 servicio.setFechaRegistro(rs.getTimestamp("fecha_registro"));
+                servicio.setFoto(rs.getString("foto"));
 
                 lista.add(servicio);
             }
@@ -79,11 +81,12 @@ public class ServiciosDao {
                     descripcion,
                     precio,
                     estado,
-                    fecha_registro
+                    fecha_registro,
+                    foto
                 )
                 VALUES
                 (
-                    ?,?,?,?,?,SYSDATE
+                    ?,?,?,?,?,SYSDATE,?
                 )
                 """;
 
@@ -95,6 +98,7 @@ public class ServiciosDao {
             ps.setString(3, servicio.getDescripcion());
             ps.setDouble(4, servicio.getPrecio());
             ps.setInt(5, servicio.getEstado());
+            ps.setString(6, servicio.getFoto());
 
             return ps.executeUpdate() > 0;
         }
@@ -116,7 +120,8 @@ public class ServiciosDao {
                     s.descripcion,
                     s.precio,
                     s.estado,
-                    s.fecha_registro
+                    s.fecha_registro,
+                    s.foto
                 FROM ADMIN.SERVICIOS s
                 INNER JOIN ADMIN.TIPOS_SERVICIO ts
                 ON ts.id_tipo_servicio=s.id_tipo_servicio
@@ -146,6 +151,7 @@ public class ServiciosDao {
                 servicio.setPrecio(rs.getDouble("precio"));
                 servicio.setEstado(rs.getInt("estado"));
                 servicio.setFechaRegistro(rs.getTimestamp("fecha_registro"));
+                servicio.setFoto(rs.getString("foto"));
 
                 return servicio;
             }
@@ -168,7 +174,8 @@ public class ServiciosDao {
                     nombre=?,
                     descripcion=?,
                     precio=?,
-                    estado=?
+                    estado=?,
+                    foto=?
                 WHERE id_servicio=?
                 """;
 
@@ -180,7 +187,8 @@ public class ServiciosDao {
             ps.setString(3, servicio.getDescripcion());
             ps.setDouble(4, servicio.getPrecio());
             ps.setInt(5, servicio.getEstado());
-            ps.setInt(6, servicio.getId_servicio());
+            ps.setString(6, servicio.getFoto());
+            ps.setInt(7, servicio.getId_servicio());
 
             return ps.executeUpdate() > 0;
         }

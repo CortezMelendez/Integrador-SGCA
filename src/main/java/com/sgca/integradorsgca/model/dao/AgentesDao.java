@@ -1,6 +1,7 @@
 package com.sgca.integradorsgca.model.dao;
 
 import com.sgca.integradorsgca.model.bean.AgentesBean;
+import com.sgca.integradorsgca.model.bean.ClientesBean;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -96,6 +97,40 @@ public class AgentesDao {
             System.err.println("Error al contar clientes del agente: " + e.getMessage());
         }
         return 0;
+    }
+
+    // Lista con el detalle (nombre y correo) de los clientes asignados a un agente,
+    // dado su ID_USUARIO. Se usa en el modal "Ver clientes" de gestionEmpleados.jsp.
+    public List<ClientesBean> listarClientesAsignados(int idUsuarioAgente) {
+        List<ClientesBean> lista = new ArrayList<>();
+        String sql = "SELECT c.ID_CLIENTE, c.ID_USUARIO, " +
+                "(u.NOMBRE || ' ' || u.APELLIDO_PATERNO || ' ' || NVL(u.APELLIDO_MATERNO, '')) AS NOMBRE_CLIENTE, " +
+                "u.CORREO AS CORREO_CLIENTE " +
+                "FROM ADMIN.CLIENTES c " +
+                "INNER JOIN ADMIN.AGENTES a ON c.ID_AGENTE = a.ID_AGENTE " +
+                "INNER JOIN ADMIN.USUARIOS u ON c.ID_USUARIO = u.ID_USUARIO " +
+                "WHERE a.ID_USUARIO = ? " +
+                "ORDER BY NOMBRE_CLIENTE ASC";
+
+        try (Connection con = Conexion.getConexion();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+
+            ps.setInt(1, idUsuarioAgente);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    ClientesBean cliente = new ClientesBean();
+                    cliente.setIdCliente(rs.getInt("ID_CLIENTE"));
+                    cliente.setIdUsuario(rs.getInt("ID_USUARIO"));
+                    cliente.setNombreCliente(rs.getString("NOMBRE_CLIENTE"));
+                    cliente.setCorreoCliente(rs.getString("CORREO_CLIENTE"));
+                    lista.add(cliente);
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Error al listar clientes del agente: " + e.getMessage());
+        }
+        return lista;
     }
 
     /*

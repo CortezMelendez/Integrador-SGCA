@@ -853,3 +853,71 @@ p {
     width: 20px;
     height: 20px;
 }
+
+/* =========================================================
+   10. COLUMNA "ASESOR" (clientes) Y "CLIENTES" (empleados)
+========================================================= */
+.asesor-sin-asignar {
+    color: var(--color-gray-600);
+    font-style: italic;
+}
+
+.btn-ver-clientes {
+    border: 1px solid var(--btn-back-bg);
+    background: var(--color-gray-100);
+    color: var(--color-text-strong);
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-family: 'Google Sans Code', ui-monospace, monospace;
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+    white-space: nowrap;
+}
+
+.btn-ver-clientes:hover {
+    background: var(--color-gray-150);
+    border-color: var(--color-navy-dark);
+}
+
+/* Modal "Ver clientes" del agente: lista con filtro de búsqueda */
+.clientes-agente-lista {
+    list-style: none;
+    margin: 16px 0 0;
+    padding: 0;
+    max-height: 320px;
+    overflow-y: auto;
+    border: 1px solid var(--color-gray-150);
+    border-radius: 8px;
+}
+
+.clientes-agente-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--color-gray-150);
+    font-size: 0.9rem;
+}
+
+.clientes-agente-item:last-child {
+    border-bottom: none;
+}
+
+.clientes-agente-nombre {
+    font-weight: 600;
+}
+
+.clientes-agente-correo {
+    color: var(--color-gray-650);
+    font-size: 0.82rem;
+}
+
+.clientes-agente-vacio {
+    padding: 20px 14px;
+    text-align: center;
+    color: var(--color-gray-600);
+    font-size: 0.9rem;
+}

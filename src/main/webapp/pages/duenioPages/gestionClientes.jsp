@@ -72,6 +72,7 @@
               <th>Teléfono</th>
               <th>CURP</th>
               <th>Correo</th>
+              <th>Asesor</th>
               <th>Fecha de registro</th>
               <th>Estado</th>
               <th>Acciones</th>
@@ -80,6 +81,7 @@
           <tbody>
             <c:forEach var="u" items="${listaUsuarios}" varStatus="fila">
               <c:set var="nombreCompleto" value="${u.nombre} ${u.apellidoPaterno} ${u.apellidoMaterno}" />
+              <c:set var="nombreAsesor" value="${asesorPorCliente[u.id_usuario]}" />
               <tr>
                 <td>${fila.count}</td>
                 <td>
@@ -92,6 +94,14 @@
                 <td>${u.telefono}</td>
                 <td>${u.curp}</td>
                 <td>${u.correo}</td>
+                <td>
+                  <c:choose>
+                    <c:when test="${empty nombreAsesor or nombreAsesor == 'Sin Agente Asignado'}">
+                      <span class="asesor-sin-asignar">Sin asesor asignado</span>
+                    </c:when>
+                    <c:otherwise>${nombreAsesor}</c:otherwise>
+                  </c:choose>
+                </td>
                 <td><fmt:formatDate value="${u.fechaRegistro}" pattern="dd/MM/yyyy"/></td>
                 <td>
                   <span class="badge ${u.estado == 1 ? 'badge-active' : 'badge-inactive'}"
@@ -115,7 +125,7 @@
             </c:forEach>
             <c:if test="${empty listaUsuarios}">
               <tr>
-                <td colspan="9" style="text-align:center; padding: 24px;">No hay clientes registrados todavía.</td>
+                <td colspan="10" style="text-align:center; padding: 24px;">No hay clientes registrados todavía.</td>
               </tr>
             </c:if>
           </tbody>

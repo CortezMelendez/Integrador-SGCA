@@ -9,6 +9,7 @@ public class ServiciosBean {
     private double precio;
     private int estado;
     private Timestamp fechaRegistro;
+    private String foto;
 
     public ServiciosBean() {}
 
@@ -75,5 +76,13 @@ public class ServiciosBean {
 
     public void setFechaRegistro(Timestamp fechaRegistro) {
         this.fechaRegistro = fechaRegistro;
+    }
+
+    public String getFoto() {
+        return foto;
+    }
+
+    public void setFoto(String foto) {
+        this.foto = foto;
     }
 }
