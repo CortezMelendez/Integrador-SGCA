@@ -9,6 +9,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,7 +20,7 @@ public class VehiculosDao {
         String sql = "SELECT "
                 + "V.ID_VEHICULO, V.ID_MODELO, V.ID_TIPO, V.ID_AGENTE, "
                 + "V.PLACA, V.COLOR, V.ANIO, V.PRECIO, V.DISPONIBLE, "
-                + "V.FECHA_REGISTRO, V.FOTO_PORTADA, "
+                + "V.FECHA_REGISTRO, V.FOTO_PORTADA, V.DESCRIPCION_GENERAL, "
                 + "M.NOMBRE AS NOMBRE_MODELO, M.ESTADO AS ESTADO_MODELO, "
                 + "MA.ID_MARCA, MA.NOMBRE AS NOMBRE_MARCA, MA.ESTADO AS ESTADO_MARCA, "
                 + "TV.NOMBRE AS NOMBRE_TIPO "
@@ -49,7 +50,7 @@ public class VehiculosDao {
         String sql = "SELECT "
                 + "V.ID_VEHICULO, V.ID_MODELO, V.ID_TIPO, V.ID_AGENTE, "
                 + "V.PLACA, V.COLOR, V.ANIO, V.PRECIO, V.DISPONIBLE, "
-                + "V.FECHA_REGISTRO, V.FOTO_PORTADA, "
+                + "V.FECHA_REGISTRO, V.FOTO_PORTADA, V.DESCRIPCION_GENERAL, "
                 + "M.NOMBRE AS NOMBRE_MODELO, M.ESTADO AS ESTADO_MODELO, "
                 + "MA.ID_MARCA, MA.NOMBRE AS NOMBRE_MARCA, MA.ESTADO AS ESTADO_MARCA, "
                 + "TV.NOMBRE AS NOMBRE_TIPO "
@@ -74,13 +75,15 @@ public class VehiculosDao {
         return veh;
     }
 
-    public void registrar(VehiculosBean veh) {
+    // Devuelve el ID_VEHICULO generado (0 si falló), para poder asociarle
+    // de inmediato las imágenes adicionales en ADMIN.VEHICULO_IMAGENES.
+    public int registrar(VehiculosBean veh) {
         String sql = "INSERT INTO ADMIN.VEHICULOS (ID_MODELO, ID_TIPO, ID_AGENTE, PLACA, COLOR, "
-                + "ANIO, PRECIO, DISPONIBLE, FECHA_REGISTRO, FOTO_PORTADA) "
-                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, SYSDATE, ?)";
+                + "ANIO, PRECIO, DISPONIBLE, FECHA_REGISTRO, FOTO_PORTADA, DESCRIPCION_GENERAL) "
+                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, SYSDATE, ?, ?)";
 
         try (Connection con = Conexion.getConexion();
-             PreparedStatement ps = con.prepareStatement(sql)) {
+             PreparedStatement ps = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
             ps.setInt(1, veh.getId_Modelo());
             ps.setInt(2, veh.getId_Tipo());
@@ -91,16 +94,24 @@ public class VehiculosDao {
             ps.setBigDecimal(7, veh.getPrecio());
             ps.setInt(8, veh.getDisponible());
             ps.setString(9, veh.getFoto_Portada());
+            ps.setString(10, veh.getDescripcion());
 
             ps.executeUpdate();
+
+            try (ResultSet rsKeys = ps.getGeneratedKeys()) {
+                if (rsKeys.next()) {
+                    return rsKeys.getInt(1);
+                }
+            }
         } catch (SQLException e) {
             System.err.println("Error al registrar vehiculo: " + e.getMessage());
         }
+        return 0;
     }
 
     public void actualizar(VehiculosBean veh) {
         String sql = "UPDATE ADMIN.VEHICULOS SET ID_MODELO = ?, ID_TIPO = ?, ID_AGENTE = ?, "
-                + "PLACA = ?, COLOR = ?, ANIO = ?, PRECIO = ?, DISPONIBLE = ?, FOTO_PORTADA = ? "
+                + "PLACA = ?, COLOR = ?, ANIO = ?, PRECIO = ?, DISPONIBLE = ?, FOTO_PORTADA = ?, DESCRIPCION_GENERAL = ? "
                 + "WHERE ID_VEHICULO = ?";
 
         try (Connection con = Conexion.getConexion();
@@ -115,11 +126,33 @@ public class VehiculosDao {
             ps.setBigDecimal(7, veh.getPrecio());
             ps.setInt(8, veh.getDisponible());
             ps.setString(9, veh.getFoto_Portada());
-            ps.setInt(10, veh.getId_Vehiculo());
+            ps.setString(10, veh.getDescripcion());
+            ps.setInt(11, veh.getId_Vehiculo());
 
             ps.executeUpdate();
         } catch (SQLException e) {
             System.err.println("Error al actualizar vehiculo: " + e.getMessage());
+        }
+    }
+
+    // Indica si ya existe otro vehículo con esa placa (idVehiculoExcluir = null en alta,
+    // o el propio ID en edición para no chocar contra sí mismo).
+    public boolean existePlaca(String placa, Integer idVehiculoExcluir) {
+        String sql = "SELECT 1 FROM ADMIN.VEHICULOS WHERE UPPER(PLACA) = UPPER(?)"
+                + (idVehiculoExcluir != null ? " AND ID_VEHICULO != ?" : "");
+
+        try (Connection con = Conexion.getConexion();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+
+            ps.setString(1, placa);
+            if (idVehiculoExcluir != null) ps.setInt(2, idVehiculoExcluir);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next();
+            }
+        } catch (SQLException e) {
+            System.err.println("Error al verificar placa duplicada: " + e.getMessage());
+            return false;
         }
     }
 
@@ -165,6 +198,7 @@ public class VehiculosDao {
         v.setDisponible(rs.getInt("DISPONIBLE"));
         v.setFecha_registro(rs.getDate("FECHA_REGISTRO"));
         v.setFoto_Portada(rs.getString("FOTO_PORTADA"));
+        v.setDescripcion(rs.getString("DESCRIPCION_GENERAL"));
 
         // Datos de Marcas
         MarcaBean marca = new MarcaBean();
@@ -200,7 +234,7 @@ public class VehiculosDao {
                         + "V.ID_VEHICULO, V.ID_MODELO, V.ID_TIPO, V.ID_AGENTE,"
                         + "V.PLACA, V.COLOR, V.ANIO, V.PRECIO,"
                         + "V.DISPONIBLE, V.FECHA_REGISTRO,"
-                        + "V.FOTO_PORTADA,"
+                        + "V.FOTO_PORTADA, V.DESCRIPCION_GENERAL,"
                         + "M.NOMBRE NOMBRE_MODELO,"
                         + "M.ESTADO ESTADO_MODELO,"
                         + "MA.ID_MARCA,"
@@ -246,7 +280,7 @@ public class VehiculosDao {
         StringBuilder sql = new StringBuilder(
                 "SELECT "
                         + "V.ID_VEHICULO, V.ID_MODELO, V.ID_TIPO, V.ID_AGENTE, "
-                        + "V.PLACA, V.COLOR, V.ANIO, V.PRECIO, V.DISPONIBLE, V.FECHA_REGISTRO, V.FOTO_PORTADA, "
+                        + "V.PLACA, V.COLOR, V.ANIO, V.PRECIO, V.DISPONIBLE, V.FECHA_REGISTRO, V.FOTO_PORTADA, V.DESCRIPCION_GENERAL, "
                         + "M.NOMBRE NOMBRE_MODELO, M.ESTADO ESTADO_MODELO, "
                         + "MA.ID_MARCA, MA.NOMBRE NOMBRE_MARCA, MA.ESTADO ESTADO_MARCA, "
                         + "TV.NOMBRE NOMBRE_TIPO "

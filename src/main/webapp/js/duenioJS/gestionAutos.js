@@ -80,6 +80,14 @@ function confirmarGuardarEdicion() {
     });
 }
 
+// Agregar auto (modal Agregar)
+function confirmarGuardarAgregar() {
+    if (!validarYPrepararEnvio('mod')) return;
+    pedirConfirmacion('¿Deseas agregar este auto?', () => {
+        document.getElementById('formAgregar').submit();
+    });
+}
+
 // Limpia el formulario de "Agregar" cada vez que se abre desde cero
 function resetearModalAgregar() {
     document.getElementById('formAgregar').reset();
@@ -88,7 +96,94 @@ function resetearModalAgregar() {
     preview.removeAttribute('src');
     preview.style.display = 'none';
     placeholder.style.display = 'flex';
+    document.getElementById('mod-galeria-extra').innerHTML = '';
+    document.getElementById('err-fotosExtra').textContent = '';
     limpiarErrores('mod');
+}
+
+// =========================================================
+// IMÁGENES ADICIONALES (hasta 5 por vehículo, además de la portada)
+// =========================================================
+const MAX_IMAGENES_EXTRA = 5;
+
+// IDs (ID_IMAGEN) de la galería existente que el dueño marcó para quitar (solo modal Editar)
+let idsImagenesAEliminar = [];
+
+// Muestra la vista previa de los archivos elegidos en el <input type="file" multiple>.
+// El input reemplaza la selección anterior cada vez que se abre, así que la previsualización
+// solo refleja los archivos actualmente elegidos (no se acumulan entre selecciones).
+function manejarFotosExtra(input, prefijo) {
+    const errorEl = document.getElementById(prefijo === 'mod' ? 'err-fotosExtra' : 'edit-err-fotosExtra');
+    errorEl.textContent = '';
+
+    const archivos = Array.from(input.files || []);
+    const limiteRestante = prefijo === 'edit'
+        ? Math.max(0, MAX_IMAGENES_EXTRA - contarImagenesExistentes())
+        : MAX_IMAGENES_EXTRA;
+
+    if (archivos.length > limiteRestante) {
+        errorEl.textContent = `Solo puedes agregar ${limiteRestante} imagen(es) más (máximo ${MAX_IMAGENES_EXTRA} en total).`;
+    }
+
+    // Quita las previsualizaciones de archivos nuevos (deja intacta la galería ya guardada)
+    document.querySelectorAll(`#${prefijo}-galeria-extra .galeria-extra-nueva`).forEach(el => el.remove());
+
+    const contenedor = document.getElementById(`${prefijo}-galeria-extra`);
+    archivos.slice(0, limiteRestante).forEach(archivo => {
+        const item = document.createElement('div');
+        item.className = 'galeria-extra-item galeria-extra-nueva';
+
+        const img = document.createElement('img');
+        img.alt = 'Nueva imagen';
+        const lector = new FileReader();
+        lector.onload = e => { img.src = e.target.result; };
+        lector.readAsDataURL(archivo);
+
+        item.appendChild(img);
+        contenedor.appendChild(item);
+    });
+}
+
+// Cuenta cuántas imágenes de la galería ya guardada quedan (sin contar las marcadas para eliminar)
+function contarImagenesExistentes() {
+    return document.querySelectorAll('#edit-galeria-extra .galeria-extra-existente').length;
+}
+
+// Pinta la galería ya guardada de un vehículo en el modal Editar, cada una con su botón "quitar"
+function renderGaleriaExistente(idVehiculo) {
+    const contenedor = document.getElementById('edit-galeria-extra');
+    contenedor.innerHTML = '';
+    idsImagenesAEliminar = [];
+    document.getElementById('edit-eliminar-imagenes').value = '';
+
+    const imagenes = (IMAGENES_POR_VEHICULO && IMAGENES_POR_VEHICULO[idVehiculo]) || [];
+    imagenes.forEach(img => {
+        const item = document.createElement('div');
+        item.className = 'galeria-extra-item galeria-extra-existente';
+        item.dataset.idImagen = img.idImagen;
+
+        const foto = document.createElement('img');
+        foto.src = `${CONTEXT_PATH}/Images/imagesAutos/${img.ruta}`;
+        foto.alt = 'Imagen del vehículo';
+
+        const btnQuitar = document.createElement('button');
+        btnQuitar.type = 'button';
+        btnQuitar.className = 'btn-quitar-imagen';
+        btnQuitar.title = 'Quitar imagen';
+        btnQuitar.textContent = '×';
+        btnQuitar.onclick = () => quitarImagenExistente(img.idImagen, item);
+
+        item.appendChild(foto);
+        item.appendChild(btnQuitar);
+        contenedor.appendChild(item);
+    });
+}
+
+// Marca una imagen ya guardada para eliminarse al guardar los cambios (se borra recién en el servidor)
+function quitarImagenExistente(idImagen, elemento) {
+    idsImagenesAEliminar.push(idImagen);
+    document.getElementById('edit-eliminar-imagenes').value = idsImagenesAEliminar.join(',');
+    elemento.remove();
 }
 
 // Función para llenar datos en modal Editar
@@ -100,6 +195,7 @@ function abrirEditar(id, marca, modelo, categoria, precio, color, placa, anio, i
     document.getElementById('edit-color').value = color;
     document.getElementById('edit-placa').value = placa;
     document.getElementById('edit-anio').value = anio;
+    document.getElementById('edit-descripcion').value = (DESCRIPCION_POR_VEHICULO && DESCRIPCION_POR_VEHICULO[id]) || '';
 
     ['edit-categoria', 'edit-agente', 'edit-estado'].forEach(id2 => {
         const sel = document.getElementById(id2);
@@ -117,7 +213,7 @@ function abrirEditar(id, marca, modelo, categoria, precio, color, placa, anio, i
     const preview = document.getElementById('edit-foto-preview');
     const placeholder = document.getElementById('edit-foto-placeholder');
     if (foto && foto.trim() !== '') {
-        preview.src = `${CONTEXT_PATH}/${foto}`;
+        preview.src = `${CONTEXT_PATH}/Images/imagesAutos/${foto}`;
         preview.style.display = 'block';
         placeholder.style.display = 'none';
     } else {
@@ -125,6 +221,11 @@ function abrirEditar(id, marca, modelo, categoria, precio, color, placa, anio, i
         preview.style.display = 'none';
         placeholder.style.display = 'flex';
     }
+
+    // Galería de imágenes adicionales ya guardadas + limpiar selección de archivos nuevos
+    document.getElementById('edit-fotos-extra-input').value = '';
+    document.getElementById('edit-err-fotosExtra').textContent = '';
+    renderGaleriaExistente(id);
 
     // Última actualización
     document.getElementById('edit-fecha-actualizado').textContent =

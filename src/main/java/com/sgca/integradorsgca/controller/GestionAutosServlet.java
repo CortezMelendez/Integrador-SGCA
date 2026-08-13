@@ -1,9 +1,11 @@
 package com.sgca.integradorsgca.controller;
 
+import com.sgca.integradorsgca.model.bean.VehImgBean;
 import com.sgca.integradorsgca.model.bean.VehiculosBean;
 import com.sgca.integradorsgca.model.dao.MarcaDao;
 import com.sgca.integradorsgca.model.dao.ModelosDao;
 import com.sgca.integradorsgca.model.dao.TiposVehiculoDao;
+import com.sgca.integradorsgca.model.dao.VehImgDao;
 import com.sgca.integradorsgca.model.dao.VehiculosDao;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.MultipartConfig;
@@ -19,6 +21,8 @@ import java.io.InputStream;
 import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -34,7 +38,7 @@ import java.util.UUID;
 @WebServlet(name = "GestionAutosServlet", value = "/gestionAutos")
 @MultipartConfig(
         maxFileSize = 5 * 1024 * 1024,        // 5 MB por imagen
-        maxRequestSize = 10 * 1024 * 1024,    // 10 MB por request
+        maxRequestSize = 40 * 1024 * 1024,    // hasta 6 imágenes (portada + 5 extra) por request
         fileSizeThreshold = 1024 * 1024
 )
 public class GestionAutosServlet extends HttpServlet {
@@ -43,10 +47,13 @@ public class GestionAutosServlet extends HttpServlet {
     private final MarcaDao marcaDao = new MarcaDao();
     private final ModelosDao modelosDao = new ModelosDao();
     private final TiposVehiculoDao tiposVehiculoDao = new TiposVehiculoDao();
+    private final VehImgDao vehImgDao = new VehImgDao();
 
     private static final String REDIRECT_LISTA = "/btn?action=gestionAutos";
     // Carpeta dentro de webapp donde se guardan las fotos (ya existe en el proyecto: /Images/imagesAutos)
     private static final String CARPETA_IMAGENES = "Images/imagesAutos";
+    private static final String CAMPO_FOTOS_EXTRA = "fotosExtra";
+    private static final int MAX_IMAGENES_EXTRA = 5;
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -68,30 +75,63 @@ public class GestionAutosServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         req.setCharacterEncoding("UTF-8");
         String accion = req.getParameter("accion");
+        String error = null;
 
         try {
             if ("registrar".equals(accion)) {
-                registrar(req);
+                error = registrar(req);
             } else if ("actualizar".equals(accion)) {
-                actualizar(req);
+                error = actualizar(req);
             }
         } catch (Exception e) {
             System.err.println("Error al procesar auto: " + e.getMessage());
             e.printStackTrace();
+            error = "error_servidor";
         }
 
-        resp.sendRedirect(req.getContextPath() + REDIRECT_LISTA);
+        String destino = REDIRECT_LISTA + (error != null ? "&error=" + error : "");
+        resp.sendRedirect(req.getContextPath() + destino);
     }
 
-    private void registrar(HttpServletRequest req) throws IOException, ServletException {
+    // Devuelve el código de error a mostrar en el modal (null si todo salió bien)
+    private String registrar(HttpServletRequest req) throws IOException, ServletException {
+        String placa = req.getParameter("placa");
+        if (placa != null && vehiculosDao.existePlaca(placa.trim(), null)) {
+            return "duplicado_placa";
+        }
+
         VehiculosBean veh = construirDesdeRequest(req, 0);
-        vehiculosDao.registrar(veh);
+        int idVehiculoNuevo = vehiculosDao.registrar(veh);
+        if (idVehiculoNuevo > 0) {
+            guardarImagenesExtra(req, idVehiculoNuevo, MAX_IMAGENES_EXTRA);
+        }
+        return null;
     }
 
-    private void actualizar(HttpServletRequest req) throws IOException, ServletException {
+    private String actualizar(HttpServletRequest req) throws IOException, ServletException {
         int idVehiculo = Integer.parseInt(req.getParameter("id_Vehiculo"));
+
+        String placa = req.getParameter("placa");
+        if (placa != null && vehiculosDao.existePlaca(placa.trim(), idVehiculo)) {
+            return "duplicado_placa";
+        }
+
         VehiculosBean veh = construirDesdeRequest(req, idVehiculo);
         vehiculosDao.actualizar(veh);
+
+        // Imágenes extra que el dueño marcó para quitar desde la galería del modal Editar
+        String idsAEliminar = req.getParameter("eliminarImagenes");
+        if (idsAEliminar != null && !idsAEliminar.trim().isEmpty()) {
+            for (String idTexto : idsAEliminar.split(",")) {
+                if (idTexto.trim().isEmpty()) continue;
+                vehImgDao.eliminar(Integer.parseInt(idTexto.trim()));
+            }
+        }
+
+        int actuales = vehImgDao.listarPorVehiculo(idVehiculo).size();
+        int espacioDisponible = Math.max(0, MAX_IMAGENES_EXTRA - actuales);
+        guardarImagenesExtra(req, idVehiculo, espacioDisponible);
+        return null;
     }
 
     // Arma el bean a partir de los campos del formulario (marca/modelo/categoría en texto libre)
@@ -105,6 +145,7 @@ public class GestionAutosServlet extends HttpServlet {
         BigDecimal precio = new BigDecimal(req.getParameter("precio"));
         int idAgente = Integer.parseInt(req.getParameter("id_Agente"));
         String estado = req.getParameter("estado");
+        String descripcion = req.getParameter("descripcion");
 
         String fotoExistente = req.getParameter("foto_actual"); // ruta que ya tenía (solo en edición)
         String fotoPortada = guardarFotoSiViene(req, fotoExistente);
@@ -116,23 +157,52 @@ public class GestionAutosServlet extends HttpServlet {
         int idModelo = modelosDao.obtenerOCrearId(idMarca, modelo.trim());
         int idTipo = tiposVehiculoDao.obtenerOCrearId(categoria.trim());
 
-        if (idVehiculo > 0) {
-            return new VehiculosBean(idVehiculo, idModelo, idTipo, idAgente, placa, color, anio, precio, disponible, fotoPortada);
-        }
-        return new VehiculosBean(idModelo, idTipo, idAgente, placa, color, anio, precio, disponible, fotoPortada);
+        VehiculosBean veh = idVehiculo > 0
+                ? new VehiculosBean(idVehiculo, idModelo, idTipo, idAgente, placa, color, anio, precio, disponible, fotoPortada)
+                : new VehiculosBean(idModelo, idTipo, idAgente, placa, color, anio, precio, disponible, fotoPortada);
+        veh.setDescripcion(descripcion != null ? descripcion.trim() : "");
+        return veh;
     }
 
     /**
      * Si el usuario adjuntó un archivo nuevo en el campo "foto", lo guarda en
-     * /Images/imagesAutos y devuelve la ruta relativa a usar en FOTO_PORTADA.
-     * Si no adjuntó nada, conserva la ruta que ya tenía el vehículo (o "" si es nuevo).
+     * /Images/imagesAutos y devuelve el nombre de archivo a usar en FOTO_PORTADA
+     * (sin la carpeta: detalleVehiculo.jsp y las imágenes "seed" ya asumen esa
+     * convención). Si no adjuntó nada, conserva la ruta que ya tenía el vehículo
+     * (o "" si es nuevo).
      */
     private String guardarFotoSiViene(HttpServletRequest req, String fotoExistente) throws IOException, ServletException {
         Part parte = req.getPart("foto");
         if (parte == null || parte.getSize() == 0) {
             return fotoExistente != null ? fotoExistente : "";
         }
+        return guardarArchivoEnCarpeta(parte);
+    }
 
+    // Guarda hasta "maxAGuardar" imágenes adicionales del campo "fotosExtra"
+    // (input file "multiple") y las asocia al vehículo en ADMIN.VEHICULO_IMAGENES.
+    private void guardarImagenesExtra(HttpServletRequest req, int idVehiculo, int maxAGuardar) throws IOException, ServletException {
+        if (maxAGuardar <= 0) return;
+
+        List<Part> partesFoto = new ArrayList<>();
+        for (Part parte : req.getParts()) {
+            if (CAMPO_FOTOS_EXTRA.equals(parte.getName()) && parte.getSize() > 0) {
+                partesFoto.add(parte);
+            }
+        }
+
+        int guardadas = 0;
+        for (Part parte : partesFoto) {
+            if (guardadas >= maxAGuardar) break;
+            String nombreArchivo = guardarArchivoEnCarpeta(parte);
+            vehImgDao.registrar(new VehImgBean(idVehiculo, nombreArchivo));
+            guardadas++;
+        }
+    }
+
+    // Copia el archivo de un Part a /Images/imagesAutos con un nombre único y
+    // devuelve solo el nombre de archivo generado.
+    private String guardarArchivoEnCarpeta(Part parte) throws IOException {
         String nombreOriginal = obtenerNombreArchivo(parte);
         String extension = "";
         int punto = nombreOriginal.lastIndexOf('.');
@@ -148,7 +218,7 @@ public class GestionAutosServlet extends HttpServlet {
             Files.copy(is, new File(carpeta, nombreNuevo).toPath(), StandardCopyOption.REPLACE_EXISTING);
         }
 
-        return CARPETA_IMAGENES + "/" + nombreNuevo;
+        return nombreNuevo;
     }
 
     private String obtenerNombreArchivo(Part part) {

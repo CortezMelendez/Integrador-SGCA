@@ -82,6 +82,8 @@
             <c:forEach var="u" items="${listaUsuarios}" varStatus="fila">
               <c:set var="nombreCompleto" value="${u.nombre} ${u.apellidoPaterno} ${u.apellidoMaterno}" />
               <c:set var="nombreAsesor" value="${asesorPorCliente[u.id_usuario]}" />
+              <c:set var="idClienteRow" value="${idClientePorUsuario[u.id_usuario]}" />
+              <c:set var="idAgenteRow" value="${idAgentePorUsuario[u.id_usuario]}" />
               <tr>
                 <td>${fila.count}</td>
                 <td>
@@ -95,12 +97,15 @@
                 <td>${u.curp}</td>
                 <td>${u.correo}</td>
                 <td>
-                  <c:choose>
-                    <c:when test="${empty nombreAsesor or nombreAsesor == 'Sin Agente Asignado'}">
-                      <span class="asesor-sin-asignar">Sin asesor asignado</span>
-                    </c:when>
-                    <c:otherwise>${nombreAsesor}</c:otherwise>
-                  </c:choose>
+                  <button type="button" class="btn-asesor" title="Asignar asesor"
+                          onclick="abrirModalAsesor(this, ${idClienteRow}, ${empty idAgenteRow ? 0 : idAgenteRow})">
+                    <c:choose>
+                      <c:when test="${empty nombreAsesor or nombreAsesor == 'Sin Agente Asignado'}">
+                        <span class="asesor-sin-asignar">Sin asesor asignado</span>
+                      </c:when>
+                      <c:otherwise>${nombreAsesor}</c:otherwise>
+                    </c:choose>
+                  </button>
                 </td>
                 <td><fmt:formatDate value="${u.fechaRegistro}" pattern="dd/MM/yyyy"/></td>
                 <td>
@@ -218,7 +223,7 @@
 
         <div class="modal-actions">
           <button type="button" class="btn-modal-cancel" onclick="cerrarModal('modalAgregar')">Cancelar</button>
-          <button type="submit" class="btn-modal-save">Guardar cambios</button>
+          <button type="button" class="btn-modal-save" onclick="confirmarGuardarAgregar()">Guardar cambios</button>
         </div>
       </form>
     </div>
@@ -299,6 +304,34 @@
     </div>
   </div>
 
+  <!-- Modal Asignar Asesor -->
+  <div class="modal-overlay" id="modalAsesor" onclick="cerrarOverlay(event,'modalAsesor')">
+    <div class="modal-box" onclick="event.stopPropagation()">
+      <div class="modal-header-bar">Asignar asesor</div>
+      <p class="modal-subtitle">Selecciona el asesor que atenderá a este cliente.</p>
+
+      <input type="hidden" id="asesor-idCliente" />
+
+      <div class="modal-field">
+        <label class="modal-label">Asesor</label>
+        <select class="modal-select" id="asesor-select">
+          <option value="">Sin asesor asignado</option>
+          <c:forEach var="a" items="${listaAgentes}">
+            <c:if test="${a.estado == 1}">
+              <option value="${a.idAgente}">${a.nombreCompletoUsuario}</option>
+            </c:if>
+          </c:forEach>
+        </select>
+        <span class="modal-error" id="err-asesor"></span>
+      </div>
+
+      <div class="modal-actions">
+        <button type="button" class="btn-modal-cancel" onclick="cerrarModal('modalAsesor')">Cancelar</button>
+        <button type="button" class="btn-modal-save" onclick="guardarAsesor()">Guardar</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Modal de confirmación (reemplaza los confirm() del navegador) -->
   <div class="modal-overlay" id="modalConfirmar" onclick="cerrarOverlay(event,'modalConfirmar')">
     <div class="modal-box modal-confirm-box" onclick="event.stopPropagation()">
@@ -313,7 +346,20 @@
   </div>
 
   <c:if test="${not empty param.error}">
-    <script>window.addEventListener('DOMContentLoaded', () => alert('No se pudo guardar el cliente. Verifica que el correo, RFC, CURP y teléfono no estén ya registrados.'));</script>
+    <script>
+      window.addEventListener('DOMContentLoaded', () => {
+        const mensajes = {
+          duplicado_correo: 'Ya existe un usuario registrado con ese correo.',
+          duplicado_rfc: 'Ya existe un usuario registrado con ese RFC.',
+          duplicado_curp: 'Ya existe un usuario registrado con ese CURP.',
+          duplicado_telefono: 'Ya existe un usuario registrado con ese teléfono.',
+          password_invalido: 'La contraseña debe tener al menos 8 caracteres.',
+          error_servidor: 'Ocurrió un error en el servidor. Intenta de nuevo.'
+        };
+        const codigo = '${param.error}';
+        alert(mensajes[codigo] || 'No se pudo guardar el cliente. Verifica que el correo, RFC, CURP y teléfono no estén ya registrados.');
+      });
+    </script>
   </c:if>
 
   <script src="${pageContext.request.contextPath}/js/duenioJS/gestionClientes.js"></script>

@@ -881,6 +881,26 @@ p {
     border-color: var(--color-navy-dark);
 }
 
+.btn-asesor {
+    border: 1px solid var(--btn-back-bg);
+    background: var(--color-gray-100);
+    color: var(--color-text-strong);
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-family: 'Google Sans Code', ui-monospace, monospace;
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+    white-space: nowrap;
+    text-align: left;
+}
+
+.btn-asesor:hover {
+    background: var(--color-gray-150);
+    border-color: var(--color-navy-dark);
+}
+
 /* Modal "Ver clientes" del agente: lista con filtro de búsqueda */
 .clientes-agente-lista {
     list-style: none;
@@ -920,4 +940,79 @@ p {
     text-align: center;
     color: var(--color-gray-600);
     font-size: 0.9rem;
+}
+
+/* =========================================================
+   11. DESCRIPCIÓN (columna de la tabla) E IMÁGENES ADICIONALES (modal)
+========================================================= */
+.celda-descripcion {
+    max-width: 220px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.modal-textarea {
+    resize: vertical;
+    min-height: 70px;
+    font-family: inherit;
+}
+
+.galeria-extra {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.galeria-extra-item {
+    position: relative;
+    width: 70px;
+    height: 70px;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid var(--color-gray-150);
+}
+
+.galeria-extra-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.galeria-extra-item .btn-quitar-imagen {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    width: 20px;
+    height: 20px;
+    border: none;
+    border-radius: 50%;
+    background: var(--color-danger-bg-hover, rgba(0,0,0,0.6));
+    color: var(--color-white);
+    font-size: 0.75rem;
+    line-height: 1;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-agregar-imagen {
+    border: 1px solid var(--btn-back-bg);
+    background: var(--color-gray-100);
+    color: var(--color-text-strong);
+    padding: 8px 14px;
+    border-radius: 6px;
+    font-family: 'Google Sans Code', ui-monospace, monospace;
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.btn-agregar-imagen:hover {
+    background: var(--color-gray-150);
+    border-color: var(--color-navy-dark);
 }

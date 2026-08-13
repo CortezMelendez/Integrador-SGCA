@@ -18,6 +18,7 @@ public class VehiculosBean {
     private int disponible;
     private Date fecha_registro;
     private String foto_Portada;
+    private String descripcion;
 
     // Objetos anidados para acceder a las relaciones
     private MarcaBean marca;
@@ -90,6 +91,9 @@ public class VehiculosBean {
 
     public String getFoto_Portada() { return foto_Portada; }
     public void setFoto_Portada(String foto_Portada) { this.foto_Portada = foto_Portada; }
+
+    public String getDescripcion() { return descripcion; }
+    public void setDescripcion(String descripcion) { this.descripcion = descripcion; }
 
     public MarcaBean getMarca() { return marca; }
     public void setMarca(MarcaBean marca) { this.marca = marca; }

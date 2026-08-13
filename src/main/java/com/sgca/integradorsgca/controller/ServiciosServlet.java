@@ -75,6 +75,7 @@ public class ServiciosServlet extends HttpServlet {
         req.setCharacterEncoding("UTF-8");
 
         String accion = req.getParameter("accion");
+        String error = null;
 
         try {
 
@@ -87,7 +88,7 @@ public class ServiciosServlet extends HttpServlet {
                  */
                 case "agregar":
 
-                    agregarServicio(req);
+                    error = agregarServicio(req);
 
                     break;
 
@@ -98,7 +99,7 @@ public class ServiciosServlet extends HttpServlet {
                  */
                 case "editar":
 
-                    editarServicio(req);
+                    error = editarServicio(req);
 
                     break;
 
@@ -126,16 +127,15 @@ public class ServiciosServlet extends HttpServlet {
 
             }
 
-            resp.sendRedirect(req.getContextPath() + "/servicios");
-
         } catch (Exception e) {
 
             e.printStackTrace();
-
-            resp.sendRedirect(req.getContextPath()
-                    + "/servicios?error");
+            error = "error_servidor";
 
         }
+
+        String destino = "/servicios" + (error != null ? "?error=" + error : "");
+        resp.sendRedirect(req.getContextPath() + destino);
 
     }
 
@@ -144,14 +144,18 @@ public class ServiciosServlet extends HttpServlet {
      * REGISTRAR
      * ========================================
      */
-    private void agregarServicio(HttpServletRequest req)
+    private String agregarServicio(HttpServletRequest req)
             throws Exception {
-
-        int idTipo =
-                Integer.parseInt(req.getParameter("id_tipo_servicio"));
 
         String nombre =
                 req.getParameter("nombre");
+
+        if (nombre != null && serviciosDao.existeNombre(nombre.trim(), null)) {
+            return "duplicado_nombre";
+        }
+
+        int idTipo =
+                Integer.parseInt(req.getParameter("id_tipo_servicio"));
 
         String descripcion =
                 req.getParameter("descripcion");
@@ -177,6 +181,7 @@ public class ServiciosServlet extends HttpServlet {
         servicio.setFoto(foto);
 
         serviciosDao.registrar(servicio);
+        return null;
 
     }
 
@@ -185,17 +190,21 @@ public class ServiciosServlet extends HttpServlet {
      * EDITAR
      * ========================================
      */
-    private void editarServicio(HttpServletRequest req)
+    private String editarServicio(HttpServletRequest req)
             throws Exception {
 
         int idServicio =
                 Integer.parseInt(req.getParameter("id_servicio"));
 
-        int idTipo =
-                Integer.parseInt(req.getParameter("id_tipo_servicio"));
-
         String nombre =
                 req.getParameter("nombre");
+
+        if (nombre != null && serviciosDao.existeNombre(nombre.trim(), idServicio)) {
+            return "duplicado_nombre";
+        }
+
+        int idTipo =
+                Integer.parseInt(req.getParameter("id_tipo_servicio"));
 
         String descripcion =
                 req.getParameter("descripcion");
@@ -226,6 +235,7 @@ public class ServiciosServlet extends HttpServlet {
         servicio.setFoto(foto);
 
         serviciosDao.actualizar(servicio);
+        return null;
 
     }
 

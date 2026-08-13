@@ -42,6 +42,7 @@ document.addEventListener('keydown', e => {
     cerrarModal('modalAgregar');
     cerrarModal('modalEditar');
     cerrarModal('modalConfirmar');
+    cerrarModal('modalAsesor');
   }
 });
 
@@ -94,6 +95,14 @@ function confirmarGuardarEdicion() {
   if (!validarYPrepararEnvio('edit')) return;
   pedirConfirmacion('¿Deseas guardar los cambios de este cliente?', () => {
     document.getElementById('formEditar').submit();
+  });
+}
+
+// Agregar cliente (modal Agregar)
+function confirmarGuardarAgregar() {
+  if (!validarYPrepararEnvio('mod')) return;
+  pedirConfirmacion('¿Deseas agregar este cliente?', () => {
+    document.getElementById('formAgregar').submit();
   });
 }
 
@@ -262,6 +271,54 @@ function toggleEstado(elemento, idUsuario) {
 
   fetch(`${CONTEXT_PATH}/gestionUsuarios?accion=cambiarEstado&id=${idUsuario}&estado=${nuevoEstado}&idRol=3`)
     .catch(err => console.error('No se pudo actualizar el estado:', err));
+}
+
+// -------------------------------
+// Modal Asignar Asesor (columna "Asesor" de la tabla)
+// -------------------------------
+let _asesorBtnActual = null;
+
+function abrirModalAsesor(boton, idCliente, idAgenteActual) {
+  _asesorBtnActual = boton;
+  document.getElementById('asesor-idCliente').value = idCliente;
+
+  const sel = document.getElementById('asesor-select');
+  sel.value = idAgenteActual ? String(idAgenteActual) : '';
+
+  document.getElementById('err-asesor').textContent = '';
+  abrirModal('modalAsesor');
+}
+
+function guardarAsesor() {
+  const idCliente = document.getElementById('asesor-idCliente').value;
+  const sel = document.getElementById('asesor-select');
+  const idAgente = sel.value;
+  const nombreAsesor = sel.options[sel.selectedIndex].text;
+
+  fetch(`${CONTEXT_PATH}/agentes`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+      'X-Requested-With': 'XMLHttpRequest'
+    },
+    body: `accion=reasignarManual&idCliente=${encodeURIComponent(idCliente)}&idAgente=${encodeURIComponent(idAgente)}`
+  })
+    .then(res => {
+      if (!res.ok) throw new Error('No se pudo asignar el asesor. Intenta de nuevo.');
+      return res.text();
+    })
+    .then(() => {
+      if (_asesorBtnActual) {
+        _asesorBtnActual.setAttribute('onclick', `abrirModalAsesor(this, ${idCliente}, ${idAgente || 0})`);
+        _asesorBtnActual.innerHTML = idAgente
+          ? nombreAsesor
+          : '<span class="asesor-sin-asignar">Sin asesor asignado</span>';
+      }
+      cerrarModal('modalAsesor');
+    })
+    .catch(err => {
+      document.getElementById('err-asesor').textContent = err.message;
+    });
 }
 
 // -------------------------------

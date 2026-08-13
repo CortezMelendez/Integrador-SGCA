@@ -75,6 +75,7 @@
                     <th>Precio</th>
                     <th>Placa</th>
                     <th>Año</th>
+                    <th>Descripción</th>
                     <th>Estado</th>
                     <th>Fecha</th>
                     <th>Acciones</th>
@@ -87,7 +88,7 @@
                         <td>
                             <c:choose>
                                 <c:when test="${not empty v.foto_Portada}">
-                                    <img class="foto-thumb" src="${pageContext.request.contextPath}/${v.foto_Portada}" alt="${v.marca.nombre} ${v.modelos.nombre}" />
+                                    <img class="foto-thumb" src="${pageContext.request.contextPath}/Images/imagesAutos/${v.foto_Portada}" alt="${v.marca.nombre} ${v.modelos.nombre}" />
                                 </c:when>
                                 <c:otherwise>
                                     <div class="foto-placeholder"></div>
@@ -100,6 +101,12 @@
                         <td>$<fmt:formatNumber value="${v.precio}" type="number" minFractionDigits="2" maxFractionDigits="2"/></td>
                         <td>${v.placa}</td>
                         <td>${v.anio}</td>
+                        <td class="celda-descripcion">
+                            <c:choose>
+                                <c:when test="${not empty v.descripcion}">${v.descripcion}</c:when>
+                                <c:otherwise><span class="asesor-sin-asignar">Sin descripción</span></c:otherwise>
+                            </c:choose>
+                        </td>
                         <td>
                   <span class="badge ${v.disponible == 1 ? 'badge-active' : 'badge-inactive'}"
                         onclick="toggleEstado(this, ${v.id_Vehiculo})">
@@ -123,7 +130,7 @@
                 </c:forEach>
                 <c:if test="${empty listaVehiculos}">
                     <tr class="fila-vacia">
-                        <td colspan="11" style="text-align:center; padding: 24px;">No hay autos registrados todavía.</td>
+                        <td colspan="12" style="text-align:center; padding: 24px;">No hay autos registrados todavía.</td>
                     </tr>
                 </c:if>
                 </tbody>
@@ -245,9 +252,26 @@
                 </div>
             </div>
 
+            <div class="modal-field">
+                <label class="modal-label">Descripción / Detalles</label>
+                <textarea class="modal-input modal-textarea" id="mod-descripcion" name="descripcion" maxlength="1000"
+                          placeholder="Equipamiento, condiciones, observaciones..."></textarea>
+            </div>
+
+            <div class="modal-field">
+                <label class="modal-label">Imágenes adicionales (máx. 5)</label>
+                <div class="galeria-extra" id="mod-galeria-extra"></div>
+                <input type="file" id="mod-fotos-extra-input" name="fotosExtra" accept="image/*" multiple hidden
+                       onchange="manejarFotosExtra(this, 'mod')" />
+                <button type="button" class="btn-agregar-imagen" onclick="document.getElementById('mod-fotos-extra-input').click()">
+                    + Agregar imágenes
+                </button>
+                <span class="modal-error" id="err-fotosExtra"></span>
+            </div>
+
             <div class="modal-actions">
                 <button type="button" class="btn-modal-cancel" onclick="cerrarModal('modalAgregar')">Cancelar</button>
-                <button type="submit" class="btn-modal-save">Guardar cambios</button>
+                <button type="button" class="btn-modal-save" onclick="confirmarGuardarAgregar()">Guardar cambios</button>
             </div>
         </form>
     </div>
@@ -263,6 +287,7 @@
             <input type="hidden" name="accion" value="actualizar" />
             <input type="hidden" name="id_Vehiculo" id="edit-id" />
             <input type="hidden" name="foto_actual" id="edit-foto-actual" />
+            <input type="hidden" name="eliminarImagenes" id="edit-eliminar-imagenes" />
 
             <div class="modal-header-bar">
                 Editar Automóvil
@@ -357,6 +382,24 @@
                 </div>
             </div>
 
+            <div class="modal-field">
+                <label class="modal-label">Descripción / Detalles</label>
+                <textarea class="modal-input modal-textarea" id="edit-descripcion" name="descripcion" maxlength="1000"
+                          placeholder="Equipamiento, condiciones, observaciones..."></textarea>
+            </div>
+
+            <div class="modal-field">
+                <label class="modal-label">Imágenes adicionales (máx. 5)</label>
+                <div class="galeria-extra" id="edit-galeria-extra"></div>
+                <input type="file" id="edit-fotos-extra-input" name="fotosExtra" accept="image/*" multiple hidden
+                       onchange="manejarFotosExtra(this, 'edit')" />
+                <button type="button" class="btn-agregar-imagen" id="edit-btn-agregar-imagen"
+                        onclick="document.getElementById('edit-fotos-extra-input').click()">
+                    + Agregar imágenes
+                </button>
+                <span class="modal-error" id="edit-err-fotosExtra"></span>
+            </div>
+
             <p class="modal-updated" id="edit-fecha-actualizado"></p>
 
             <div class="modal-actions">
@@ -380,6 +423,26 @@
     </div>
 </div>
 
+<c:if test="${not empty param.error}">
+    <script>
+        window.addEventListener('DOMContentLoaded', () => {
+            const mensajes = {
+                duplicado_placa: 'Ya existe un vehículo registrado con esa placa.',
+                error_servidor: 'Ocurrió un error en el servidor. Intenta de nuevo.'
+            };
+            const codigo = '${param.error}';
+            alert(mensajes[codigo] || 'No se pudo guardar el vehículo. Intenta de nuevo.');
+        });
+    </script>
+</c:if>
+
+<script>
+    // Galería de imágenes extra de cada vehículo (id → [{idImagen, ruta}]), para el modal Editar.
+    const IMAGENES_POR_VEHICULO = ${empty imagenesJsonPorVehiculo ? '{}' : imagenesJsonPorVehiculo};
+    // Descripción de cada vehículo (id → texto), aparte del onclick para no romper
+    // el JavaScript si el dueño escribió saltos de línea en el textarea.
+    const DESCRIPCION_POR_VEHICULO = ${empty descripcionJsonPorVehiculo ? '{}' : descripcionJsonPorVehiculo};
+</script>
 <script src="${pageContext.request.contextPath}/js/duenioJS/gestionAutos.js"></script>
 </body>
 </html>

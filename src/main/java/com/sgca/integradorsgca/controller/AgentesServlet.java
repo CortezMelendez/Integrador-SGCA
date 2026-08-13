@@ -68,10 +68,27 @@ public class AgentesServlet extends HttpServlet {
         try {
             if ("reasignarManual".equals(accion)) {
                 // El dueño asigna o cambia manualmente el agente de un cliente
+                // (o lo deja libre si no se selecciona ningún agente, ej. modal de gestionClientes.jsp)
                 int idCliente = Integer.parseInt(req.getParameter("idCliente"));
-                int idNuevoAgente = Integer.parseInt(req.getParameter("idAgente"));
+                String idAgenteParam = req.getParameter("idAgente");
 
-                boolean exito = agentesDao.reasignarAgenteACliente(idCliente, idNuevoAgente);
+                boolean exito = (idAgenteParam == null || idAgenteParam.trim().isEmpty())
+                        ? agentesDao.liberarCliente(idCliente)
+                        : agentesDao.reasignarAgenteACliente(idCliente, Integer.parseInt(idAgenteParam));
+
+                // El modal "Asignar asesor" de gestionClientes.jsp llama por fetch (AJAX)
+                // y espera una respuesta corta en texto plano en vez de un redirect de página completa.
+                boolean esAjax = "XMLHttpRequest".equals(req.getHeader("X-Requested-With"));
+                if (esAjax) {
+                    resp.setContentType("text/plain; charset=UTF-8");
+                    if (exito) {
+                        resp.getWriter().print("OK");
+                    } else {
+                        resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                        resp.getWriter().print("No se pudo asignar el asesor. Intenta de nuevo.");
+                    }
+                    return;
+                }
 
                 if (exito) {
                     resp.sendRedirect(req.getContextPath() + "/agentes?exito=reasignado");

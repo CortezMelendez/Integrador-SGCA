@@ -81,24 +81,6 @@ public class AgentesDao {
         }
     }
 
-    // Resuelve el ID_AGENTE a partir del ID_USUARIO de la sesión (usuario logueado con rol AGENTE)
-    public Integer obtenerIdAgentePorUsuario(int idUsuario) {
-        String sql = "SELECT ID_AGENTE FROM ADMIN.AGENTES WHERE ID_USUARIO = ?";
-
-        try (Connection con = Conexion.getConexion();
-             PreparedStatement ps = con.prepareStatement(sql)) {
-
-            ps.setInt(1, idUsuario);
-
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) return rs.getInt("ID_AGENTE");
-            }
-        } catch (SQLException e) {
-            System.err.println("Error al buscar agente por id_usuario: " + e.getMessage());
-        }
-        return null;
-    }
-
     // Cuenta cuántos clientes tiene asignados un agente, dado su ID_USUARIO
     public int contarClientesAsignados(int idUsuarioAgente) {
         String sql = "SELECT COUNT(*) AS total FROM ADMIN.CLIENTES c " +
