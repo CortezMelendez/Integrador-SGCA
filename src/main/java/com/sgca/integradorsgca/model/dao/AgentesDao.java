@@ -81,6 +81,43 @@ public class AgentesDao {
         }
     }
 
+    // Devuelve el ID_AGENTE correspondiente a un ID_USUARIO (null si el usuario
+    // no tiene registro de agente). Se usa para resolver el agente actualmente
+    // logueado antes de asignarlo como agente de un nuevo cliente registrado.
+    public Integer obtenerIdAgentePorUsuario(int idUsuario) {
+        String sql = "SELECT ID_AGENTE FROM ADMIN.AGENTES WHERE ID_USUARIO = ?";
+
+        try (Connection con = Conexion.getConexion();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+
+            ps.setInt(1, idUsuario);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) return rs.getInt("ID_AGENTE");
+            }
+        } catch (SQLException e) {
+            System.err.println("Error al obtener el ID_AGENTE del usuario: " + e.getMessage());
+        }
+        return null;
+    }
+
+    // Deja a un cliente sin agente asignado (ID_AGENTE = NULL), para que quede
+    // disponible ante todos los agentes activos del sistema.
+    public boolean liberarCliente(int idCliente) {
+        String sql = "UPDATE ADMIN.CLIENTES SET ID_AGENTE = NULL WHERE ID_CLIENTE = ?";
+
+        try (Connection con = Conexion.getConexion();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+
+            ps.setInt(1, idCliente);
+
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.err.println("Error al liberar el cliente: " + e.getMessage());
+            return false;
+        }
+    }
+
     // Cuenta cuántos clientes tiene asignados un agente, dado su ID_USUARIO
     public int contarClientesAsignados(int idUsuarioAgente) {
         String sql = "SELECT COUNT(*) AS total FROM ADMIN.CLIENTES c " +
