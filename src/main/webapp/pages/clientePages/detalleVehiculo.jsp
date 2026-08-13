@@ -1,6 +1,7 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
+<%@ taglib prefix="fn" uri="jakarta.tags.functions" %>
 
 <html lang="es">
 
@@ -20,31 +21,34 @@
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/clientePages/serviciosModal.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/clientePages/detalleVehiculo.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/clientePages/perfilModal.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/asesorStyles/cotizacionModal.css">
 </head>
 
 
 <body>
 
+<c:set var="esAsesor" value="${fn:toUpperCase(sessionScope.usuarioLogueado.rol.rol) == 'AGENTE'}" />
+<c:set var="inicioHref" value="${esAsesor ? '/asesor' : '/cliente'}" />
 
 <!-- NAVBAR -->
 <header class="dash-navbar">
 
     <div class="dash-navbar-left">
-        <a href="${pageContext.request.contextPath}/cliente" class="dash-brand">
+        <a href="${pageContext.request.contextPath}${inicioHref}" class="dash-brand">
             Gestionaria Automotriz
         </a>
     </div>
 
     <nav class="dash-nav-center">
 
-        <a href="${pageContext.request.contextPath}/cliente" class="dash-nav-link">
+        <a href="${pageContext.request.contextPath}${inicioHref}" class="dash-nav-link">
             Inicio
         </a>
 
         <div class="dropdown">
 
             <button class="dash-nav-link dropdown-btn">
-                Automóviles ▾
+                ${esAsesor ? 'Vehículos' : 'Automóviles'} ▾
             </button>
 
             <div class="dropdown-menu">
@@ -62,9 +66,30 @@
             Servicios
         </button>
 
-        <a href="${pageContext.request.contextPath}/comprasCliente" class="dash-nav-link">
-            Mis compras
-        </a>
+        <c:choose>
+            <c:when test="${esAsesor}">
+
+                <button type="button" class="dash-nav-link" id="btnAbrirRegistrarCliente">
+                    Registrar Cliente
+                </button>
+
+                <button type="button" class="dash-nav-link" id="btnAbrirCotizacion">
+                    Cotización
+                </button>
+
+                <a href="${pageContext.request.contextPath}/historialAsesor" class="dash-nav-link">
+                    Historial de ventas
+                </a>
+
+            </c:when>
+            <c:otherwise>
+
+                <a href="${pageContext.request.contextPath}/comprasCliente" class="dash-nav-link">
+                    Mis compras
+                </a>
+
+            </c:otherwise>
+        </c:choose>
 
         <div class="dropdown">
             <button class="dash-nav-link dropdown-btn">
@@ -140,6 +165,136 @@
     </div>
 
 </div>
+
+<c:if test="${esAsesor}">
+
+    <!-- MODAL REGISTRAR CLIENTE -->
+    <div class="modal-overlay" id="modalRegistrarCliente">
+
+        <div class="modal-box modal-box-perfil">
+
+            <div class="perfil-header">
+                <h2>Registrar Cliente</h2>
+                <button type="button" class="modal-cerrar" id="btnCerrarRegistrarCliente" aria-label="Cerrar">&times;</button>
+            </div>
+
+            <p class="perfil-nota">El cliente quedará asignado automáticamente a tu cartera.</p>
+
+            <form id="formRegistrarCliente" novalidate>
+
+                <div class="perfil-form-row">
+                    <div class="perfil-campo-edit">
+                        <label class="perfil-form-label" for="regClienteNombre">Nombre</label>
+                        <input class="perfil-input" type="text" id="regClienteNombre" name="nombre" maxlength="50">
+                    </div>
+                    <div class="perfil-campo-edit">
+                        <label class="perfil-form-label" for="regClienteApellidoPaterno">Apellido paterno</label>
+                        <input class="perfil-input" type="text" id="regClienteApellidoPaterno" name="apellidoPaterno" maxlength="30">
+                    </div>
+                </div>
+
+                <div class="perfil-campo-edit">
+                    <label class="perfil-form-label" for="regClienteApellidoMaterno">Apellido materno</label>
+                    <input class="perfil-input" type="text" id="regClienteApellidoMaterno" name="apellidoMaterno" maxlength="30">
+                </div>
+
+                <div class="perfil-form-row">
+                    <div class="perfil-campo-edit">
+                        <label class="perfil-form-label" for="regClienteRfc">RFC</label>
+                        <input class="perfil-input" type="text" id="regClienteRfc" name="rfc" maxlength="13">
+                    </div>
+                    <div class="perfil-campo-edit">
+                        <label class="perfil-form-label" for="regClienteCurp">CURP</label>
+                        <input class="perfil-input" type="text" id="regClienteCurp" name="curp" maxlength="18">
+                    </div>
+                </div>
+
+                <div class="perfil-form-row">
+                    <div class="perfil-campo-edit">
+                        <label class="perfil-form-label" for="regClienteTelefono">Teléfono</label>
+                        <input class="perfil-input" type="tel" id="regClienteTelefono" name="telefono" maxlength="10">
+                    </div>
+                    <div class="perfil-campo-edit">
+                        <label class="perfil-form-label" for="regClienteCorreo">Correo</label>
+                        <input class="perfil-input" type="email" id="regClienteCorreo" name="correo" maxlength="100">
+                    </div>
+                </div>
+
+                <div class="perfil-campo-edit">
+                    <label class="perfil-form-label" for="regClientePassword">Contraseña temporal</label>
+                    <input class="perfil-input" type="password" id="regClientePassword" name="password" autocomplete="new-password">
+                </div>
+
+                <p class="perfil-error" id="errorRegistrarCliente"></p>
+                <p class="perfil-exito" id="exitoRegistrarCliente"></p>
+
+                <div class="perfil-acciones">
+                    <button type="button" class="btn-perfil-cancelar" id="btnCancelarRegistrarCliente">Cancelar</button>
+                    <button type="submit" class="btn-perfil-guardar">Registrar</button>
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+    <!-- MODAL ARMAR COTIZACION -->
+    <div class="modal-overlay" id="modalArmarCotizacion">
+
+        <div class="modal-box modal-box-servicios">
+
+            <div class="modal-header-bar">
+                <span>Armar cotización</span>
+                <button type="button" class="modal-cerrar" id="btnCerrarArmarCotizacion" aria-label="Cerrar">&times;</button>
+            </div>
+
+            <div class="cotizacion-body">
+
+                <div class="cotizacion-seccion">
+                    <h4>Vehículo</h4>
+                    <select class="perfil-input" id="cotizacionVehiculo">
+                        <option value="0">-- Selecciona un vehículo --</option>
+                        <option value="${vehiculo.precio}">
+                            ${vehiculo.marca.nombre} ${vehiculo.modelos.nombre} ${vehiculo.anio} — $${vehiculo.precio}
+                        </option>
+                        <c:forEach var="v" items="${relacionados}">
+                            <option value="${v.precio}">
+                                ${v.marca.nombre} ${v.modelos.nombre} ${v.anio} — $${v.precio}
+                            </option>
+                        </c:forEach>
+                    </select>
+                </div>
+
+                <div class="cotizacion-seccion">
+                    <h4>Servicios adicionales</h4>
+                    <div class="cotizacion-servicios-lista" id="cotizacionServiciosLista">
+                        <c:forEach var="s" items="${servicios}">
+                            <label class="cotizacion-servicio-item">
+                                <input type="checkbox" class="cotizacion-servicio-checkbox" value="${s.precio}">
+                                <span class="cotizacion-servicio-nombre">${s.nombre}</span>
+                                <span class="cotizacion-servicio-tipo">${s.tipoServicio.nombre}</span>
+                                <span class="cotizacion-servicio-precio">$${s.precio}</span>
+                            </label>
+                        </c:forEach>
+                        <c:if test="${empty servicios}">
+                            <p class="servicios-vacio">No hay servicios disponibles.</p>
+                        </c:if>
+                    </div>
+                </div>
+
+                <div class="cotizacion-total">
+                    <span>Total estimado</span>
+                    <span id="cotizacionTotal">$0</span>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</c:if>
 
 <!-- MODAL PERFIL -->
 <div class="modal-overlay" id="modalPerfil">
@@ -290,7 +445,7 @@
 <main class="detalle-page">
 
     <p class="detalle-breadcrumb">
-        <a href="${pageContext.request.contextPath}/automoviles?tipo=${vehiculo.tipoVehiculo.nombre}">Automóviles</a>
+        <a href="${pageContext.request.contextPath}/automoviles?tipo=${vehiculo.tipoVehiculo.nombre}">${esAsesor ? 'Vehículos' : 'Automóviles'}</a>
         › ${vehiculo.marca.nombre} ${vehiculo.modelos.nombre} ${vehiculo.anio} · ${vehiculo.tipoVehiculo.nombre}
     </p>
 
@@ -566,6 +721,122 @@
     });
 
 </script>
+
+<c:if test="${esAsesor}">
+<script>
+
+    // MODAL REGISTRAR CLIENTE
+
+    const modalRegistrarCliente = document.getElementById("modalRegistrarCliente");
+    const btnAbrirRegistrarCliente = document.getElementById("btnAbrirRegistrarCliente");
+    const btnCerrarRegistrarCliente = document.getElementById("btnCerrarRegistrarCliente");
+    const btnCancelarRegistrarCliente = document.getElementById("btnCancelarRegistrarCliente");
+    const formRegistrarCliente = document.getElementById("formRegistrarCliente");
+    const errorRegistrarCliente = document.getElementById("errorRegistrarCliente");
+    const exitoRegistrarCliente = document.getElementById("exitoRegistrarCliente");
+
+    function cerrarModalRegistrarCliente(){
+        modalRegistrarCliente.classList.remove("active");
+    }
+
+    btnAbrirRegistrarCliente.addEventListener("click", function(e){
+        e.stopPropagation();
+        errorRegistrarCliente.textContent = "";
+        exitoRegistrarCliente.textContent = "";
+        formRegistrarCliente.reset();
+        modalRegistrarCliente.classList.add("active");
+    });
+
+    btnCerrarRegistrarCliente.addEventListener("click", cerrarModalRegistrarCliente);
+    btnCancelarRegistrarCliente.addEventListener("click", cerrarModalRegistrarCliente);
+
+    modalRegistrarCliente.addEventListener("click", function(e){
+        if(e.target === modalRegistrarCliente){
+            cerrarModalRegistrarCliente();
+        }
+    });
+
+    formRegistrarCliente.addEventListener("submit", async function(e){
+        e.preventDefault();
+
+        errorRegistrarCliente.textContent = "";
+        exitoRegistrarCliente.textContent = "";
+
+        const datos = new URLSearchParams(new FormData(formRegistrarCliente));
+
+        try {
+            const respuesta = await fetch("${pageContext.request.contextPath}/registrarClienteAsesor", {
+                method: "POST",
+                headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                body: datos.toString()
+            });
+            const texto = (await respuesta.text()).trim();
+
+            if (respuesta.ok) {
+                exitoRegistrarCliente.textContent = texto;
+                formRegistrarCliente.reset();
+            } else {
+                errorRegistrarCliente.textContent = texto;
+            }
+        } catch (err) {
+            errorRegistrarCliente.textContent = "No se pudo contactar al servidor. Intenta de nuevo.";
+        }
+    });
+
+
+    // MODAL ARMAR COTIZACION
+
+    const modalArmarCotizacion = document.getElementById("modalArmarCotizacion");
+    const btnAbrirCotizacion = document.getElementById("btnAbrirCotizacion");
+    const btnCerrarArmarCotizacion = document.getElementById("btnCerrarArmarCotizacion");
+    const cotizacionVehiculo = document.getElementById("cotizacionVehiculo");
+    const cotizacionCheckboxes = document.querySelectorAll(".cotizacion-servicio-checkbox");
+    const cotizacionTotal = document.getElementById("cotizacionTotal");
+
+    function calcularTotalCotizacion(){
+        let total = parseFloat(cotizacionVehiculo.value) || 0;
+
+        cotizacionCheckboxes.forEach(function(cb){
+            if (cb.checked) {
+                total += parseFloat(cb.value) || 0;
+            }
+        });
+
+        cotizacionTotal.textContent = "$" + total.toLocaleString("es-MX");
+    }
+
+    btnAbrirCotizacion.addEventListener("click", function(e){
+        e.stopPropagation();
+        cotizacionVehiculo.value = "0";
+        cotizacionCheckboxes.forEach(function(cb){ cb.checked = false; });
+        calcularTotalCotizacion();
+        modalArmarCotizacion.classList.add("active");
+    });
+
+    btnCerrarArmarCotizacion.addEventListener("click", function(){
+        modalArmarCotizacion.classList.remove("active");
+    });
+
+    modalArmarCotizacion.addEventListener("click", function(e){
+        if(e.target === modalArmarCotizacion){
+            modalArmarCotizacion.classList.remove("active");
+        }
+    });
+
+    cotizacionVehiculo.addEventListener("change", calcularTotalCotizacion);
+    cotizacionCheckboxes.forEach(function(cb){
+        cb.addEventListener("change", calcularTotalCotizacion);
+    });
+
+    document.addEventListener("keydown", function(e){
+        if(e.key === "Escape"){
+            modalRegistrarCliente.classList.remove("active");
+            modalArmarCotizacion.classList.remove("active");
+        }
+    });
+
+</script>
+</c:if>
 
 <script>
     window.PERFIL_CONTEXT_PATH = "${pageContext.request.contextPath}";

@@ -23,7 +23,7 @@
     --color-hero-bg:        #f9f9fa;
     --color-hero-alt-bg:    #D9D9D9;
     --color-black-soft:     #1a1a1a;
-    --color-gray-50:        #eef0f3;
+    --color-gray-50: #f9fafb;
     --color-gray-100:       #e5e7eb;
     --color-gray-150:       #E0E5EB;
     --color-gray-200:       #D9D9D9;
@@ -141,6 +141,11 @@ body {
 }
 
 .dash-nav-link {
+    background: transparent;
+    border: none;
+    padding: 0;
+    font-family: inherit;
+    cursor: pointer;
     color: #ffffff;
     text-decoration: none;
     font-size: 1.1rem;

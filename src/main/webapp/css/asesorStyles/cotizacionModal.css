@@ -1,0 +1,102 @@
+/* =============================================
+   MODAL COTIZACION
+   Usa .modal-overlay / .modal-box / .modal-header-bar
+   ya definidos en serviciosModal.css, y .perfil-input
+   ya definido en perfilModal.css
+============================================= */
+
+.cotizacion-body {
+
+    padding: 24px 28px 28px;
+
+}
+
+.cotizacion-seccion {
+
+    margin-bottom: 20px;
+
+}
+
+.cotizacion-seccion h4 {
+
+    margin: 0 0 10px;
+    font-size: .85rem;
+    font-weight: 700;
+    color: var(--color-gray-700);
+    text-transform: uppercase;
+    letter-spacing: .02em;
+
+}
+
+.cotizacion-servicios-lista {
+
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+
+    max-height: 240px;
+    overflow-y: auto;
+
+}
+
+.cotizacion-servicio-item {
+
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    background: var(--color-gray-50);
+    border-radius: 8px;
+
+    padding: 10px 14px;
+
+    cursor: pointer;
+
+}
+
+.cotizacion-servicio-nombre {
+
+    flex: 1;
+    font-size: .9rem;
+    font-weight: 600;
+
+}
+
+.cotizacion-servicio-tipo {
+
+    font-size: .75rem;
+    color: var(--color-gray-700);
+
+}
+
+.cotizacion-servicio-precio {
+
+    font-size: .9rem;
+    font-weight: 700;
+    color: var(--btn-active);
+
+}
+
+.cotizacion-total {
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    background: var(--color-navy-dark);
+    color: var(--color-white);
+
+    border-radius: 10px;
+
+    padding: 14px 18px;
+
+    font-size: 1rem;
+    font-weight: 700;
+
+}
+
+#cotizacionTotal {
+
+    font-size: 1.2rem;
+
+}
