@@ -1,8 +1,11 @@
 package com.sgca.integradorsgca.controller;
 
+import com.sgca.integradorsgca.model.bean.ClientesBean;
 import com.sgca.integradorsgca.model.bean.ServiciosBean;
+import com.sgca.integradorsgca.model.bean.UsuarioBean;
 import com.sgca.integradorsgca.model.bean.VehImgBean;
 import com.sgca.integradorsgca.model.bean.VehiculosBean;
+import com.sgca.integradorsgca.model.dao.AgentesDao;
 import com.sgca.integradorsgca.model.dao.ServiciosDao;
 import com.sgca.integradorsgca.model.dao.TiposVehiculoDao;
 import com.sgca.integradorsgca.model.dao.VehImgDao;
@@ -12,6 +15,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -26,6 +30,7 @@ public class DetalleVehiculoServlet extends HttpServlet {
     private final VehImgDao vehImgDao = new VehImgDao();
     private final TiposVehiculoDao tiposVehiculoDao = new TiposVehiculoDao();
     private final ServiciosDao serviciosDao = new ServiciosDao();
+    private final AgentesDao agentesDao = new AgentesDao();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -60,6 +65,14 @@ public class DetalleVehiculoServlet extends HttpServlet {
         request.setAttribute("galeria", galeria);
         request.setAttribute("relacionados", relacionados);
         request.setAttribute("listaTipos", tiposVehiculoDao.listar());
+
+        HttpSession session = request.getSession(false);
+        UsuarioBean usuario = session != null ? (UsuarioBean) session.getAttribute("usuarioLogueado") : null;
+
+        if (usuario != null && "AGENTE".equalsIgnoreCase(usuario.getRol().getRol())) {
+            List<ClientesBean> clientesAsesor = agentesDao.listarClientesAsignados(usuario.getId_usuario());
+            request.setAttribute("clientesAsesor", clientesAsesor);
+        }
 
         try {
 

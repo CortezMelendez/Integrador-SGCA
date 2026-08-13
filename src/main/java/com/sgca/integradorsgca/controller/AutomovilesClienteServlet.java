@@ -1,7 +1,10 @@
 package com.sgca.integradorsgca.controller;
 
+import com.sgca.integradorsgca.model.bean.ClientesBean;
 import com.sgca.integradorsgca.model.bean.ServiciosBean;
+import com.sgca.integradorsgca.model.bean.UsuarioBean;
 import com.sgca.integradorsgca.model.bean.VehiculosBean;
+import com.sgca.integradorsgca.model.dao.AgentesDao;
 import com.sgca.integradorsgca.model.dao.ServiciosDao;
 import com.sgca.integradorsgca.model.dao.TiposVehiculoDao;
 import com.sgca.integradorsgca.model.dao.VehiculosDao;
@@ -10,6 +13,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -23,6 +27,7 @@ public class AutomovilesClienteServlet extends HttpServlet {
     private final VehiculosDao vehiculosDao = new VehiculosDao();
     private final TiposVehiculoDao tiposVehiculoDao = new TiposVehiculoDao();
     private final ServiciosDao serviciosDao = new ServiciosDao();
+    private final AgentesDao agentesDao = new AgentesDao();
 
     private static final List<String> ORDENES_VALIDOS =
             List.of("precio_desc", "precio_asc", "az", "recientes");
@@ -48,6 +53,14 @@ public class AutomovilesClienteServlet extends HttpServlet {
         request.setAttribute("buscarValor", buscar);
 
         request.setAttribute("listaTipos", tiposVehiculoDao.listar());
+
+        HttpSession session = request.getSession(false);
+        UsuarioBean usuario = session != null ? (UsuarioBean) session.getAttribute("usuarioLogueado") : null;
+
+        if (usuario != null && "AGENTE".equalsIgnoreCase(usuario.getRol().getRol())) {
+            List<ClientesBean> clientesAsesor = agentesDao.listarClientesAsignados(usuario.getId_usuario());
+            request.setAttribute("clientesAsesor", clientesAsesor);
+        }
 
         try {
 

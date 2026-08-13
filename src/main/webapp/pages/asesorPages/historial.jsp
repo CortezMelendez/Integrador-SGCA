@@ -219,11 +219,24 @@
         <div class="cotizacion-body">
 
             <div class="cotizacion-seccion">
+                <h4>Cliente</h4>
+                <select class="perfil-input" id="cotizacionCliente">
+                    <option value="0">-- Selecciona un cliente --</option>
+                    <c:forEach var="cl" items="${clientesAsesor}">
+                        <option value="${cl.idCliente}">${cl.nombreCliente}</option>
+                    </c:forEach>
+                </select>
+                <c:if test="${empty clientesAsesor}">
+                    <p class="servicios-vacio">Todavía no tienes clientes registrados en tu cartera.</p>
+                </c:if>
+            </div>
+
+            <div class="cotizacion-seccion">
                 <h4>Vehículo</h4>
                 <select class="perfil-input" id="cotizacionVehiculo">
-                    <option value="0">-- Selecciona un vehículo --</option>
+                    <option value="0" data-precio="0">-- Selecciona un vehículo --</option>
                     <c:forEach var="v" items="${vehiculos}">
-                        <option value="${v.precio}">
+                        <option value="${v.id_Vehiculo}" data-precio="${v.precio}">
                             ${v.marca.nombre} ${v.modelos.nombre} ${v.anio} — $${v.precio}
                         </option>
                     </c:forEach>
@@ -238,7 +251,7 @@
                 <div class="cotizacion-servicios-lista" id="cotizacionServiciosLista">
                     <c:forEach var="s" items="${servicios}">
                         <label class="cotizacion-servicio-item">
-                            <input type="checkbox" class="cotizacion-servicio-checkbox" value="${s.precio}">
+                            <input type="checkbox" class="cotizacion-servicio-checkbox" value="${s.id_servicio}" data-precio="${s.precio}">
                             <span class="cotizacion-servicio-nombre">${s.nombre}</span>
                             <span class="cotizacion-servicio-tipo">${s.tipoServicio.nombre}</span>
                             <span class="cotizacion-servicio-precio">$${s.precio}</span>
@@ -255,6 +268,61 @@
                 <span id="cotizacionTotal">$0</span>
             </div>
 
+            <p class="perfil-error" id="errorCotizacion"></p>
+            <p class="perfil-exito" id="exitoCotizacion"></p>
+
+            <div class="perfil-acciones">
+                <button type="button" class="btn-perfil-guardar" id="btnRegistrarVenta">Registrar venta</button>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- MODAL DETALLE DE VENTA -->
+<div class="modal-overlay" id="modalDetalleVenta">
+
+    <div class="modal-box modal-box-perfil">
+
+        <div class="perfil-header">
+            <h2>Detalle de la venta</h2>
+            <button type="button" class="modal-cerrar" id="btnCerrarDetalleVenta" aria-label="Cerrar">&times;</button>
+        </div>
+
+        <div class="perfil-seccion">
+            <div class="perfil-grid perfil-grid-1">
+                <div class="perfil-campo">
+                    <span class="perfil-label">Folio</span>
+                    <span class="perfil-valor" id="detalleVentaFolio"></span>
+                </div>
+                <div class="perfil-campo">
+                    <span class="perfil-label">Cliente</span>
+                    <span class="perfil-valor" id="detalleVentaCliente"></span>
+                </div>
+                <div class="perfil-campo">
+                    <span class="perfil-label">Correo</span>
+                    <span class="perfil-valor" id="detalleVentaCorreo"></span>
+                </div>
+                <div class="perfil-campo">
+                    <span class="perfil-label">Fecha</span>
+                    <span class="perfil-valor" id="detalleVentaFecha"></span>
+                </div>
+                <div class="perfil-campo">
+                    <span class="perfil-label">Vehículo</span>
+                    <span class="perfil-valor" id="detalleVentaVehiculo"></span>
+                </div>
+                <div class="perfil-campo">
+                    <span class="perfil-label">Servicios incluidos</span>
+                    <span class="perfil-valor" id="detalleVentaServicios"></span>
+                </div>
+                <div class="perfil-campo">
+                    <span class="perfil-label">Total</span>
+                    <span class="perfil-valor" id="detalleVentaTotal"></span>
+                </div>
+            </div>
         </div>
 
     </div>
@@ -431,21 +499,54 @@
             <table class="gest-table" id="tabla">
                 <thead>
                 <tr>
-                    <th>NO. de historial</th>
-                    <th>Id Cliente</th>
+                    <th>No. Venta</th>
+                    <th>Cliente</th>
                     <th>Fecha</th>
-                    <th>Costo</th>
-                    <th>Vehiculo</th>
-                    <th>Servicio</th>
+                    <th>Total</th>
                     <th>Acciones</th>
                 </tr>
                 </thead>
                 <tbody>
-                <tr>
-                    <td colspan="7" style="text-align:center; padding: 24px;">
-                        Todavía no hay ventas registradas para mostrar aquí.
-                    </td>
-                </tr>
+                <c:forEach var="venta" items="${ventas}">
+                    <fmt:formatDate value="${venta.fechaVenta}" pattern="dd/MM/yyyy" var="fechaVentaFmt"/>
+                    <fmt:formatNumber value="${venta.total}" pattern="#,##0" var="totalVentaFmt"/>
+                    <c:choose>
+                        <c:when test="${empty venta.detalles}">
+                            <c:set var="serviciosVentaTexto" value="—"/>
+                        </c:when>
+                        <c:otherwise>
+                            <c:set var="serviciosVentaTexto"><c:forEach var="d" items="${venta.detalles}" varStatus="st">${d.servicio.nombre}<c:if test="${!st.last}">, </c:if></c:forEach></c:set>
+                        </c:otherwise>
+                    </c:choose>
+                    <tr>
+                        <td>${venta.id_venta}</td>
+                        <td>${venta.cliente.nombreCliente}</td>
+                        <td>${fechaVentaFmt}</td>
+                        <td>$${totalVentaFmt}</td>
+                        <td class="acciones-cell">
+                            <div class="action-group">
+                                <button type="button" class="btn-icon btn-info" title="Ver detalle"
+                                        data-folio="${venta.id_venta}"
+                                        data-cliente="${venta.cliente.nombreCliente}"
+                                        data-correo="${venta.cliente.correoCliente}"
+                                        data-fecha="${fechaVentaFmt}"
+                                        data-vehiculo="${venta.vehiculo.marca.nombre} ${venta.vehiculo.modelos.nombre} ${venta.vehiculo.anio} — ${venta.vehiculo.placa}"
+                                        data-servicios="${serviciosVentaTexto}"
+                                        data-total="$${totalVentaFmt}"
+                                        onclick="abrirDetalleVenta(this)">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M8 0a8 8 0 100 16A8 8 0 008 0zm.9 12.1H7.1V7h1.8v5.1zm0-6.4H7.1V4h1.8v1.7z" fill="currentColor"/></svg>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                </c:forEach>
+                <c:if test="${empty ventas}">
+                    <tr>
+                        <td colspan="5" style="text-align:center; padding: 24px;">
+                            Todavía no hay ventas registradas para mostrar aquí.
+                        </td>
+                    </tr>
+                </c:if>
                 </tbody>
             </table>
         </div>
@@ -506,6 +607,34 @@
             modalServicios.classList.remove("active");
             modalRegistrarCliente.classList.remove("active");
             modalArmarCotizacion.classList.remove("active");
+            modalDetalleVenta.classList.remove("active");
+        }
+    });
+
+
+    // MODAL DETALLE DE VENTA
+
+    const modalDetalleVenta = document.getElementById("modalDetalleVenta");
+    const btnCerrarDetalleVenta = document.getElementById("btnCerrarDetalleVenta");
+
+    function abrirDetalleVenta(btn){
+        document.getElementById("detalleVentaFolio").textContent = btn.dataset.folio;
+        document.getElementById("detalleVentaCliente").textContent = btn.dataset.cliente;
+        document.getElementById("detalleVentaCorreo").textContent = btn.dataset.correo;
+        document.getElementById("detalleVentaFecha").textContent = btn.dataset.fecha;
+        document.getElementById("detalleVentaVehiculo").textContent = btn.dataset.vehiculo;
+        document.getElementById("detalleVentaServicios").textContent = btn.dataset.servicios;
+        document.getElementById("detalleVentaTotal").textContent = btn.dataset.total;
+        modalDetalleVenta.classList.add("active");
+    }
+
+    btnCerrarDetalleVenta.addEventListener("click", function(){
+        modalDetalleVenta.classList.remove("active");
+    });
+
+    modalDetalleVenta.addEventListener("click", function(e){
+        if(e.target === modalDetalleVenta){
+            modalDetalleVenta.classList.remove("active");
         }
     });
 
@@ -574,16 +703,21 @@
     const modalArmarCotizacion = document.getElementById("modalArmarCotizacion");
     const btnAbrirCotizacion = document.getElementById("btnAbrirCotizacion");
     const btnCerrarArmarCotizacion = document.getElementById("btnCerrarArmarCotizacion");
+    const cotizacionCliente = document.getElementById("cotizacionCliente");
     const cotizacionVehiculo = document.getElementById("cotizacionVehiculo");
     const cotizacionCheckboxes = document.querySelectorAll(".cotizacion-servicio-checkbox");
     const cotizacionTotal = document.getElementById("cotizacionTotal");
+    const btnRegistrarVenta = document.getElementById("btnRegistrarVenta");
+    const errorCotizacion = document.getElementById("errorCotizacion");
+    const exitoCotizacion = document.getElementById("exitoCotizacion");
 
     function calcularTotalCotizacion(){
-        let total = parseFloat(cotizacionVehiculo.value) || 0;
+        const opcionVehiculo = cotizacionVehiculo.selectedOptions[0];
+        let total = opcionVehiculo ? (parseFloat(opcionVehiculo.dataset.precio) || 0) : 0;
 
         cotizacionCheckboxes.forEach(function(cb){
             if (cb.checked) {
-                total += parseFloat(cb.value) || 0;
+                total += parseFloat(cb.dataset.precio) || 0;
             }
         });
 
@@ -592,8 +726,11 @@
 
     btnAbrirCotizacion.addEventListener("click", function(e){
         e.stopPropagation();
+        cotizacionCliente.value = "0";
         cotizacionVehiculo.value = "0";
         cotizacionCheckboxes.forEach(function(cb){ cb.checked = false; });
+        errorCotizacion.textContent = "";
+        exitoCotizacion.textContent = "";
         calcularTotalCotizacion();
         modalArmarCotizacion.classList.add("active");
     });
@@ -611,6 +748,50 @@
     cotizacionVehiculo.addEventListener("change", calcularTotalCotizacion);
     cotizacionCheckboxes.forEach(function(cb){
         cb.addEventListener("change", calcularTotalCotizacion);
+    });
+
+    btnRegistrarVenta.addEventListener("click", async function(){
+        errorCotizacion.textContent = "";
+        exitoCotizacion.textContent = "";
+
+        const idCliente = cotizacionCliente.value;
+        const idVehiculo = cotizacionVehiculo.value;
+
+        if (!idCliente || idCliente === "0") {
+            errorCotizacion.textContent = "Selecciona un cliente.";
+            return;
+        }
+        if (!idVehiculo || idVehiculo === "0") {
+            errorCotizacion.textContent = "Selecciona un vehículo.";
+            return;
+        }
+
+        const datos = new URLSearchParams();
+        datos.append("idCliente", idCliente);
+        datos.append("idVehiculo", idVehiculo);
+        cotizacionCheckboxes.forEach(function(cb){
+            if (cb.checked) {
+                datos.append("idsServicios", cb.value);
+            }
+        });
+
+        try {
+            const respuesta = await fetch("${pageContext.request.contextPath}/registrarVentaAsesor", {
+                method: "POST",
+                headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                body: datos.toString()
+            });
+            const texto = (await respuesta.text()).trim();
+
+            if (respuesta.ok) {
+                exitoCotizacion.textContent = texto;
+                setTimeout(function(){ window.location.reload(); }, 1200);
+            } else {
+                errorCotizacion.textContent = texto;
+            }
+        } catch (err) {
+            errorCotizacion.textContent = "No se pudo contactar al servidor. Intenta de nuevo.";
+        }
     });
 
 </script>
