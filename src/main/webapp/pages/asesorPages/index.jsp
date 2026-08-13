@@ -215,11 +215,24 @@
         <div class="cotizacion-body">
 
             <div class="cotizacion-seccion">
+                <h4>Cliente</h4>
+                <select class="perfil-input" id="cotizacionCliente">
+                    <option value="0">-- Selecciona un cliente --</option>
+                    <c:forEach var="cl" items="${clientesAsesor}">
+                        <option value="${cl.idCliente}">${cl.nombreCliente}</option>
+                    </c:forEach>
+                </select>
+                <c:if test="${empty clientesAsesor}">
+                    <p class="servicios-vacio">Todavía no tienes clientes registrados en tu cartera.</p>
+                </c:if>
+            </div>
+
+            <div class="cotizacion-seccion">
                 <h4>Vehículo</h4>
                 <select class="perfil-input" id="cotizacionVehiculo">
-                    <option value="0">-- Selecciona un vehículo --</option>
+                    <option value="0" data-precio="0">-- Selecciona un vehículo --</option>
                     <c:forEach var="v" items="${vehiculos}">
-                        <option value="${v.precio}">
+                        <option value="${v.id_Vehiculo}" data-precio="${v.precio}">
                             ${v.marca.nombre} ${v.modelos.nombre} ${v.anio} — $${v.precio}
                         </option>
                     </c:forEach>
@@ -234,7 +247,7 @@
                 <div class="cotizacion-servicios-lista" id="cotizacionServiciosLista">
                     <c:forEach var="s" items="${servicios}">
                         <label class="cotizacion-servicio-item">
-                            <input type="checkbox" class="cotizacion-servicio-checkbox" value="${s.precio}">
+                            <input type="checkbox" class="cotizacion-servicio-checkbox" value="${s.id_servicio}" data-precio="${s.precio}">
                             <span class="cotizacion-servicio-nombre">${s.nombre}</span>
                             <span class="cotizacion-servicio-tipo">${s.tipoServicio.nombre}</span>
                             <span class="cotizacion-servicio-precio">$${s.precio}</span>
@@ -249,6 +262,13 @@
             <div class="cotizacion-total">
                 <span>Total estimado</span>
                 <span id="cotizacionTotal">$0</span>
+            </div>
+
+            <p class="perfil-error" id="errorCotizacion"></p>
+            <p class="perfil-exito" id="exitoCotizacion"></p>
+
+            <div class="perfil-acciones">
+                <button type="button" class="btn-perfil-guardar" id="btnRegistrarVenta">Registrar venta</button>
             </div>
 
         </div>
@@ -613,16 +633,21 @@
     const modalCotizacion = document.getElementById("modalCotizacion");
     const btnAbrirCotizacion = document.getElementById("btnAbrirCotizacion");
     const btnCerrarCotizacion = document.getElementById("btnCerrarCotizacion");
+    const cotizacionCliente = document.getElementById("cotizacionCliente");
     const cotizacionVehiculo = document.getElementById("cotizacionVehiculo");
     const cotizacionCheckboxes = document.querySelectorAll(".cotizacion-servicio-checkbox");
     const cotizacionTotal = document.getElementById("cotizacionTotal");
+    const btnRegistrarVenta = document.getElementById("btnRegistrarVenta");
+    const errorCotizacion = document.getElementById("errorCotizacion");
+    const exitoCotizacion = document.getElementById("exitoCotizacion");
 
     function calcularTotalCotizacion(){
-        let total = parseFloat(cotizacionVehiculo.value) || 0;
+        const opcionVehiculo = cotizacionVehiculo.selectedOptions[0];
+        let total = opcionVehiculo ? (parseFloat(opcionVehiculo.dataset.precio) || 0) : 0;
 
         cotizacionCheckboxes.forEach(function(cb){
             if (cb.checked) {
-                total += parseFloat(cb.value) || 0;
+                total += parseFloat(cb.dataset.precio) || 0;
             }
         });
 
@@ -631,8 +656,11 @@
 
     btnAbrirCotizacion.addEventListener("click", function(e){
         e.stopPropagation();
+        cotizacionCliente.value = "0";
         cotizacionVehiculo.value = "0";
         cotizacionCheckboxes.forEach(function(cb){ cb.checked = false; });
+        errorCotizacion.textContent = "";
+        exitoCotizacion.textContent = "";
         calcularTotalCotizacion();
         modalCotizacion.classList.add("active");
     });
@@ -650,6 +678,50 @@
     cotizacionVehiculo.addEventListener("change", calcularTotalCotizacion);
     cotizacionCheckboxes.forEach(function(cb){
         cb.addEventListener("change", calcularTotalCotizacion);
+    });
+
+    btnRegistrarVenta.addEventListener("click", async function(){
+        errorCotizacion.textContent = "";
+        exitoCotizacion.textContent = "";
+
+        const idCliente = cotizacionCliente.value;
+        const idVehiculo = cotizacionVehiculo.value;
+
+        if (!idCliente || idCliente === "0") {
+            errorCotizacion.textContent = "Selecciona un cliente.";
+            return;
+        }
+        if (!idVehiculo || idVehiculo === "0") {
+            errorCotizacion.textContent = "Selecciona un vehículo.";
+            return;
+        }
+
+        const datos = new URLSearchParams();
+        datos.append("idCliente", idCliente);
+        datos.append("idVehiculo", idVehiculo);
+        cotizacionCheckboxes.forEach(function(cb){
+            if (cb.checked) {
+                datos.append("idsServicios", cb.value);
+            }
+        });
+
+        try {
+            const respuesta = await fetch("${pageContext.request.contextPath}/registrarVentaAsesor", {
+                method: "POST",
+                headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                body: datos.toString()
+            });
+            const texto = (await respuesta.text()).trim();
+
+            if (respuesta.ok) {
+                exitoCotizacion.textContent = texto;
+                setTimeout(function(){ window.location.reload(); }, 1200);
+            } else {
+                errorCotizacion.textContent = texto;
+            }
+        } catch (err) {
+            errorCotizacion.textContent = "No se pudo contactar al servidor. Intenta de nuevo.";
+        }
     });
 
 </script>

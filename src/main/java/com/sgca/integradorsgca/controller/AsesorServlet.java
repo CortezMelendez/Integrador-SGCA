@@ -1,7 +1,10 @@
 package com.sgca.integradorsgca.controller;
 
+import com.sgca.integradorsgca.model.bean.ClientesBean;
 import com.sgca.integradorsgca.model.bean.ServiciosBean;
+import com.sgca.integradorsgca.model.bean.UsuarioBean;
 import com.sgca.integradorsgca.model.bean.VehiculosBean;
+import com.sgca.integradorsgca.model.dao.AgentesDao;
 import com.sgca.integradorsgca.model.dao.ServiciosDao;
 import com.sgca.integradorsgca.model.dao.TiposVehiculoDao;
 import com.sgca.integradorsgca.model.dao.VehiculosDao;
@@ -10,6 +13,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -23,6 +27,7 @@ public class AsesorServlet extends HttpServlet {
     private final VehiculosDao vehiculosDao = new VehiculosDao();
     private final TiposVehiculoDao tiposVehiculoDao = new TiposVehiculoDao();
     private final ServiciosDao serviciosDao = new ServiciosDao();
+    private final AgentesDao agentesDao = new AgentesDao();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -32,6 +37,14 @@ public class AsesorServlet extends HttpServlet {
 
         request.setAttribute("vehiculos", vehiculos);
         request.setAttribute("listaTipos", tiposVehiculoDao.listar());
+
+        HttpSession session = request.getSession(false);
+        UsuarioBean usuario = session != null ? (UsuarioBean) session.getAttribute("usuarioLogueado") : null;
+
+        List<ClientesBean> clientesAsesor = usuario != null
+                ? agentesDao.listarClientesAsignados(usuario.getId_usuario())
+                : new ArrayList<>();
+        request.setAttribute("clientesAsesor", clientesAsesor);
 
         try {
 

@@ -336,6 +336,14 @@ p {
 .btn-delete:hover { background-color: var(--color-danger-bg-hover); }
 .btn-delete:active { background-color: var(--color-danger-bg-active); }
 
+/* Botón Ver detalle / Info (gris neutro, 3 tonos) */
+.btn-info {
+    background-color: var(--color-gray-300);
+    color: var(--color-text-strong);
+}
+.btn-info:hover { background-color: var(--color-gray-400); }
+.btn-info:active { background-color: var(--color-gray-500); }
+
 /* =========================================================
    7. FOOTER (PIE DE PÁGINA)
 ========================================================= */
