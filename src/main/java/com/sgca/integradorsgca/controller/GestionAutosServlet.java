@@ -58,17 +58,20 @@ public class GestionAutosServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String accion = req.getParameter("accion");
+        String exito = null;
 
         if ("eliminar".equals(accion)) {
             int id = Integer.parseInt(req.getParameter("id"));
             vehiculosDao.eliminar(id);
+            exito = "eliminado";
         } else if ("cambiarEstado".equals(accion)) {
             int id = Integer.parseInt(req.getParameter("id"));
             int disponible = Integer.parseInt(req.getParameter("disponible"));
             vehiculosDao.cambiarEstado(id, disponible);
         }
 
-        resp.sendRedirect(req.getContextPath() + REDIRECT_LISTA);
+        String destino = REDIRECT_LISTA + (exito != null ? "&exito=" + exito : "");
+        resp.sendRedirect(req.getContextPath() + destino);
     }
 
     @Override
@@ -76,12 +79,15 @@ public class GestionAutosServlet extends HttpServlet {
         req.setCharacterEncoding("UTF-8");
         String accion = req.getParameter("accion");
         String error = null;
+        String exito = null;
 
         try {
             if ("registrar".equals(accion)) {
                 error = registrar(req);
+                if (error == null) exito = "agregado";
             } else if ("actualizar".equals(accion)) {
                 error = actualizar(req);
+                if (error == null) exito = "editado";
             }
         } catch (Exception e) {
             System.err.println("Error al procesar auto: " + e.getMessage());
@@ -89,7 +95,9 @@ public class GestionAutosServlet extends HttpServlet {
             error = "error_servidor";
         }
 
-        String destino = REDIRECT_LISTA + (error != null ? "&error=" + error : "");
+        String destino = REDIRECT_LISTA
+                + (error != null ? "&error=" + error : "")
+                + (exito != null ? "&exito=" + exito : "");
         resp.sendRedirect(req.getContextPath() + destino);
     }
 

@@ -111,8 +111,10 @@
 }
 
 .auto-card-img {
+  display: block;
   width: 100%;
   height: 130px;
+  object-fit: cover;
   background: linear-gradient(135deg, var(--color-navy-dark) 0%, var(--color-navy-light) 100%);
 }
 

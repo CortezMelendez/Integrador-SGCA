@@ -25,8 +25,15 @@ document.addEventListener('keydown', e => {
         cerrarModal('modalAgregar');
         cerrarModal('modalEditar');
         cerrarModal('modalConfirmar');
+        cerrarModal('modalExito');
     }
 });
+
+// Cierra el modal de éxito y, por si quedó alguno abierto detrás, todos los demás,
+// dejando visible únicamente la tabla.
+function cerrarTodoYMostrarTabla() {
+    ['modalExito', 'modalAgregar', 'modalEditar', 'modalConfirmar'].forEach(cerrarModal);
+}
 
 // =========================================================
 // MODAL DE CONFIRMACIÓN (reemplaza confirm() del navegador)

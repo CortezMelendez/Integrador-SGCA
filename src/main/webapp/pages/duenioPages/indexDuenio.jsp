@@ -88,6 +88,46 @@
 
     </section>
 
+    <!-- Carrusel de autos disponibles (mismo carrusel que ven Cliente y Asesor) -->
+    <section class="carrusel-section" id="carrusel">
+
+        <div class="carrusel-header">
+            <h2>Autos disponibles</h2>
+            <div class="carrusel-controls">
+                <button type="button" class="carrusel-btn" id="btnPrev" aria-label="Anterior">&#8249;</button>
+                <button type="button" class="carrusel-btn" id="btnNext" aria-label="Siguiente">&#8250;</button>
+            </div>
+        </div>
+
+        <div class="carrusel-track" id="carruselTrack">
+            <c:forEach var="v" items="${vehiculos}">
+                <a class="auto-card" href="${pageContext.request.contextPath}/detalleVehiculo?id=${v.id_Vehiculo}">
+                    <c:choose>
+                        <c:when test="${not empty v.foto_Portada}">
+                            <img class="auto-card-img" src="${pageContext.request.contextPath}/Images/imagesAutos/${v.foto_Portada}" alt="${v.marca.nombre} ${v.modelos.nombre}" />
+                        </c:when>
+                        <c:otherwise>
+                            <div class="auto-card-img"></div>
+                        </c:otherwise>
+                    </c:choose>
+                    <div class="auto-card-info">
+                        <span class="auto-card-marca">${v.marca.nombre} ${v.modelos.nombre}</span>
+                        <span class="auto-card-modelo">Año ${v.anio}</span>
+                        <span class="auto-card-precio">$<fmt:formatNumber value="${v.precio}" type="number" minFractionDigits="2" maxFractionDigits="2"/></span>
+                    </div>
+                </a>
+            </c:forEach>
+            <c:if test="${empty vehiculos}">
+                <p>No hay vehículos disponibles por el momento.</p>
+            </c:if>
+        </div>
+
+        <div class="carrusel-scrollbar">
+            <div class="carrusel-scrollbar-thumb" id="scrollThumb"></div>
+        </div>
+
+    </section>
+
 </main>
 
 
@@ -418,6 +458,50 @@
         }
     });
 
+</script>
+
+<script>
+    // ===== CARRUSEL DE AUTOS DISPONIBLES =====
+    (function () {
+        const track = document.getElementById('carruselTrack');
+        const btnPrev = document.getElementById('btnPrev');
+        const btnNext = document.getElementById('btnNext');
+        const thumb = document.getElementById('scrollThumb');
+        if (!track || !thumb) return;
+
+        const DISTANCIA_SCROLL = 260;
+
+        if (btnPrev) btnPrev.addEventListener('click', () => track.scrollBy({ left: -DISTANCIA_SCROLL, behavior: 'smooth' }));
+        if (btnNext) btnNext.addEventListener('click', () => track.scrollBy({ left: DISTANCIA_SCROLL, behavior: 'smooth' }));
+
+        function actualizarBarra() {
+            const scrollableWidth = track.scrollWidth - track.clientWidth;
+            if (scrollableWidth <= 0) {
+                thumb.style.width = '100%';
+                thumb.style.left = '0';
+                return;
+            }
+            const porcentajeVisible = (track.clientWidth / track.scrollWidth) * 100;
+            const porcentajeScroll = (track.scrollLeft / scrollableWidth) * (100 - porcentajeVisible);
+            thumb.style.width = porcentajeVisible + '%';
+            thumb.style.left = porcentajeScroll + '%';
+        }
+
+        track.addEventListener('scroll', actualizarBarra);
+        window.addEventListener('resize', actualizarBarra);
+        actualizarBarra();
+
+        let arrastrando = false;
+        thumb.addEventListener('mousedown', (e) => { arrastrando = true; e.preventDefault(); });
+        document.addEventListener('mouseup', () => arrastrando = false);
+        document.addEventListener('mousemove', (e) => {
+            if (!arrastrando) return;
+            const barra = thumb.parentElement.getBoundingClientRect();
+            const porcentaje = (e.clientX - barra.left) / barra.width;
+            const scrollableWidth = track.scrollWidth - track.clientWidth;
+            track.scrollLeft = porcentaje * scrollableWidth;
+        });
+    })();
 </script>
 
 <script>

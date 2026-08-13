@@ -76,6 +76,7 @@ public class ServiciosServlet extends HttpServlet {
 
         String accion = req.getParameter("accion");
         String error = null;
+        String exito = null;
 
         try {
 
@@ -89,6 +90,7 @@ public class ServiciosServlet extends HttpServlet {
                 case "agregar":
 
                     error = agregarServicio(req);
+                    if (error == null) exito = "agregado";
 
                     break;
 
@@ -100,6 +102,7 @@ public class ServiciosServlet extends HttpServlet {
                 case "editar":
 
                     error = editarServicio(req);
+                    if (error == null) exito = "editado";
 
                     break;
 
@@ -122,6 +125,7 @@ public class ServiciosServlet extends HttpServlet {
                 case "eliminar":
 
                     eliminarServicio(req);
+                    exito = "eliminado";
 
                     break;
 
@@ -134,7 +138,8 @@ public class ServiciosServlet extends HttpServlet {
 
         }
 
-        String destino = "/servicios" + (error != null ? "?error=" + error : "");
+        String destino = "/servicios"
+                + (error != null ? "?error=" + error : (exito != null ? "?exito=" + exito : ""));
         resp.sendRedirect(req.getContextPath() + destino);
 
     }

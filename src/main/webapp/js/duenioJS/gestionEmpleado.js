@@ -44,8 +44,15 @@ document.addEventListener('keydown', e => {
         cerrarModal('modalConfirmar');
         cerrarModal('modalTransferir');
         cerrarModal('modalClientesAgente');
+        cerrarModal('modalExito');
     }
 });
+
+// Cierra el modal de éxito y, por si quedó alguno abierto detrás, todos los demás,
+// dejando visible únicamente la tabla.
+function cerrarTodoYMostrarTabla() {
+    ['modalExito', 'modalAgregar', 'modalEditar', 'modalConfirmar', 'modalTransferir', 'modalClientesAgente'].forEach(cerrarModal);
+}
 
 // -------------------------------
 // Modal "Ver clientes" del agente (columna Clientes de la tabla)

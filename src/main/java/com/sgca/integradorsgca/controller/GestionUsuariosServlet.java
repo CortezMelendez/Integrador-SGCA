@@ -32,6 +32,7 @@ public class GestionUsuariosServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String accion = req.getParameter("accion");
         String error = null;
+        String exito = null;
 
         try {
             if ("cambiarEstado".equals(accion)) {
@@ -60,16 +61,18 @@ public class GestionUsuariosServlet extends HttpServlet {
                     boolean ok = usuarioDao.eliminar(idUsuario);
                     if (!ok) error = "no_se_pudo_eliminar";
                 }
+                if (error == null) exito = "eliminado";
 
             } else if ("darDeBaja".equals(accion)) {
                 error = darDeBaja(req);
+                if (error == null) exito = "eliminado";
             }
         } catch (Exception e) {
             e.printStackTrace();
             error = "error_servidor";
         }
 
-        resp.sendRedirect(req.getContextPath() + destino(req, error));
+        resp.sendRedirect(req.getContextPath() + destino(req, error, exito));
     }
 
     @Override
@@ -77,12 +80,15 @@ public class GestionUsuariosServlet extends HttpServlet {
         req.setCharacterEncoding("UTF-8");
         String accion = req.getParameter("accion");
         String error = null;
+        String exito = null;
 
         try {
             if ("registrar".equals(accion)) {
                 error = registrar(req);
+                if (error == null) exito = "agregado";
             } else if ("actualizar".equals(accion)) {
                 error = actualizar(req);
+                if (error == null) exito = "editado";
             }
         } catch (Exception e) {
             System.err.println("Error al procesar usuario: " + e.getMessage());
@@ -90,13 +96,15 @@ public class GestionUsuariosServlet extends HttpServlet {
             error = "error_servidor";
         }
 
-        resp.sendRedirect(req.getContextPath() + destino(req, error));
+        resp.sendRedirect(req.getContextPath() + destino(req, error, exito));
     }
 
-    private String destino(HttpServletRequest req, String error) {
+    private String destino(HttpServletRequest req, String error, String exito) {
         int idRol = Integer.parseInt(req.getParameter("idRol"));
         String base = idRol == ID_ROL_AGENTE ? "/btn?action=gestionEmpleados" : "/btn?action=gestionClientes";
-        return error != null ? base + "&error=" + error : base;
+        if (error != null) return base + "&error=" + error;
+        if (exito != null) return base + "&exito=" + exito;
+        return base;
     }
 
     /**

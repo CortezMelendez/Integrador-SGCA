@@ -338,6 +338,18 @@
     </div>
 </div>
 
+<!-- Modal de éxito (se muestra tras guardar/editar/eliminar correctamente) -->
+<div class="modal-overlay" id="modalExito" onclick="cerrarOverlay(event,'modalExito')">
+    <div class="modal-box modal-confirm-box" onclick="event.stopPropagation()">
+        <div class="modal-confirm-icon icono-guardar">✓</div>
+        <h3 class="modal-confirm-title">¡Listo!</h3>
+        <p class="modal-confirm-msg" id="exitoMensaje">Operación realizada correctamente.</p>
+        <div class="modal-actions modal-confirm-actions">
+            <button type="button" class="btn-modal-save" onclick="cerrarTodoYMostrarTabla()">Aceptar</button>
+        </div>
+    </div>
+</div>
+
 <c:if test="${not empty param.error}">
     <script>
         window.addEventListener('DOMContentLoaded', () => {
@@ -347,6 +359,21 @@
             };
             const codigo = '${param.error}';
             alert(mensajes[codigo] || 'No se pudo guardar el servicio. Intenta de nuevo.');
+        });
+    </script>
+</c:if>
+
+<c:if test="${not empty param.exito}">
+    <script>
+        window.addEventListener('DOMContentLoaded', () => {
+            const mensajesExito = {
+                agregado: 'El servicio se agregó correctamente.',
+                editado: 'Los cambios del servicio se guardaron correctamente.',
+                eliminado: 'El servicio se eliminó correctamente.'
+            };
+            document.getElementById('exitoMensaje').textContent =
+                mensajesExito['${param.exito}'] || 'Operación realizada correctamente.';
+            abrirModal('modalExito');
         });
     </script>
 </c:if>
