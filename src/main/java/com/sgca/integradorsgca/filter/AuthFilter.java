@@ -27,6 +27,11 @@ public class AuthFilter implements Filter {
         PERMISOS.put("/servicios",   roles("ADMIN", "AGENTE"));
         PERMISOS.put("/ventas",      roles("ADMIN", "AGENTE"));
 
+        // --- ROL: AGENTE (tablas de gestión propias del asesor) ---
+        PERMISOS.put("/gestionAutoAsesor",    roles("AGENTE"));
+        PERMISOS.put("/gestionClienteAsesor", roles("AGENTE"));
+        PERMISOS.put("/cotizacionesAsesor",   roles("AGENTE"));
+
         // --- ROL: CLIENTE (Consulta personal) ---
         PERMISOS.put("/mis-servicios", roles("CLIENTE"));
 

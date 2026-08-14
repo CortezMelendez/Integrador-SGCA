@@ -100,3 +100,60 @@
     font-size: 1.2rem;
 
 }
+
+/* =============================================
+   BUSCADOR (cliente / vehículo) del modal de cotización
+============================================= */
+
+.lista-buscable {
+
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+
+    max-height: 180px;
+    overflow-y: auto;
+
+    margin-top: 8px;
+
+}
+
+.buscable-item {
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+
+    background: var(--color-gray-50);
+    border: 2px solid transparent;
+    border-radius: 8px;
+
+    padding: 10px 14px;
+
+    font-size: .9rem;
+    cursor: pointer;
+
+}
+
+.buscable-item:hover {
+
+    background: var(--color-gray-100, #eef1f5);
+
+}
+
+.buscable-item.seleccionado {
+
+    border-color: var(--btn-active);
+    background: var(--color-gray-50);
+    font-weight: 700;
+
+}
+
+.buscable-vacio {
+
+    font-size: .85rem;
+    color: var(--color-gray-700);
+    padding: 6px 2px;
+
+}

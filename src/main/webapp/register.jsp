@@ -215,13 +215,13 @@
 
                     <label class="field-label"
                            for="curp">
-                        CURP
+                        AAAA800101HDFXXXX01
                     </label>
 
                     <div class="input-wrapper">
 
                         <img class="input-icon"
-                             src="${pageContext.request.contextPath}/Images/phone.svg"
+                             src="${pageContext.request.contextPath}/Images/infoUser.svg"
                              alt=""
                         >
 
@@ -241,13 +241,13 @@
 
                     <label class="field-label"
                            for="rfc">
-                        RFC
+                        AAAA580812AA7
                     </label>
 
                     <div class="input-wrapper">
 
                         <img class="input-icon"
-                             src="${pageContext.request.contextPath}/Images/phone.svg"
+                             src="${pageContext.request.contextPath}/Images/infoUser.svg"
                              alt="">
 
                         <input

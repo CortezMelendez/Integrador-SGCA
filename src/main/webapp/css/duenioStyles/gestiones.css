@@ -870,6 +870,12 @@ p {
     font-style: italic;
 }
 
+.asesor-asignado {
+    color: var(--btn-active);
+    font-weight: 600;
+    font-size: 0.85rem;
+}
+
 .btn-ver-clientes {
     border: 1px solid var(--btn-back-bg);
     background: var(--color-gray-100);
