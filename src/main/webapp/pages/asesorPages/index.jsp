@@ -312,6 +312,42 @@
     </section>
 
     <section class="carrusel-section" id="carrusel">
+
+        <div class="carrusel-header">
+            <h2>Autos disponibles</h2>
+            <div class="carrusel-controls">
+                <button type="button" class="carrusel-btn" id="btnPrev" aria-label="Anterior">&#8249;</button>
+                <button type="button" class="carrusel-btn" id="btnNext" aria-label="Siguiente">&#8250;</button>
+            </div>
+        </div>
+
+        <div class="carrusel-track" id="carruselTrack">
+            <c:forEach var="v" items="${vehiculos}">
+                <a class="auto-card" href="${pageContext.request.contextPath}/detalleVehiculo?id=${v.id_Vehiculo}">
+                    <c:choose>
+                        <c:when test="${not empty v.foto_Portada}">
+                            <img class="auto-card-img" src="${pageContext.request.contextPath}/Images/imagesAutos/${v.foto_Portada}" alt="${v.marca.nombre} ${v.modelos.nombre}" />
+                        </c:when>
+                        <c:otherwise>
+                            <div class="auto-card-img"></div>
+                        </c:otherwise>
+                    </c:choose>
+                    <div class="auto-card-info">
+                        <span class="auto-card-marca">${v.marca.nombre} ${v.modelos.nombre}</span>
+                        <span class="auto-card-modelo">Año ${v.anio}</span>
+                        <span class="auto-card-precio">$<fmt:formatNumber value="${v.precio}" type="number" minFractionDigits="2" maxFractionDigits="2"/></span>
+                    </div>
+                </a>
+            </c:forEach>
+            <c:if test="${empty vehiculos}">
+                <p>No hay vehículos disponibles por el momento.</p>
+            </c:if>
+        </div>
+
+        <div class="carrusel-scrollbar">
+            <div class="carrusel-scrollbar-thumb" id="scrollThumb"></div>
+        </div>
+
     </section>
 
 </main>

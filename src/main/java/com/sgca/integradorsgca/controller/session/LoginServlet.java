@@ -87,8 +87,7 @@ public class LoginServlet extends HttpServlet {
 
         switch (rol) {
             case "ADMIN":
-                resp.sendRedirect(req.getContextPath()
-                        + "/pages/duenioPages/indexDuenio.jsp");
+                resp.sendRedirect(req.getContextPath() + "/nav?action=inicio");
                 break;
             case "AGENTE":
                 resp.sendRedirect(req.getContextPath() + "/asesor");

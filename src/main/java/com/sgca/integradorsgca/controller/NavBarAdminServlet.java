@@ -63,6 +63,7 @@ public class NavBarAdminServlet extends HttpServlet {
 
         switch (action) {
             case "inicio":
+                request.setAttribute("vehiculos", vehiculosDao.listarDisponibles());
                 request.getRequestDispatcher(BASE_DUENIO + "indexDuenio.jsp").forward(request, response);
                 break;
 
@@ -78,6 +79,7 @@ public class NavBarAdminServlet extends HttpServlet {
 
             case "perfil":
                 request.setAttribute("mensaje", "Sección de Perfil en construcción");
+                request.setAttribute("vehiculos", vehiculosDao.listarDisponibles());
                 request.getRequestDispatcher(BASE_DUENIO + "indexDuenio.jsp").forward(request, response);
                 break;
 
@@ -87,7 +89,7 @@ public class NavBarAdminServlet extends HttpServlet {
                 break;
 
             default:
-                response.sendRedirect(request.getContextPath() + BASE_DUENIO + "indexDuenio.jsp");
+                response.sendRedirect(request.getContextPath() + "/nav?action=inicio");
         }
     }
 
