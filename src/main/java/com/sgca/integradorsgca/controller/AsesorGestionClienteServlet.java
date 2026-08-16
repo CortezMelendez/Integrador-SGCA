@@ -57,7 +57,10 @@ public class AsesorGestionClienteServlet extends HttpServlet {
                     resp.sendRedirect(req.getContextPath() + RUTA_LISTA + "?error=no_autorizado");
                     return;
                 }
-                boolean ok = usuarioDao.eliminar(idUsuario);
+                // Borrado real (ADMIN.CLIENTES + ADMIN.USUARIOS), distinto del
+                // botón de estado. Si el cliente tiene compras o servicios
+                // contratados, la BD rechaza el borrado por llave foránea.
+                boolean ok = clientesDao.eliminarPorIdUsuario(idUsuario);
                 resp.sendRedirect(req.getContextPath() + RUTA_LISTA + (ok ? "?exito=eliminado" : "?error=no_se_pudo_eliminar"));
                 return;
             }

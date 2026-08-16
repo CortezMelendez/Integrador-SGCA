@@ -27,7 +27,7 @@
       <span class="dash-brand">Concesionaria Automotriz</span>
     </div>
     <nav class="dash-nav-center">
-        <a href="${pageContext.request.contextPath}/nav?action=inicio" class="dash-nav-link">Inicio</a>
+        <a href="${pageContext.request.contextPath}/index.html" class="dash-nav-link">Inicio</a>
         <a href="${pageContext.request.contextPath}/nav?action=dashboard" class="dash-nav-link">Dashboard</a>
         <a href="${pageContext.request.contextPath}/nav?action=historial" class="dash-nav-link">Historial</a>
         <a href="${pageContext.request.contextPath}/nav?action=perfil" class="dash-nav-link">Perfil</a>
@@ -366,6 +366,7 @@
           duplicado_curp: 'Ya existe un usuario registrado con ese CURP.',
           duplicado_telefono: 'Ya existe un usuario registrado con ese teléfono.',
           password_invalido: 'La contraseña debe tener al menos 8 caracteres.',
+          no_se_pudo_eliminar: 'No se pudo eliminar: el cliente tiene compras o servicios contratados en su historial.',
           error_servidor: 'Ocurrió un error en el servidor. Intenta de nuevo.'
         };
         const codigo = '${param.error}';

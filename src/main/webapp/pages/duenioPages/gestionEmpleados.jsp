@@ -27,7 +27,7 @@
         <span class="dash-brand">Concesionaria Automotriz</span>
     </div>
     <nav class="dash-nav-center">
-        <a href="${pageContext.request.contextPath}/nav?action=inicio" class="dash-nav-link">Inicio</a>
+        <a href="${pageContext.request.contextPath}/index.html" class="dash-nav-link">Inicio</a>
         <a href="${pageContext.request.contextPath}/nav?action=dashboard" class="dash-nav-link">Dashboard</a>
         <a href="${pageContext.request.contextPath}/nav?action=historial" class="dash-nav-link">Historial</a>
         <a href="${pageContext.request.contextPath}/nav?action=perfil" class="dash-nav-link">Perfil</a>
@@ -197,9 +197,8 @@
                     <span class="modal-error" id="err-curp"></span>
                 </div>
                 <div class="modal-field">
-                    <label class="modal-label">Contraseña temporal *</label>
-                    <input class="modal-input" type="password" id="mod-password" name="password" maxlength="30" placeholder="Mínimo 8 caracteres" />
-                    <span class="modal-error" id="err-password"></span>
+                    <label class="modal-label">Contraseña</label>
+                    <p style="font-size: 0.85rem; color: #666; margin: 0;">El sistema genera una contraseña temporal y la envía al correo del agente.</p>
                 </div>
             </div>
             <div class="modal-row">
@@ -328,7 +327,7 @@
         <p class="modal-subtitle">
             <strong id="transferirNombreAgente"></strong> tiene
             <strong id="transferirClientesActivos"></strong> cliente(s) activo(s).
-            Selecciona a qué agente se transferirán antes de darlo de baja.
+            Selecciona a qué agente se transferirán antes de eliminarlo. Esta acción no se puede deshacer.
         </p>
 
         <div class="modal-field">
@@ -346,7 +345,7 @@
 
         <div class="modal-actions">
             <button type="button" class="btn-modal-cancel" onclick="cerrarModal('modalTransferir')">Cancelar</button>
-            <button type="button" class="btn-modal-delete" onclick="confirmarTransferenciaYBaja()">Transferir y dar de baja</button>
+            <button type="button" class="btn-modal-delete" onclick="confirmarTransferenciaYBaja()">Transferir y eliminar</button>
         </div>
     </div>
 </div>
@@ -386,13 +385,14 @@
                 receptor_invalido: 'El agente receptor debe ser distinto al agente que se da de baja.',
                 error_transferencia: 'No se pudo transferir los clientes. Intenta de nuevo.',
                 error_baja: 'No se pudo dar de baja al empleado. Intenta de nuevo.',
-                no_se_pudo_eliminar: 'No se pudo eliminar el empleado.',
+                no_se_pudo_eliminar: 'No se pudo eliminar: el agente tiene ventas o vehículos registrados en su historial.',
                 duplicado_correo: 'Ya existe un usuario registrado con ese correo.',
                 duplicado_rfc: 'Ya existe un usuario registrado con ese RFC.',
                 duplicado_curp: 'Ya existe un usuario registrado con ese CURP.',
                 duplicado_telefono: 'Ya existe un usuario registrado con ese teléfono.',
                 password_invalido: 'La contraseña debe tener al menos 8 caracteres.',
                 error_vinculo_agente: 'El empleado se creó, pero no se pudo vincular como agente. Contacta soporte.',
+                error_envio_correo: 'La cuenta del agente se creó correctamente, pero no se pudo enviar el correo con su contraseña. Pídele que use "Recuperar contraseña" para acceder.',
                 error_servidor: 'Ocurrió un error en el servidor. Intenta de nuevo.'
             };
             const codigo = '${param.error}';

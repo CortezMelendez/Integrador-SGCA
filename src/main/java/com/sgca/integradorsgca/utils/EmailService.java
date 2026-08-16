@@ -121,11 +121,29 @@ public class EmailService extends HttpServlet {
     }
 
     private void enviarCorreo(String destino, String asunto, String cuerpoHtml) throws MessagingException {
+        enviarCorreoConCredenciales(destino, asunto, cuerpoHtml,
+                obtenerConfiguracion("GMAIL_USER"), obtenerConfiguracion("GMAIL_PASS"),
+                obtenerConfiguracion("SMTP_HOST", "smtp.gmail.com"), obtenerConfiguracion("SMTP_PORT", "587"));
+    }
 
-        String usuario = obtenerConfiguracion("GMAIL_USER");
-        String clave   = obtenerConfiguracion("GMAIL_PASS");
-        String host    = obtenerConfiguracion("SMTP_HOST", "smtp.gmail.com");
-        String port    = obtenerConfiguracion("SMTP_PORT", "587");
+    /**
+     * Envía un correo HTML reutilizando la configuración SMTP de variables de
+     * entorno (GMAIL_USER, GMAIL_PASS, SMTP_HOST, SMTP_PORT). Pensado para
+     * usarse fuera de este servlet, por ejemplo al dar de alta un agente y
+     * enviarle su contraseña temporal (módulo 3 del DFR).
+     */
+    public static void enviarCorreoGenerico(String destino, String asunto, String cuerpoHtml) throws MessagingException {
+        String host = System.getenv("SMTP_HOST");
+        if (host == null || host.trim().isEmpty()) host = "smtp.gmail.com";
+        String port = System.getenv("SMTP_PORT");
+        if (port == null || port.trim().isEmpty()) port = "587";
+
+        enviarCorreoConCredenciales(destino, asunto, cuerpoHtml,
+                System.getenv("GMAIL_USER"), System.getenv("GMAIL_PASS"), host, port);
+    }
+
+    private static void enviarCorreoConCredenciales(String destino, String asunto, String cuerpoHtml,
+            String usuario, String clave, String host, String port) throws MessagingException {
 
         if (usuario == null || clave == null) {
             throw new MessagingException("No se encontraron las variables 'GMAIL_USER' o 'GMAIL_PASS' en el sistema.");
@@ -148,7 +166,7 @@ public class EmailService extends HttpServlet {
         });
 
         Message message = new MimeMessage(session);
-        message.setFrom(new InternetAddress(usuario));
+        message.setFrom(new InternetAddress(usuarioFinal));
         message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(destino));
         message.setSubject(asunto);
         message.setContent(cuerpoHtml, "text/html; charset=utf-8");
