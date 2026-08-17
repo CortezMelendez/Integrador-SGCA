@@ -27,6 +27,16 @@ public class AgentesServlet extends HttpServlet {
         if ("baja".equals(accion)) {
             try {
                 int idAgente = Integer.parseInt(req.getParameter("id"));
+
+                // Regla de negocio del DFR (módulo 3.2): un agente con clientes
+                // activos no puede darse de baja sin transferirlos antes. Esta
+                // ruta no ofrece un receptor, así que si tiene clientes se
+                // bloquea y se remite al flujo con transferencia.
+                if (agentesDao.contarClientesAsignados(idAgente) > 0) {
+                    resp.sendRedirect(req.getContextPath() + "/agentes?error=clientes_activos");
+                    return;
+                }
+
                 boolean exito = agentesDao.darDeBajaAgente(idAgente);
 
                 if (exito) {
@@ -100,6 +110,13 @@ public class AgentesServlet extends HttpServlet {
             } else if ("bajaAgente".equals(accion)) {
                 //El agente cambia su ESTADO a 0 y sus clientes quedan compartidos/libres (ID_AGENTE = NULL)
                 int idAgente = Integer.parseInt(req.getParameter("idAgente"));
+
+                // Misma regla de negocio del DFR (módulo 3.2): sin receptor de
+                // clientes, un agente con clientes activos no puede darse de baja.
+                if (agentesDao.contarClientesAsignados(idAgente) > 0) {
+                    resp.sendRedirect(req.getContextPath() + "/agentes?error=clientes_activos");
+                    return;
+                }
 
                 boolean exito = agentesDao.darDeBajaAgente(idAgente);
 

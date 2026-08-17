@@ -212,6 +212,73 @@ public class AgentesDao {
     }
 
     /*
+      Transfiere todos los clientes de un agente a otro agente activo (mismo
+      UPDATE que usa darDeBajaConTransferencia), sin tocar el estado de
+      ninguno de los dos. Se usa antes de eliminar definitivamente a un
+      agente con clientes asignados.
+     */
+    public boolean transferirClientes(int idUsuarioAgente, int idUsuarioReceptor) {
+        String sql =
+                "UPDATE ADMIN.CLIENTES SET ID_AGENTE = (SELECT ID_AGENTE FROM ADMIN.AGENTES WHERE ID_USUARIO = ?) " +
+                        "WHERE ID_AGENTE = (SELECT ID_AGENTE FROM ADMIN.AGENTES WHERE ID_USUARIO = ?)";
+
+        try (Connection con = Conexion.getConexion();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+
+            ps.setInt(1, idUsuarioReceptor);
+            ps.setInt(2, idUsuarioAgente);
+
+            ps.executeUpdate();
+            return true;
+        } catch (SQLException e) {
+            System.err.println("Error al transferir clientes del agente: " + e.getMessage());
+            return false;
+        }
+    }
+
+    /*
+      Elimina definitivamente a un agente: borra su fila en ADMIN.AGENTES y
+      luego en ADMIN.USUARIOS, en una sola transacción (a diferencia del
+      botón de estado y de bajaAgente, que solo lo desactivan). Solo debe
+      llamarse cuando ya no tiene clientes asignados (ver
+      contarClientesAsignados) — si el agente tiene ventas o vehículos en su
+      historial, la base de datos rechaza el borrado por llave foránea y
+      este método devuelve false en vez de dejar datos a medias.
+     */
+    public boolean eliminarPorIdUsuario(int idUsuario) {
+        String sqlAgente = "DELETE FROM ADMIN.AGENTES WHERE ID_USUARIO = ?";
+        String sqlUsuario = "DELETE FROM ADMIN.USUARIOS WHERE ID_USUARIO = ?";
+
+        Connection con = null;
+        try {
+            con = Conexion.getConexion();
+            con.setAutoCommit(false);
+
+            try (PreparedStatement ps1 = con.prepareStatement(sqlAgente)) {
+                ps1.setInt(1, idUsuario);
+                ps1.executeUpdate();
+            }
+            try (PreparedStatement ps2 = con.prepareStatement(sqlUsuario)) {
+                ps2.setInt(1, idUsuario);
+                ps2.executeUpdate();
+            }
+
+            con.commit();
+            return true;
+        } catch (SQLException e) {
+            if (con != null) {
+                try { con.rollback(); } catch (SQLException ex) { ex.printStackTrace(); }
+            }
+            System.err.println("Error al eliminar agente (posible historial de ventas/vehículos): " + e.getMessage());
+            return false;
+        } finally {
+            if (con != null) {
+                try { con.setAutoCommit(true); con.close(); } catch (SQLException ex) { ex.printStackTrace(); }
+            }
+        }
+    }
+
+    /*
       Transfiere todos los clientes de un agente a otro agente activo y, solo
       si la transferencia se aplica correctamente, da de baja al agente de
       origen (ADMIN.AGENTES y ADMIN.USUARIOS). Ambos agentes se identifican

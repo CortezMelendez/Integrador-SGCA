@@ -154,7 +154,7 @@ function confirmarEliminarUsuario(id, nombre, clientesActivos) {
         return;
     }
 
-    pedirConfirmacion('¿Deseas dar de baja a este empleado? Esta acción no se puede deshacer.', () => {
+    pedirConfirmacion('¿Deseas eliminar a este empleado? Esta acción no se puede deshacer.', () => {
         window.location.href = `${CONTEXT_PATH}/gestionUsuarios?accion=eliminar&id=${id}&idRol=2`;
     }, 'peligro');
 }
@@ -252,8 +252,7 @@ function obtenerDatos(prefijo) {
         rfc: val(`${prefijo}-rfc`).toUpperCase(),
         telefono: val(`${prefijo}-telefono`),
         curp: val(`${prefijo}-curp`).toUpperCase(),
-        correo: val(`${prefijo}-correo`),
-        password: prefijo === 'mod' ? val('mod-password') : null
+        correo: val(`${prefijo}-correo`)
     };
 }
 
@@ -306,14 +305,6 @@ function validarDatos(prefijo, datos) {
         marcarError('correo', 'El correo es obligatorio.');
     } else if (!RE_CORREO.test(datos.correo)) {
         marcarError('correo', 'Ingresa un correo electrónico válido.');
-    }
-
-    if (prefijo === 'mod') {
-        if (!datos.password) {
-            marcarError('password', 'La contraseña es obligatoria.');
-        } else if (datos.password.length < 8) {
-            marcarError('password', 'Debe tener al menos 8 caracteres.');
-        }
     }
 
     return valido;

@@ -141,6 +141,47 @@ public class ClientesDao {
     }
 
     /*
+      Elimina definitivamente a un cliente: borra su fila en ADMIN.CLIENTES y
+      luego en ADMIN.USUARIOS, en una sola transacción (a diferencia del
+      botón de estado, que solo lo desactiva). Si el cliente tiene compras o
+      servicios contratados en su historial, la base de datos rechaza el
+      borrado por llave foránea y este método devuelve false sin dejar datos
+      a medias.
+     */
+    public boolean eliminarPorIdUsuario(int idUsuario) {
+        String sqlCliente = "DELETE FROM ADMIN.CLIENTES WHERE ID_USUARIO = ?";
+        String sqlUsuario = "DELETE FROM ADMIN.USUARIOS WHERE ID_USUARIO = ?";
+
+        Connection con = null;
+        try {
+            con = Conexion.getConexion();
+            con.setAutoCommit(false);
+
+            try (PreparedStatement ps1 = con.prepareStatement(sqlCliente)) {
+                ps1.setInt(1, idUsuario);
+                ps1.executeUpdate();
+            }
+            try (PreparedStatement ps2 = con.prepareStatement(sqlUsuario)) {
+                ps2.setInt(1, idUsuario);
+                ps2.executeUpdate();
+            }
+
+            con.commit();
+            return true;
+        } catch (SQLException e) {
+            if (con != null) {
+                try { con.rollback(); } catch (SQLException ex) { ex.printStackTrace(); }
+            }
+            System.err.println("Error al eliminar cliente (posible historial de compras/servicios): " + e.getMessage());
+            return false;
+        } finally {
+            if (con != null) {
+                try { con.setAutoCommit(true); con.close(); } catch (SQLException ex) { ex.printStackTrace(); }
+            }
+        }
+    }
+
+    /*
     Asigna o toma un cliente libre (actualiza su ID_AGENTE).
     */
     public boolean asignarAgente(int idCliente, int idAgente) {

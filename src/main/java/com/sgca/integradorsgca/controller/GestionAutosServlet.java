@@ -26,6 +26,7 @@ import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.regex.Pattern;
 
 /**
  * Servlet encargado de las acciones del CRUD de autos que se muestra
@@ -56,6 +57,9 @@ public class GestionAutosServlet extends HttpServlet {
     private static final String CARPETA_IMAGENES = "Images/imagesAutos";
     private static final String CAMPO_FOTOS_EXTRA = "fotosExtra";
     private static final int MAX_IMAGENES_EXTRA = 5;
+
+    // Placa: 3 letras mayúsculas + guión + 3 o 4 dígitos (regla de negocio del DFR, módulo 2).
+    private static final Pattern PATRON_PLACA = Pattern.compile("^[A-Z]{3}-\\d{3,4}$");
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -110,9 +114,15 @@ public class GestionAutosServlet extends HttpServlet {
     // Devuelve el código de error a mostrar en el modal (null si todo salió bien)
     private String registrar(HttpServletRequest req) throws IOException, ServletException {
         String placa = req.getParameter("placa");
-        if (placa != null && vehiculosDao.existePlaca(placa.trim(), null)) {
+        if (placa == null || !PATRON_PLACA.matcher(placa.trim().toUpperCase()).matches()) {
+            return "formato_placa";
+        }
+        if (vehiculosDao.existePlaca(placa.trim(), null)) {
             return "duplicado_placa";
         }
+
+        String errorPrecio = validarPrecio(req.getParameter("precio"));
+        if (errorPrecio != null) return errorPrecio;
 
         VehiculosBean veh = construirDesdeRequest(req, 0);
         int idVehiculoNuevo = vehiculosDao.registrar(veh);
@@ -125,12 +135,18 @@ public class GestionAutosServlet extends HttpServlet {
     private String actualizar(HttpServletRequest req) throws IOException, ServletException {
         int idVehiculo = Integer.parseInt(req.getParameter("id_Vehiculo"));
 
-        String placa = req.getParameter("placa");
-        if (placa != null && vehiculosDao.existePlaca(placa.trim(), idVehiculo)) {
-            return "duplicado_placa";
+        VehiculosBean existente = vehiculosDao.buscarPorID(idVehiculo);
+        if (existente == null) {
+            return "vehiculo_no_encontrado";
         }
 
+        String errorPrecio = validarPrecio(req.getParameter("precio"));
+        if (errorPrecio != null) return errorPrecio;
+
         VehiculosBean veh = construirDesdeRequest(req, idVehiculo);
+        // La placa es de referencia y no es editable (regla de negocio del DFR):
+        // se conserva siempre la que ya tenía el vehículo, sin importar lo enviado.
+        veh.setPlaca(existente.getPlaca());
         vehiculosDao.actualizar(veh);
 
         // Imágenes extra que el dueño marcó para quitar desde la galería del modal Editar
@@ -145,6 +161,19 @@ public class GestionAutosServlet extends HttpServlet {
         int actuales = vehImgDao.listarPorVehiculo(idVehiculo).size();
         int espacioDisponible = Math.max(0, MAX_IMAGENES_EXTRA - actuales);
         guardarImagenesExtra(req, idVehiculo, espacioDisponible);
+        return null;
+    }
+
+    // Valida que el precio recibido sea un número positivo (regla de negocio del DFR, módulo 2).
+    // Devuelve el código de error a mostrar en el modal, o null si es válido.
+    private String validarPrecio(String precioParam) {
+        try {
+            if (precioParam == null || new BigDecimal(precioParam).compareTo(BigDecimal.ZERO) <= 0) {
+                return "precio_invalido";
+            }
+        } catch (NumberFormatException e) {
+            return "precio_invalido";
+        }
         return null;
     }
 

@@ -27,7 +27,7 @@
         <span class="dash-brand">Concesionaria Automotriz</span>
     </div>
     <nav class="dash-nav-center">
-        <a href="${pageContext.request.contextPath}/nav?action=inicio" class="dash-nav-link">Inicio</a>
+        <a href="${pageContext.request.contextPath}/index" class="dash-nav-link">Inicio</a>
         <a href="${pageContext.request.contextPath}/nav?action=dashboard" class="dash-nav-link">Dashboard</a>
         <a href="${pageContext.request.contextPath}/nav?action=historial" class="dash-nav-link">Historial</a>
         <a href="${pageContext.request.contextPath}/nav?action=perfil" class="dash-nav-link">Perfil</a>
@@ -67,12 +67,12 @@
                 <thead>
                 <tr>
                     <th>#</th>
+                    <th>Placa</th>
                     <th>Foto</th>
                     <th>Marca</th>
                     <th>Modelo</th>
                     <th>Categoria</th>
                     <th>Precio</th>
-                    <th>Placa</th>
                     <th>Año</th>
                     <th>Descripción</th>
                     <th>Estado</th>
@@ -84,6 +84,7 @@
                 <c:forEach var="v" items="${listaVehiculos}" varStatus="fila">
                     <tr>
                         <td>${fila.count}</td>
+                        <td>${v.placa}</td>
                         <td>
                             <c:choose>
                                 <c:when test="${not empty v.foto_Portada}">
@@ -98,7 +99,6 @@
                         <td>${v.modelos.nombre}</td>
                         <td>${v.tipoVehiculo.nombre}</td>
                         <td>$<fmt:formatNumber value="${v.precio}" type="number" minFractionDigits="2" maxFractionDigits="2"/></td>
-                        <td>${v.placa}</td>
                         <td>${v.anio}</td>
                         <td class="celda-descripcion">
                             <c:choose>
@@ -355,8 +355,8 @@
                     <span class="modal-error" id="edit-err-color"></span>
                 </div>
                 <div class="modal-field">
-                    <label class="modal-label">Placa *</label>
-                    <input class="modal-input" id="edit-placa" name="placa" type="text" />
+                    <label class="modal-label">Placa (no editable)</label>
+                    <input class="modal-input" id="edit-placa" name="placa" type="text" readonly title="La placa es de referencia y no puede modificarse." />
                     <span class="modal-error" id="edit-err-placa"></span>
                 </div>
             </div>
@@ -439,6 +439,9 @@
         window.addEventListener('DOMContentLoaded', () => {
             const mensajes = {
                 duplicado_placa: 'Ya existe un vehículo registrado con esa placa.',
+                formato_placa: 'El formato de placa no es válido. Debe ser 3 letras mayúsculas, guión y 3 o 4 dígitos (ej. ABC-1234).',
+                precio_invalido: 'El precio debe ser un valor numérico positivo.',
+                vehiculo_no_encontrado: 'El vehículo que intentas editar ya no existe.',
                 error_servidor: 'Ocurrió un error en el servidor. Intenta de nuevo.'
             };
             const codigo = '${param.error}';
