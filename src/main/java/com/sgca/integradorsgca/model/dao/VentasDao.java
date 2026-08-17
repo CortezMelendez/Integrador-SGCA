@@ -10,7 +10,9 @@ public class VentasDao {
 
     private final DetalleVentaServiciosDao detalleDao = new DetalleVentaServiciosDao();
 
-    public boolean registrarVentaCompleta(VentasBean venta) throws Exception {
+    // Devuelve el ID_VENTA generado (folio del comprobante), o -1 si la
+    // cabecera de venta no se pudo insertar.
+    public int registrarVentaCompleta(VentasBean venta) throws Exception {
         String sqlVenta = "INSERT INTO ADMIN.VENTAS (id_cliente, id_agente, id_vehiculo, fecha_venta, total) " +
                 "VALUES (?, ?, ?, SYSDATE, ?)";
         String sqlUpdateVehiculo = "UPDATE ADMIN.VEHICULOS SET disponible = 0 WHERE id_vehiculo = ?";
@@ -34,7 +36,7 @@ public class VentasDao {
             int filasVenta = psVenta.executeUpdate();
             if (filasVenta == 0) {
                 con.rollback();
-                return false;
+                return -1;
             }
 
             // Obtener el ID de la venta insertada
@@ -57,7 +59,7 @@ public class VentasDao {
             psVehiculo.executeUpdate();
 
             con.commit(); // Confirmar cambios en BD Oracle
-            return true;
+            return idVentaGenerado;
 
         } catch (Exception e) {
             if (con != null) {

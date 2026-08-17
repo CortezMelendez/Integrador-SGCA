@@ -19,13 +19,17 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 // Modal "Cotización" del navbar del asesor: convierte la cotización armada en
 // una venta real (ADMIN.VENTAS + ADMIN.DETALLE_VENTA_SERVICIOS), reutilizando
 // VentasDao.registrarVentaCompleta. El total se recalcula en el servidor con los precios
-// reales de BD.
+// reales de BD. Si la venta se registra con éxito, responde con el comprobante
+// informativo (folio, cliente, vehículo, servicios y total) en JSON, tal como
+// lo pide el DFR del módulo 5 ("genera un comprobante informativo").
 @WebServlet("/registrarVentaAsesor")
 public class AsesorRegistrarVentaServlet extends HttpServlet {
 
@@ -72,8 +76,11 @@ public class AsesorRegistrarVentaServlet extends HttpServlet {
             }
 
             List<ClientesBean> misClientes = agentesDao.listarClientesAsignados(asesor.getId_usuario());
-            boolean esClientePropio = misClientes.stream().anyMatch(c -> c.getIdCliente() == idCliente);
-            if (!esClientePropio) {
+            ClientesBean clienteCartera = misClientes.stream()
+                    .filter(c -> c.getIdCliente() == idCliente)
+                    .findFirst()
+                    .orElse(null);
+            if (clienteCartera == null) {
                 response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                 response.getWriter().println("Ese cliente no pertenece a tu cartera.");
                 return;
@@ -118,19 +125,66 @@ public class AsesorRegistrarVentaServlet extends HttpServlet {
             venta.setTotal(total);
             venta.setDetalles(detalles);
 
-            boolean exito = ventasDao.registrarVentaCompleta(venta);
-            if (!exito) {
+            int idVentaGenerado = ventasDao.registrarVentaCompleta(venta);
+            if (idVentaGenerado <= 0) {
                 response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
                 response.getWriter().println("No se pudo registrar la venta. Intenta de nuevo.");
                 return;
             }
 
-            response.getWriter().println("Venta registrada correctamente.");
+            String nombreAsesor = (asesor.getNombre() + " " + asesor.getApellidoPaterno()).trim();
+            response.setContentType("application/json; charset=UTF-8");
+            response.getWriter().println(
+                    aJsonComprobante(idVentaGenerado, clienteCartera, nombreAsesor, vehiculo, detalles, total));
 
         } catch (Exception e) {
             e.printStackTrace();
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             response.getWriter().println("Ocurrió un error en el servidor. Intenta más tarde.");
         }
+    }
+
+    // Comprobante informativo de la venta (Módulo 5 del DFR): folio, fecha,
+    // cliente, asesor, vehículo, servicios contratados y total. No es un
+    // comprobante fiscal ni de cobro (eso se hace fuera de la plataforma),
+    // solo confirma en pantalla los datos de la operación.
+    private String aJsonComprobante(int idVenta, ClientesBean cliente, String nombreAsesor,
+                                     VehiculosBean vehiculo, List<DetalleVentaServiciosBean> detalles,
+                                     double total) {
+        SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+        String nombreVehiculo = vehiculo.getMarca().getNombre() + " " + vehiculo.getModelos().getNombre()
+                + " " + vehiculo.getAnio();
+
+        StringBuilder json = new StringBuilder("{");
+        json.append("\"folio\":").append(idVenta).append(",");
+        json.append("\"fecha\":\"").append(escapeJson(formato.format(new Date()))).append("\",");
+        json.append("\"cliente\":\"").append(escapeJson(cliente.getNombreCliente())).append("\",");
+        json.append("\"asesor\":\"").append(escapeJson(nombreAsesor)).append("\",");
+        json.append("\"vehiculo\":\"").append(escapeJson(nombreVehiculo)).append("\",");
+        json.append("\"placa\":\"").append(escapeJson(vehiculo.getPlaca())).append("\",");
+        json.append("\"precioVehiculo\":").append(vehiculo.getPrecio()).append(",");
+
+        json.append("\"servicios\":[");
+        boolean primero = true;
+        for (DetalleVentaServiciosBean det : detalles) {
+            if (!primero) json.append(",");
+            primero = false;
+            json.append("{\"nombre\":\"").append(escapeJson(det.getServicio().getNombre()))
+                    .append("\",\"precio\":").append(det.getPrecio()).append("}");
+        }
+        json.append("],");
+        json.append("\"total\":").append(total);
+        json.append("}");
+        return json.toString();
+    }
+
+    private String escapeJson(String valor) {
+        if (valor == null) return "";
+        return valor.replace("\\", "\\\\")
+                .replace("\"", "\\\"")
+                .replace("\n", " ")
+                .replace("\r", " ")
+                .replace("<", "\\u003c")
+                .replace(">", "\\u003e");
     }
 }

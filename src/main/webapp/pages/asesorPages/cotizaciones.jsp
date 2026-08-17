@@ -16,6 +16,7 @@
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/duenioStyles/gestiones.css" />
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/duenioStyles/responsive.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/asesorStyles/cotizacionModal.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/comprobanteVenta.css">
 </head>
 <body>
 
@@ -207,6 +208,7 @@
     const VEHICULOS_DISPONIBLES = ${empty vehiculosJson ? '[]' : vehiculosJson};
     const SERVICIOS_ACTIVOS = ${empty serviciosJson ? '[]' : serviciosJson};
 </script>
+<script src="${pageContext.request.contextPath}/js/comprobanteVenta.js"></script>
 <script src="${pageContext.request.contextPath}/js/asesorJS/cotizacionesAsesor.js"></script>
 </body>
 </html>

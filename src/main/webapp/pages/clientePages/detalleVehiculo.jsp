@@ -23,6 +23,7 @@
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/clientePages/detalleVehiculo.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/clientePages/perfilModal.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/asesorStyles/cotizacionModal.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/comprobanteVenta.css">
 </head>
 
 
@@ -888,13 +889,13 @@
                 headers: { "Content-Type": "application/x-www-form-urlencoded" },
                 body: datos.toString()
             });
-            const texto = (await respuesta.text()).trim();
 
             if (respuesta.ok) {
-                exitoCotizacion.textContent = texto;
-                setTimeout(function(){ window.location.reload(); }, 1200);
+                const comprobante = await respuesta.json();
+                modalArmarCotizacion.classList.remove("active");
+                mostrarComprobanteVenta(comprobante, function(){ window.location.reload(); });
             } else {
-                errorCotizacion.textContent = texto;
+                errorCotizacion.textContent = (await respuesta.text()).trim();
             }
         } catch (err) {
             errorCotizacion.textContent = "No se pudo contactar al servidor. Intenta de nuevo.";
@@ -914,6 +915,7 @@
 <script>
     window.PERFIL_CONTEXT_PATH = "${pageContext.request.contextPath}";
 </script>
+<script src="${pageContext.request.contextPath}/js/comprobanteVenta.js"></script>
 <script src="${pageContext.request.contextPath}/js/clienteJS/perfilModal.js"></script>
 </body>
 </html>

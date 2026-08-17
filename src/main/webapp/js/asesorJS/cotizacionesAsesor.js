@@ -222,13 +222,13 @@ document.getElementById('btnRegistrarVenta').addEventListener('click', async fun
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
             body: datos.toString()
         });
-        const texto = (await respuesta.text()).trim();
 
         if (respuesta.ok) {
-            exitoCotizacion.textContent = texto;
-            setTimeout(() => window.location.reload(), 1200);
+            const comprobante = await respuesta.json();
+            cerrarModal('modalCotizacion');
+            mostrarComprobanteVenta(comprobante, () => window.location.reload());
         } else {
-            errorCotizacion.textContent = texto;
+            errorCotizacion.textContent = (await respuesta.text()).trim();
         }
     } catch (err) {
         errorCotizacion.textContent = 'No se pudo contactar al servidor. Intenta de nuevo.';
