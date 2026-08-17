@@ -11,6 +11,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -19,6 +20,8 @@ import java.sql.SQLException;
  * CRUD de usuarios (ADMIN.USUARIOS) usado por gestionEmpleados.jsp y
  * gestionClientes.jsp. Ambas pantallas son la misma tabla filtrada por
  * ID_ROL (2 = Agente/Empleado, 3 = Cliente), así que comparten este servlet.
+ * Solo el Dueño (ADMIN) puede gestionar empleados/clientes, y solo puede
+ * crear/editar usuarios con ID_ROL 2 o 3 (nunca 1 = ADMIN).
  */
 @WebServlet(name = "GestionUsuariosServlet", value = "/gestionUsuarios")
 public class GestionUsuariosServlet extends HttpServlet {
@@ -27,9 +30,16 @@ public class GestionUsuariosServlet extends HttpServlet {
     private final AgentesDao agentesDao = new AgentesDao();
 
     private static final int ID_ROL_AGENTE = 2;
+    private static final int ID_ROL_CLIENTE = 3;
+
+    private boolean esRolGestionable(int idRol) {
+        return idRol == ID_ROL_AGENTE || idRol == ID_ROL_CLIENTE;
+    }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        if (!esAdmin(req, resp)) return;
+
         String accion = req.getParameter("accion");
         String error = null;
         String exito = null;
@@ -40,7 +50,9 @@ public class GestionUsuariosServlet extends HttpServlet {
                 int estado = Integer.parseInt(req.getParameter("estado"));
                 int idRol = Integer.parseInt(req.getParameter("idRol"));
 
-                if (idRol == ID_ROL_AGENTE && estado == 0 && agentesDao.contarClientesAsignados(idUsuario) > 0) {
+                if (!esRolGestionable(idRol)) {
+                    error = "rol_invalido";
+                } else if (idRol == ID_ROL_AGENTE && estado == 0 && agentesDao.contarClientesAsignados(idUsuario) > 0) {
                     // No se puede dar de baja a un agente con clientes activos sin transferirlos antes.
                     error = "clientes_activos";
                 } else {
@@ -50,7 +62,9 @@ public class GestionUsuariosServlet extends HttpServlet {
             } else if ("eliminar".equals(accion)) {
                 int idRol = Integer.parseInt(req.getParameter("idRol"));
 
-                if (idRol == ID_ROL_AGENTE) {
+                if (!esRolGestionable(idRol)) {
+                    error = "rol_invalido";
+                } else if (idRol == ID_ROL_AGENTE) {
                     // Un agente nunca se borra físicamente: su fila en AGENTES (y el
                     // historial de ventas/vehículos ligado a él) sigue apuntando a
                     // USUARIOS, así que un DELETE directo siempre viola la llave
@@ -77,6 +91,8 @@ public class GestionUsuariosServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        if (!esAdmin(req, resp)) return;
+
         req.setCharacterEncoding("UTF-8");
         String accion = req.getParameter("accion");
         String error = null;
@@ -137,6 +153,9 @@ public class GestionUsuariosServlet extends HttpServlet {
     }
 
     private String registrar(HttpServletRequest req) throws Exception {
+        int idRol = Integer.parseInt(req.getParameter("idRol"));
+        if (!esRolGestionable(idRol)) return "rol_invalido";
+
         UsuarioBean usuario = construirDesdeRequest(req);
 
         String duplicado = usuarioDao.validarDuplicados(usuario);
@@ -176,6 +195,9 @@ public class GestionUsuariosServlet extends HttpServlet {
     }
 
     private String actualizar(HttpServletRequest req) throws Exception {
+        int idRol = Integer.parseInt(req.getParameter("idRol"));
+        if (!esRolGestionable(idRol)) return "rol_invalido";
+
         int idUsuario = Integer.parseInt(req.getParameter("id_usuario"));
         UsuarioBean usuario = construirDesdeRequest(req);
         usuario.setId_usuario(idUsuario);
@@ -207,5 +229,42 @@ public class GestionUsuariosServlet extends HttpServlet {
         usuario.setTelefono(req.getParameter("telefono").trim());
         usuario.setEstado(estado);
         return usuario;
+    }
+
+    // Solo el Dueño puede gestionar empleados/clientes desde este servlet.
+    // Si no hay sesión o el rol no es ADMIN, redirige y regresa false para
+    // que el caller no siga procesando la petición.
+    private boolean esAdmin(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        HttpSession session = req.getSession(false);
+        UsuarioBean usuario = (session != null)
+                ? (UsuarioBean) session.getAttribute("usuarioLogueado")
+                : null;
+
+        if (usuario == null) {
+            resp.sendRedirect(req.getContextPath() + "/login.jsp?error=sesion_requerida");
+            return false;
+        }
+
+        if (!"ADMIN".equals(obtenerNombreRol(usuario))) {
+            resp.sendRedirect(req.getContextPath() + "/login.jsp?error=no_autorizado");
+            return false;
+        }
+
+        return true;
+    }
+
+    private String obtenerNombreRol(UsuarioBean usuario) {
+        if (usuario != null && usuario.getRol() != null && usuario.getRol().getRol() != null) {
+            String nombreRol = usuario.getRol().getRol().trim().toUpperCase();
+            if (!nombreRol.isEmpty()) return nombreRol;
+        }
+        if (usuario != null && usuario.getRol() != null) {
+            switch (usuario.getRol().getId_Rol()) {
+                case 1: return "ADMIN";
+                case 2: return "AGENTE";
+                case 3: return "CLIENTE";
+            }
+        }
+        return "INVITADO";
     }
 }

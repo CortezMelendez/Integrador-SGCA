@@ -24,13 +24,20 @@ public class AuthFilter implements Filter {
 
         // --- ROL: AGENTE y ADMIN (Atención a clientes y catálogo) ---
         PERMISOS.put("/clientes",    roles("ADMIN", "AGENTE"));
-        PERMISOS.put("/servicios",   roles("ADMIN", "AGENTE"));
         PERMISOS.put("/ventas",      roles("ADMIN", "AGENTE"));
+
+        // Solo ADMIN: el asesor nunca escribe servicios, y su lectura ya se
+        // resuelve del lado del servidor (ServiciosDao.listar() directo en
+        // AsesorServlet/AsesorHistorialServlet/etc.), no vía esta ruta.
+        PERMISOS.put("/servicios",   roles("ADMIN"));
 
         // --- ROL: AGENTE (tablas de gestión propias del asesor) ---
         PERMISOS.put("/gestionAutoAsesor",    roles("AGENTE"));
         PERMISOS.put("/gestionClienteAsesor", roles("AGENTE"));
         PERMISOS.put("/cotizacionesAsesor",   roles("AGENTE"));
+        PERMISOS.put("/historialAsesor",        roles("AGENTE"));
+        PERMISOS.put("/registrarClienteAsesor", roles("AGENTE"));
+        PERMISOS.put("/registrarVentaAsesor",   roles("AGENTE"));
 
         // --- ROL: CLIENTE (Consulta personal) ---
         PERMISOS.put("/mis-servicios", roles("CLIENTE"));

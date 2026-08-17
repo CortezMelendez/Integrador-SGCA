@@ -4,6 +4,7 @@
 
 <fmt:setLocale value="es_MX" />
 
+<!DOCTYPE html>
 <html lang="es">
 
 <head>

@@ -14,7 +14,6 @@
 
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/duenioStyles/styles.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/duenioStyles/gestiones.css" />
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/duenioStyles/gestiones-extra.css" />
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/duenioStyles/responsive.css" />
 </head>
 <body>
