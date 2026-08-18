@@ -2,6 +2,8 @@ package com.sgca.integradorsgca.controller;
 
 import com.sgca.integradorsgca.model.bean.AgentesBean;
 import com.sgca.integradorsgca.model.bean.ClientesBean;
+import com.sgca.integradorsgca.model.bean.MarcaBean;
+import com.sgca.integradorsgca.model.bean.ModelosBean;
 import com.sgca.integradorsgca.model.bean.ServiciosBean;
 import com.sgca.integradorsgca.model.bean.TiposServicioBean;
 import com.sgca.integradorsgca.model.bean.TiposVehiculoBean;
@@ -10,6 +12,8 @@ import com.sgca.integradorsgca.model.bean.VehImgBean;
 import com.sgca.integradorsgca.model.bean.VehiculosBean;
 import com.sgca.integradorsgca.model.dao.AgentesDao;
 import com.sgca.integradorsgca.model.dao.ClientesDao;
+import com.sgca.integradorsgca.model.dao.MarcaDao;
+import com.sgca.integradorsgca.model.dao.ModelosDao;
 import com.sgca.integradorsgca.model.dao.ServiciosDao;
 import com.sgca.integradorsgca.model.dao.TiposServicioDao;
 import com.sgca.integradorsgca.model.dao.TiposVehiculoDao;
@@ -44,6 +48,8 @@ public class GestionBtnServlet extends HttpServlet {
     private final ServiciosDao serviciosDao = new ServiciosDao();
     private final TiposServicioDao tiposServicioDao = new TiposServicioDao();
     private final UsuarioDao usuarioDao = new UsuarioDao();
+    private final MarcaDao marcaDao = new MarcaDao();
+    private final ModelosDao modelosDao = new ModelosDao();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -142,6 +148,8 @@ public class GestionBtnServlet extends HttpServlet {
                     List<VehiculosBean> listaVehiculos = vehiculosDao.listar();
                     List<TiposVehiculoBean> listaTipos = tiposVehiculoDao.listar();
                     List<AgentesBean> listaAgentes = agentesDao.listar();
+                    List<MarcaBean> listaMarcas = marcaDao.listar();
+                    List<ModelosBean> listaModelos = modelosDao.listar();
 
                     // Imágenes adicionales (galería) y descripción de cada vehículo, para poder
                     // mostrarlas/editarlas desde el modal Editar sin peticiones extra. La descripción
@@ -156,8 +164,10 @@ public class GestionBtnServlet extends HttpServlet {
                     request.setAttribute("listaVehiculos", listaVehiculos);
                     request.setAttribute("listaTipos", listaTipos);
                     request.setAttribute("listaAgentes", listaAgentes);
+                    request.setAttribute("listaMarcas", listaMarcas);
                     request.setAttribute("imagenesJsonPorVehiculo", aJsonImagenes(imagenesPorVehiculo));
                     request.setAttribute("descripcionJsonPorVehiculo", aJsonTextos(descripcionPorVehiculo));
+                    request.setAttribute("modelosJsonPorMarca", aJsonModelosPorMarca(listaModelos));
 
                     request.getRequestDispatcher(BASE_DUENIO + "gestionAutos.jsp").forward(request, response);
                     break;
@@ -286,6 +296,34 @@ public class GestionBtnServlet extends HttpServlet {
             primero = false;
             json.append("\"").append(entrada.getKey()).append("\":\"")
                     .append(escapeJsonConSaltos(entrada.getValue())).append("\"");
+        }
+        json.append("}");
+        return json.toString();
+    }
+
+    // id de marca -> [{idModelo, nombre}], para que el <select> de Modelo del
+    // modal de vehículos se pueble en el cliente sin peticiones extra.
+    private String aJsonModelosPorMarca(List<ModelosBean> modelos) {
+        Map<Integer, List<ModelosBean>> porMarca = new HashMap<>();
+        for (ModelosBean m : modelos) {
+            porMarca.computeIfAbsent(m.getId_Marca(), k -> new java.util.ArrayList<>()).add(m);
+        }
+
+        StringBuilder json = new StringBuilder("{");
+        boolean primeraMarca = true;
+        for (Map.Entry<Integer, List<ModelosBean>> entrada : porMarca.entrySet()) {
+            if (!primeraMarca) json.append(",");
+            primeraMarca = false;
+            json.append("\"").append(entrada.getKey()).append("\":[");
+
+            boolean primerModelo = true;
+            for (ModelosBean m : entrada.getValue()) {
+                if (!primerModelo) json.append(",");
+                primerModelo = false;
+                json.append("{\"idModelo\":").append(m.getId_Modelo())
+                        .append(",\"nombre\":\"").append(escapeJson(m.getNombre())).append("\"}");
+            }
+            json.append("]");
         }
         json.append("}");
         return json.toString();

@@ -30,7 +30,13 @@
         <a href="${pageContext.request.contextPath}/nav?action=inicio" class="dash-nav-link">Inicio</a>
         <a href="${pageContext.request.contextPath}/nav?action=dashboard" class="dash-nav-link">Dashboard</a>
         <a href="${pageContext.request.contextPath}/nav?action=historial" class="dash-nav-link">Historial</a>
-        <a href="${pageContext.request.contextPath}/nav?action=perfil" class="dash-nav-link">Perfil</a>
+        <div class="dropdown">
+            <button type="button" class="dash-nav-link dropdown-btn">Configuración ▾</button>
+            <div class="dropdown-menu">
+                <a href="${pageContext.request.contextPath}/nav?action=perfil">Perfil</a>
+                <a href="${pageContext.request.contextPath}/btn?action=cerrarSesionTodos">Cerrar sesión</a>
+            </div>
+        </div>
     </nav>
     <div class="dash-navbar-right">
         <div class="dash-user">
@@ -378,5 +384,29 @@
 </c:if>
 
 <script src="${pageContext.request.contextPath}/js/duenioJS/gestionServicios.js"></script>
+<script>
+    // Dropdown "Configuración"
+    document.querySelectorAll(".dropdown-btn").forEach(function (btn) {
+        btn.addEventListener("click", function (e) {
+            e.stopPropagation();
+            this.nextElementSibling.classList.toggle("show");
+        });
+    });
+    document.addEventListener("click", function () {
+        document.querySelectorAll(".dropdown-menu").forEach(function (menu) {
+            menu.classList.remove("show");
+        });
+    });
+
+    // Si el navegador restaura esta página desde su caché (botón "atrás")
+    // después de haber cerrado sesión, fuerza una recarga real para que
+    // AuthFilter vuelva a validar la sesión en vez de mostrar la versión
+    // guardada en caché.
+    window.addEventListener("pageshow", function (e) {
+        if (e.persisted) {
+            window.location.reload();
+        }
+    });
+</script>
 </body>
 </html>

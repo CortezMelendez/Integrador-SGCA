@@ -112,6 +112,23 @@ p {
     transform: scale(0.97);
 }
 
+.gest-header-acciones {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.btn-agregar-secundario {
+    background-color: transparent;
+    color: var(--color-navy-dark);
+    border: 1px solid var(--color-navy-dark);
+}
+
+.btn-agregar-secundario:hover {
+    background-color: var(--color-gray-100);
+}
+
 /* =========================================================
    4. DISEÑO DE LA TABLA GLOBAL (tarjeta clara, estilo "Historial de compras")
 ========================================================= */
@@ -653,6 +670,43 @@ p {
     font-weight: 500;
     margin-top: 4px;
     min-height: 1em;
+}
+
+.modal-exito {
+    display: block;
+    color: var(--color-success-text);
+    font-size: 0.78rem;
+    font-weight: 500;
+    margin-top: 4px;
+    min-height: 1em;
+}
+
+.modal-nota {
+    font-size: 0.78rem;
+    color: var(--color-gray-650);
+    margin-top: 6px;
+}
+
+.modal-row-inline {
+    display: flex;
+    gap: 10px;
+    margin-top: 8px;
+    flex-wrap: wrap;
+}
+
+.modal-row-inline .modal-input {
+    flex: 1 1 200px;
+    min-width: 0;
+}
+
+.modal-row-inline .btn-modal-save {
+    flex: 0 0 auto;
+}
+
+.modal-divisor {
+    border: none;
+    border-top: 1px solid var(--btn-back-bg);
+    margin: 24px 28px;
 }
 
 .modal-field {

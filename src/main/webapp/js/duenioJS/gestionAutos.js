@@ -26,6 +26,7 @@ document.addEventListener('keydown', e => {
         cerrarModal('modalEditar');
         cerrarModal('modalConfirmar');
         cerrarModal('modalExito');
+        cerrarModal('modalMarcaModelo');
     }
 });
 
@@ -193,11 +194,39 @@ function quitarImagenExistente(idImagen, elemento) {
     elemento.remove();
 }
 
+// Pobla el <select> de Modelo según la marca elegida en el <select> de Marca
+// (mismo patrón que usa el asesor: MODELOS_POR_MARCA ya viene precargado).
+function actualizarModelos(prefijo) {
+    const idMarca = document.getElementById(`${prefijo}-marca`).value;
+    const sel = document.getElementById(`${prefijo}-modelo`);
+    sel.innerHTML = '';
+
+    if (!idMarca) {
+        sel.innerHTML = '<option value="">Selecciona una marca primero...</option>';
+        return;
+    }
+
+    const modelos = (MODELOS_POR_MARCA && MODELOS_POR_MARCA[idMarca]) || [];
+    if (modelos.length === 0) {
+        sel.innerHTML = '<option value="">Esta marca aún no tiene modelos registrados</option>';
+        return;
+    }
+
+    sel.innerHTML = '<option value="">Selecciona...</option>';
+    modelos.forEach(m => {
+        const opt = document.createElement('option');
+        opt.value = m.idModelo;
+        opt.textContent = m.nombre;
+        sel.appendChild(opt);
+    });
+}
+
 // Función para llenar datos en modal Editar
-function abrirEditar(id, marca, modelo, categoria, precio, color, placa, anio, idAgente, estado, foto, fechaActualizado) {
+function abrirEditar(id, idMarca, idModelo, categoria, precio, color, placa, anio, idAgente, estado, foto, fechaActualizado) {
     document.getElementById('edit-id').value = id;
-    document.getElementById('edit-marca').value = marca;
-    document.getElementById('edit-modelo').value = modelo;
+    document.getElementById('edit-marca').value = idMarca;
+    actualizarModelos('edit');
+    document.getElementById('edit-modelo').value = idModelo;
     document.getElementById('edit-precio').value = precio;
     document.getElementById('edit-color').value = color;
     document.getElementById('edit-placa').value = placa;
@@ -347,8 +376,6 @@ function previsualizarFoto(input, boxId) {
 }
 
 // --- Validación de campos (formato, no solo obligatorio) ---
-const RE_MARCA = /^[A-Za-zÀ-ÖØ-öø-ÿ\s]{2,30}$/;
-const RE_MODELO = /^[A-Za-z0-9À-ÖØ-öø-ÿ\s\-]{1,30}$/;
 const RE_COLOR = /^[A-Za-zÀ-ÖØ-öø-ÿ\s]{2,30}$/;
 const RE_PLACA = /^[A-Z0-9\-]{5,10}$/;
 const ANIO_MINIMO = 1980;
@@ -356,17 +383,10 @@ const ANIO_MAXIMO = 2100;
 
 // Bloquea caracteres no permitidos mientras el usuario escribe
 function sanearMientrasEscribe() {
-    ['mod-marca', 'edit-marca', 'mod-color', 'edit-color'].forEach(id => {
+    ['mod-color', 'edit-color'].forEach(id => {
         const el = document.getElementById(id);
         if (el) el.addEventListener('input', () => {
             el.value = el.value.replace(/[^A-Za-zÀ-ÖØ-öø-ÿ\s]/g, '');
-        });
-    });
-
-    ['mod-modelo', 'edit-modelo'].forEach(id => {
-        const el = document.getElementById(id);
-        if (el) el.addEventListener('input', () => {
-            el.value = el.value.replace(/[^A-Za-z0-9À-ÖØ-öø-ÿ\s\-]/g, '');
         });
     });
 
@@ -395,15 +415,11 @@ function validarCampos(prefijo, datos) {
     };
 
     if (!datos.marca) {
-        marcarError('marca', 'La marca es obligatoria.');
-    } else if (!RE_MARCA.test(datos.marca)) {
-        marcarError('marca', 'Solo se permiten letras y espacios.');
+        marcarError('marca', 'Selecciona una marca.');
     }
 
     if (!datos.modelo) {
-        marcarError('modelo', 'El modelo es obligatorio.');
-    } else if (!RE_MODELO.test(datos.modelo)) {
-        marcarError('modelo', 'Usa solo letras, números, espacios o guiones.');
+        marcarError('modelo', 'Selecciona un modelo.');
     }
 
     if (!datos.categoria) {
@@ -461,3 +477,89 @@ function validarYPrepararEnvio(prefijo) {
 }
 
 document.addEventListener('DOMContentLoaded', sanearMientrasEscribe);
+
+// =========================================================
+// MODAL "REGISTRAR MARCA / MODELO" (solo dueño)
+// =========================================================
+
+async function registrarMarcaNueva() {
+    const input = document.getElementById('mm-nombre-marca');
+    const errEl = document.getElementById('mm-err-marca');
+    const exitoEl = document.getElementById('mm-exito-marca');
+    errEl.textContent = '';
+    exitoEl.textContent = '';
+
+    const nombre = input.value.trim();
+    if (!nombre) {
+        errEl.textContent = 'Escribe el nombre de la marca.';
+        return;
+    }
+
+    try {
+        const datos = new URLSearchParams();
+        datos.append('accion', 'registrarMarca');
+        datos.append('nombreMarca', nombre);
+
+        const respuesta = await fetch(`${CONTEXT_PATH}/marcaModelo`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: datos.toString()
+        });
+        const texto = (await respuesta.text()).trim();
+
+        if (respuesta.ok) {
+            exitoEl.textContent = texto;
+            input.value = '';
+            setTimeout(() => window.location.reload(), 1200);
+        } else {
+            errEl.textContent = texto;
+        }
+    } catch (err) {
+        errEl.textContent = 'No se pudo contactar al servidor. Intenta de nuevo.';
+    }
+}
+
+async function registrarModeloNuevo() {
+    const selMarca = document.getElementById('mm-marca-para-modelo');
+    const input = document.getElementById('mm-nombre-modelo');
+    const errEl = document.getElementById('mm-err-modelo');
+    const exitoEl = document.getElementById('mm-exito-modelo');
+    errEl.textContent = '';
+    exitoEl.textContent = '';
+
+    const idMarca = selMarca.value;
+    const nombre = input.value.trim();
+
+    if (!idMarca) {
+        errEl.textContent = 'Selecciona una marca.';
+        return;
+    }
+    if (!nombre) {
+        errEl.textContent = 'Escribe el nombre del modelo.';
+        return;
+    }
+
+    try {
+        const datos = new URLSearchParams();
+        datos.append('accion', 'registrarModelo');
+        datos.append('idMarca', idMarca);
+        datos.append('nombreModelo', nombre);
+
+        const respuesta = await fetch(`${CONTEXT_PATH}/marcaModelo`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: datos.toString()
+        });
+        const texto = (await respuesta.text()).trim();
+
+        if (respuesta.ok) {
+            exitoEl.textContent = texto;
+            input.value = '';
+            setTimeout(() => window.location.reload(), 1200);
+        } else {
+            errEl.textContent = texto;
+        }
+    } catch (err) {
+        errEl.textContent = 'No se pudo contactar al servidor. Intenta de nuevo.';
+    }
+}

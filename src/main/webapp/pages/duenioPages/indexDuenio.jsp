@@ -583,5 +583,17 @@
 </script>
 <script src="${pageContext.request.contextPath}/js/recuperarPassword.js"></script>
 
+<script>
+    // Si el navegador restaura esta página desde su caché (botón "atrás")
+    // después de haber cerrado sesión, fuerza una recarga real para que
+    // AuthFilter vuelva a validar la sesión en vez de mostrar la versión
+    // guardada en caché.
+    window.addEventListener("pageshow", function (e) {
+        if (e.persisted) {
+            window.location.reload();
+        }
+    });
+</script>
+
 </body>
 </html>

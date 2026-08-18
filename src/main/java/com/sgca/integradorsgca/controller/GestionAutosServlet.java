@@ -124,6 +124,8 @@ public class GestionAutosServlet extends HttpServlet {
         if (errorPrecio != null) return errorPrecio;
 
         VehiculosBean veh = construirDesdeRequest(req, 0);
+        if (veh == null) return "marca_modelo_invalido";
+
         int idVehiculoNuevo = vehiculosDao.registrar(veh);
         if (idVehiculoNuevo > 0) {
             guardarImagenesExtra(req, idVehiculoNuevo, MAX_IMAGENES_EXTRA);
@@ -143,6 +145,8 @@ public class GestionAutosServlet extends HttpServlet {
         if (errorPrecio != null) return errorPrecio;
 
         VehiculosBean veh = construirDesdeRequest(req, idVehiculo);
+        if (veh == null) return "marca_modelo_invalido";
+
         // La placa es de referencia y no es editable (regla de negocio del DFR):
         // se conserva siempre la que ya tenía el vehículo, sin importar lo enviado.
         veh.setPlaca(existente.getPlaca());
@@ -176,10 +180,24 @@ public class GestionAutosServlet extends HttpServlet {
         return null;
     }
 
-    // Arma el bean a partir de los campos del formulario (marca/modelo/categoría en texto libre)
+    // Arma el bean a partir del formulario. Marca y modelo llegan como IDs de
+    // un <select> (nunca texto libre): si no corresponden a un catálogo ya
+    // existente, se rechaza la operación — solo el modal "Registrar marca y
+    // modelo" (MarcaModeloServlet) puede dar de alta una marca/modelo nueva.
     private VehiculosBean construirDesdeRequest(HttpServletRequest req, int idVehiculo) throws IOException, ServletException {
-        String marca = req.getParameter("marca");
-        String modelo = req.getParameter("modelo");
+        int idMarca;
+        int idModelo;
+        try {
+            idMarca = Integer.parseInt(req.getParameter("idMarca"));
+            idModelo = Integer.parseInt(req.getParameter("idModelo"));
+        } catch (NumberFormatException e) {
+            return null;
+        }
+
+        if (marcaDao.buscarPorId(idMarca) == null) return null;
+        var modelo = modelosDao.buscarPorId(idModelo);
+        if (modelo == null || modelo.getId_Marca() != idMarca) return null;
+
         String categoria = req.getParameter("categoria");
         String placa = req.getParameter("placa");
         String color = req.getParameter("color");
@@ -193,10 +211,6 @@ public class GestionAutosServlet extends HttpServlet {
         String fotoPortada = guardarFotoSiViene(req, fotoExistente);
 
         int disponible = "Activo".equalsIgnoreCase(estado) ? 1 : 0;
-
-        // Busca o crea la marca, el modelo (ligado a la marca) y la categoría/tipo
-        int idMarca = marcaDao.obtenerOCrearId(marca.trim());
-        int idModelo = modelosDao.obtenerOCrearId(idMarca, modelo.trim());
         int idTipo = tiposVehiculoDao.obtenerOCrearId(categoria.trim());
 
         VehiculosBean veh = idVehiculo > 0
