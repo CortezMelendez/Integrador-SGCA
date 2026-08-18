@@ -28,7 +28,11 @@
         <span class="dash-brand">Concesionaria Automotriz</span>
     </div>
     <nav class="dash-nav-center">
+<<<<<<< HEAD
         <a href="${pageContext.request.contextPath}/nav?action=inicio" class="dash-nav-link">Inicio</a>
+=======
+        <a href="${pageContext.request.contextPath}/nav?action=indexDuenio" class="dash-nav-link">Inicio</a>
+>>>>>>> 1de4e4e3d579c831347d1965cbcc927e18d286e4
         <a href="${pageContext.request.contextPath}/nav?action=dashboard" class="dash-nav-link">Dashboard</a>
         <a href="${pageContext.request.contextPath}/nav?action=historial" class="dash-nav-link">Historial</a>
         <a href="${pageContext.request.contextPath}/nav?action=perfil" class="dash-nav-link">Configuración</a>

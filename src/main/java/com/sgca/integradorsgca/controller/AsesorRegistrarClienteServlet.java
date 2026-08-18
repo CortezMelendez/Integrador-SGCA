@@ -17,13 +17,13 @@ import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 import java.sql.SQLException;
 
-// Modal "Registrar Cliente" que el asesor ve al navegar el catálogo público
-// (automovilesCliente.jsp / detalleVehiculo.jsp, condicionado a ${esAsesor}):
-// crea un cliente nuevo y lo asigna automáticamente al asesor que lo está
-// registrando (mismo patrón que RegisterServlet/ClientesDao, solo que aquí el
-// ID_AGENTE no queda NULL). La tabla completa de gestión de clientes del
-// asesor (pages/asesorPages/gestionClientes.jsp) usa su propio servlet
-// (AsesorGestionClienteServlet, /gestionClienteAsesor) para agregar/editar/eliminar.
+ /*Modal "Registrar Cliente" que el asesor ve al navegar el catálogo público
+(automovilesCliente.jsp / detalleVehiculo.jsp, condicionado a ${esAsesor}):
+crea un cliente nuevo y lo asigna automáticamente al asesor que lo está
+ registrando (mismo patrón que RegisterServlet/ClientesDao, solo que aquí el
+ ID_AGENTE no queda NULL). La tabla completa de gestión de clientes del
+ asesor (pages/asesorPages/gestionClientes.jsp) usa su propio servlet
+ (AsesorGestionClienteServlet, /gestionClienteAsesor) para agregar/editar/eliminar.*/
 @WebServlet("/registrarClienteAsesor")
 public class AsesorRegistrarClienteServlet extends HttpServlet {
 
