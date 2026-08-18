@@ -91,9 +91,15 @@
             </c:when>
             <c:when test="${esAsesor}">
 
-                <button type="button" class="dash-nav-link" id="btnAbrirRegistrarCliente">
-                    Registrar Cliente
-                </button>
+                <div class="dropdown">
+                    <button class="dash-nav-link dropdown-btn">
+                        Gestionar ▾
+                    </button>
+                    <div class="dropdown-menu">
+                        <a href="${pageContext.request.contextPath}/gestionClienteAsesor">Gestionar Clientes</a>
+                        <a href="${pageContext.request.contextPath}/gestionAutoAsesor">Registrar auto</a>
+                    </div>
+                </div>
 
                 <button type="button" class="dash-nav-link" id="btnAbrirCotizacion">
                     Cotización
@@ -197,77 +203,6 @@
 </div>
 
 <c:if test="${esAsesor}">
-
-    <!-- MODAL REGISTRAR CLIENTE -->
-    <div class="modal-overlay" id="modalRegistrarCliente">
-
-        <div class="modal-box modal-box-perfil">
-
-            <div class="perfil-header">
-                <h2>Registrar Cliente</h2>
-                <button type="button" class="modal-cerrar" id="btnCerrarRegistrarCliente" aria-label="Cerrar">&times;</button>
-            </div>
-
-            <p class="perfil-nota">El cliente quedará asignado automáticamente a tu cartera.</p>
-
-            <form id="formRegistrarCliente" novalidate>
-
-                <div class="perfil-form-row">
-                    <div class="perfil-campo-edit">
-                        <label class="perfil-form-label" for="regClienteNombre">Nombre</label>
-                        <input class="perfil-input" type="text" id="regClienteNombre" name="nombre" maxlength="50">
-                    </div>
-                    <div class="perfil-campo-edit">
-                        <label class="perfil-form-label" for="regClienteApellidoPaterno">Apellido paterno</label>
-                        <input class="perfil-input" type="text" id="regClienteApellidoPaterno" name="apellidoPaterno" maxlength="30">
-                    </div>
-                </div>
-
-                <div class="perfil-campo-edit">
-                    <label class="perfil-form-label" for="regClienteApellidoMaterno">Apellido materno</label>
-                    <input class="perfil-input" type="text" id="regClienteApellidoMaterno" name="apellidoMaterno" maxlength="30">
-                </div>
-
-                <div class="perfil-form-row">
-                    <div class="perfil-campo-edit">
-                        <label class="perfil-form-label" for="regClienteRfc">RFC</label>
-                        <input class="perfil-input" type="text" id="regClienteRfc" name="rfc" maxlength="13">
-                    </div>
-                    <div class="perfil-campo-edit">
-                        <label class="perfil-form-label" for="regClienteCurp">CURP</label>
-                        <input class="perfil-input" type="text" id="regClienteCurp" name="curp" maxlength="18">
-                    </div>
-                </div>
-
-                <div class="perfil-form-row">
-                    <div class="perfil-campo-edit">
-                        <label class="perfil-form-label" for="regClienteTelefono">Teléfono</label>
-                        <input class="perfil-input" type="tel" id="regClienteTelefono" name="telefono" maxlength="10">
-                    </div>
-                    <div class="perfil-campo-edit">
-                        <label class="perfil-form-label" for="regClienteCorreo">Correo</label>
-                        <input class="perfil-input" type="email" id="regClienteCorreo" name="correo" maxlength="100">
-                    </div>
-                </div>
-
-                <div class="perfil-campo-edit">
-                    <label class="perfil-form-label" for="regClientePassword">Contraseña temporal</label>
-                    <input class="perfil-input" type="password" id="regClientePassword" name="password" autocomplete="new-password">
-                </div>
-
-                <p class="perfil-error" id="errorRegistrarCliente"></p>
-                <p class="perfil-exito" id="exitoRegistrarCliente"></p>
-
-                <div class="perfil-acciones">
-                    <button type="button" class="btn-perfil-cancelar" id="btnCancelarRegistrarCliente">Cancelar</button>
-                    <button type="submit" class="btn-perfil-guardar">Registrar</button>
-                </div>
-
-            </form>
-
-        </div>
-
-    </div>
 
     <!-- MODAL ARMAR COTIZACION -->
     <div class="modal-overlay" id="modalArmarCotizacion">
@@ -775,65 +710,6 @@
 <c:if test="${esAsesor}">
 <script>
 
-    // MODAL REGISTRAR CLIENTE
-
-    const modalRegistrarCliente = document.getElementById("modalRegistrarCliente");
-    const btnAbrirRegistrarCliente = document.getElementById("btnAbrirRegistrarCliente");
-    const btnCerrarRegistrarCliente = document.getElementById("btnCerrarRegistrarCliente");
-    const btnCancelarRegistrarCliente = document.getElementById("btnCancelarRegistrarCliente");
-    const formRegistrarCliente = document.getElementById("formRegistrarCliente");
-    const errorRegistrarCliente = document.getElementById("errorRegistrarCliente");
-    const exitoRegistrarCliente = document.getElementById("exitoRegistrarCliente");
-
-    function cerrarModalRegistrarCliente(){
-        modalRegistrarCliente.classList.remove("active");
-    }
-
-    btnAbrirRegistrarCliente.addEventListener("click", function(e){
-        e.stopPropagation();
-        errorRegistrarCliente.textContent = "";
-        exitoRegistrarCliente.textContent = "";
-        formRegistrarCliente.reset();
-        modalRegistrarCliente.classList.add("active");
-    });
-
-    btnCerrarRegistrarCliente.addEventListener("click", cerrarModalRegistrarCliente);
-    btnCancelarRegistrarCliente.addEventListener("click", cerrarModalRegistrarCliente);
-
-    modalRegistrarCliente.addEventListener("click", function(e){
-        if(e.target === modalRegistrarCliente){
-            cerrarModalRegistrarCliente();
-        }
-    });
-
-    formRegistrarCliente.addEventListener("submit", async function(e){
-        e.preventDefault();
-
-        errorRegistrarCliente.textContent = "";
-        exitoRegistrarCliente.textContent = "";
-
-        const datos = new URLSearchParams(new FormData(formRegistrarCliente));
-
-        try {
-            const respuesta = await fetch("${pageContext.request.contextPath}/registrarClienteAsesor", {
-                method: "POST",
-                headers: { "Content-Type": "application/x-www-form-urlencoded" },
-                body: datos.toString()
-            });
-            const texto = (await respuesta.text()).trim();
-
-            if (respuesta.ok) {
-                exitoRegistrarCliente.textContent = texto;
-                formRegistrarCliente.reset();
-            } else {
-                errorRegistrarCliente.textContent = texto;
-            }
-        } catch (err) {
-            errorRegistrarCliente.textContent = "No se pudo contactar al servidor. Intenta de nuevo.";
-        }
-    });
-
-
     // MODAL ARMAR COTIZACION
 
     const modalArmarCotizacion = document.getElementById("modalArmarCotizacion");
@@ -932,7 +808,6 @@
 
     document.addEventListener("keydown", function(e){
         if(e.key === "Escape"){
-            modalRegistrarCliente.classList.remove("active");
             modalArmarCotizacion.classList.remove("active");
         }
     });

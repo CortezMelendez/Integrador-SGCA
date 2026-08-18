@@ -59,18 +59,24 @@
                 <c:forEach var="t" items="${listaTipos}">
                     <a href="${pageContext.request.contextPath}/automoviles?tipo=${t.nombre}">${t.nombre}</a>
                 </c:forEach>
-                <a href="${pageContext.request.contextPath}/gestionAutoAsesor">Registrar vehículo</a>
             </div>
 
+        </div>
+
+        <div class="dropdown">
+            <button class="dash-nav-link dropdown-btn">
+                Gestionar ▾
+            </button>
+            <div class="dropdown-menu">
+                <a href="${pageContext.request.contextPath}/gestionClienteAsesor">Gestionar Clientes</a>
+                <a href="${pageContext.request.contextPath}/gestionAutoAsesor">Registrar auto</a>
+            </div>
         </div>
 
         <button type="button" class="dash-nav-link" id="btnAbrirServicios">
             Servicios
         </button>
 
-        <a href="${pageContext.request.contextPath}/gestionClienteAsesor" class="dash-nav-link">
-            Clientes
-        </a>
 
         <a href="${pageContext.request.contextPath}/cotizacionesAsesor" class="dash-nav-link">
             Cotizaciones

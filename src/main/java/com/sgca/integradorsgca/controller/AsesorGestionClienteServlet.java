@@ -1,10 +1,12 @@
 package com.sgca.integradorsgca.controller;
 
 import com.sgca.integradorsgca.model.bean.ClientesBean;
+import com.sgca.integradorsgca.model.bean.ServiciosBean;
 import com.sgca.integradorsgca.model.bean.UsuarioBean;
 import com.sgca.integradorsgca.model.bean.rolBean;
 import com.sgca.integradorsgca.model.dao.AgentesDao;
 import com.sgca.integradorsgca.model.dao.ClientesDao;
+import com.sgca.integradorsgca.model.dao.ServiciosDao;
 import com.sgca.integradorsgca.model.dao.UsuarioDao;
 import com.sgca.integradorsgca.utils.PasswordUtils;
 import jakarta.servlet.ServletException;
@@ -15,6 +17,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -35,6 +38,7 @@ public class AsesorGestionClienteServlet extends HttpServlet {
     private final UsuarioDao usuarioDao = new UsuarioDao();
     private final ClientesDao clientesDao = new ClientesDao();
     private final AgentesDao agentesDao = new AgentesDao();
+    private final ServiciosDao serviciosDao = new ServiciosDao();
 
     private static final int ID_ROL_CLIENTE = 3;
     private static final String RUTA_LISTA = "/gestionClienteAsesor";
@@ -171,6 +175,19 @@ public class AsesorGestionClienteServlet extends HttpServlet {
 
         req.setAttribute("idClientePorUsuario", idClientePorUsuario);
         req.setAttribute("idsDisponibles", idsDisponibles);
+
+        try {
+            List<ServiciosBean> servicios = new ArrayList<>();
+            for (ServiciosBean s : serviciosDao.listar()) {
+                if (s.getEstado() == 1) {
+                    servicios.add(s);
+                }
+            }
+            req.setAttribute("servicios", servicios);
+        } catch (Exception e) {
+            e.printStackTrace();
+            req.setAttribute("servicios", new ArrayList<ServiciosBean>());
+        }
 
         req.getRequestDispatcher("/pages/asesorPages/gestionClientes.jsp").forward(req, resp);
     }

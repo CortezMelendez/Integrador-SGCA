@@ -3,6 +3,7 @@ package com.sgca.integradorsgca.controller;
 import com.sgca.integradorsgca.model.bean.AgentesBean;
 import com.sgca.integradorsgca.model.bean.MarcaBean;
 import com.sgca.integradorsgca.model.bean.ModelosBean;
+import com.sgca.integradorsgca.model.bean.ServiciosBean;
 import com.sgca.integradorsgca.model.bean.TiposVehiculoBean;
 import com.sgca.integradorsgca.model.bean.UsuarioBean;
 import com.sgca.integradorsgca.model.bean.VehImgBean;
@@ -10,6 +11,7 @@ import com.sgca.integradorsgca.model.bean.VehiculosBean;
 import com.sgca.integradorsgca.model.dao.AgentesDao;
 import com.sgca.integradorsgca.model.dao.MarcaDao;
 import com.sgca.integradorsgca.model.dao.ModelosDao;
+import com.sgca.integradorsgca.model.dao.ServiciosDao;
 import com.sgca.integradorsgca.model.dao.TiposVehiculoDao;
 import com.sgca.integradorsgca.model.dao.VehImgDao;
 import com.sgca.integradorsgca.model.dao.VehiculosDao;
@@ -56,6 +58,7 @@ public class AsesorGestionAutoServlet extends HttpServlet {
     private final MarcaDao marcaDao = new MarcaDao();
     private final ModelosDao modelosDao = new ModelosDao();
     private final TiposVehiculoDao tiposVehiculoDao = new TiposVehiculoDao();
+    private final ServiciosDao serviciosDao = new ServiciosDao();
     private final VehImgDao vehImgDao = new VehImgDao();
     private final AgentesDao agentesDao = new AgentesDao();
 
@@ -151,6 +154,19 @@ public class AsesorGestionAutoServlet extends HttpServlet {
         req.setAttribute("imagenesJsonPorVehiculo", aJsonImagenes(imagenesPorVehiculo));
         req.setAttribute("descripcionJsonPorVehiculo", aJsonTextos(descripcionPorVehiculo));
         req.setAttribute("modelosJsonPorMarca", aJsonModelosPorMarca(listaModelos));
+
+        try {
+            List<ServiciosBean> servicios = new ArrayList<>();
+            for (ServiciosBean s : serviciosDao.listar()) {
+                if (s.getEstado() == 1) {
+                    servicios.add(s);
+                }
+            }
+            req.setAttribute("servicios", servicios);
+        } catch (Exception e) {
+            e.printStackTrace();
+            req.setAttribute("servicios", new ArrayList<ServiciosBean>());
+        }
 
         if (req.getParameter("exito") != null) req.setAttribute("exitoParam", req.getParameter("exito"));
         if (error != null) req.setAttribute("errorParam", error);

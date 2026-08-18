@@ -18,6 +18,7 @@
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/vendor/bootstrap-scoped.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/asesorStyles/cotizacionModal.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/comprobanteVenta.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/clientePages/serviciosModal.css">
 </head>
 <body class="bs">
 
@@ -45,13 +46,22 @@
             </button>
             <div class="dropdown-menu">
                 <a href="${pageContext.request.contextPath}/automoviles">Ver todos</a>
-                <a href="${pageContext.request.contextPath}/gestionAutoAsesor">Registrar vehículo</a>
             </div>
         </div>
 
-        <a href="${pageContext.request.contextPath}/gestionClienteAsesor" class="dash-nav-link">
-            Clientes
-        </a>
+        <div class="dropdown">
+            <button class="dash-nav-link dropdown-btn">
+                Gestionar ▾
+            </button>
+            <div class="dropdown-menu">
+                <a href="${pageContext.request.contextPath}/gestionClienteAsesor">Gestionar Clientes</a>
+                <a href="${pageContext.request.contextPath}/gestionAutoAsesor">Registrar auto</a>
+            </div>
+        </div>
+
+        <button type="button" class="dash-nav-link" id="btnAbrirServicios">
+            Servicios
+        </button>
 
         <a href="${pageContext.request.contextPath}/cotizacionesAsesor" class="dash-nav-link active">
             Cotizaciones
@@ -74,6 +84,45 @@
     </nav>
 
 </header>
+
+<!-- MODAL SERVICIOS -->
+<div class="modal-overlay" id="modalServicios">
+
+    <div class="modal-box modal-box-servicios">
+
+        <div class="modal-header-bar">
+            <span>Catálogo de servicios</span>
+            <button type="button" class="modal-cerrar" id="btnCerrarServicios" aria-label="Cerrar">&times;</button>
+        </div>
+
+        <div class="modal-servicios-grid">
+
+            <c:forEach var="s" items="${servicios}">
+
+                <div class="card-servicio">
+
+                    <div class="servicio-encabezado">
+                        <h3>${s.nombre}</h3>
+                        <span class="servicio-tipo">${s.tipoServicio.nombre}</span>
+                    </div>
+
+                    <p class="servicio-descripcion">${s.descripcion}</p>
+
+                    <h2>$${s.precio}</h2>
+
+                </div>
+
+            </c:forEach>
+
+            <c:if test="${empty servicios}">
+                <p class="servicios-vacio">Por el momento no hay servicios disponibles.</p>
+            </c:if>
+
+        </div>
+
+    </div>
+
+</div>
 
 <!-- CONTENIDO PRINCIPAL -->
 <main class="dash-main">
@@ -214,5 +263,50 @@
 </script>
 <script src="${pageContext.request.contextPath}/js/comprobanteVenta.js"></script>
 <script src="${pageContext.request.contextPath}/js/asesorJS/cotizacionesAsesor.js"></script>
+
+<script>
+
+    document.querySelectorAll(".dropdown-btn")
+        .forEach(button => {
+            button.addEventListener("click", function(e){
+                e.stopPropagation();
+                let menu = this.nextElementSibling;
+                menu.classList.toggle("show");
+            });
+        });
+
+    document.addEventListener("click", function(){
+        document.querySelectorAll(".dropdown-menu")
+            .forEach(menu => menu.classList.remove("show"));
+    });
+
+    // MODAL SERVICIOS
+
+    const modalServicios = document.getElementById("modalServicios");
+    const btnAbrirServicios = document.getElementById("btnAbrirServicios");
+    const btnCerrarServicios = document.getElementById("btnCerrarServicios");
+
+    btnAbrirServicios.addEventListener("click", function(e){
+        e.stopPropagation();
+        modalServicios.classList.add("active");
+    });
+
+    btnCerrarServicios.addEventListener("click", function(){
+        modalServicios.classList.remove("active");
+    });
+
+    modalServicios.addEventListener("click", function(e){
+        if(e.target === modalServicios){
+            modalServicios.classList.remove("active");
+        }
+    });
+
+    document.addEventListener("keydown", function(e){
+        if(e.key === "Escape"){
+            modalServicios.classList.remove("active");
+        }
+    });
+
+</script>
 </body>
 </html>
