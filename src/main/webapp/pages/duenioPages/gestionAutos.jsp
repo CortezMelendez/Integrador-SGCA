@@ -16,6 +16,7 @@
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/duenioStyles/gestiones.css" />
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/responsive.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/vendor/bootstrap-scoped.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/clientePages/perfilModal.css">
 </head>
 <body class="bs">
 
@@ -34,7 +35,7 @@
         <div class="dropdown">
             <button type="button" class="dash-nav-link dropdown-btn">Configuración ▾</button>
             <div class="dropdown-menu">
-                <a href="${pageContext.request.contextPath}/nav?action=perfil">Perfil</a>
+                <a href="#" id="btnAbrirPerfil">Perfil</a>
                 <a href="${pageContext.request.contextPath}/btn?action=cerrarSesionTodos">Cerrar sesión</a>
             </div>
         </div>
@@ -48,6 +49,155 @@
         </div>
     </div>
 </header>
+
+<!-- MODAL PERFIL (mismo componente que usan cliente y asesor: ver perfil,
+     editar datos y cambiar contraseña con la contraseña actual, sin código) -->
+<div class="modal-overlay" id="modalPerfil">
+
+    <div class="modal-box modal-box-perfil">
+
+        <!-- VER PERFIL -->
+        <div class="perfil-paso" id="perfilVista">
+
+            <div class="perfil-header">
+                <h2>Ver Perfil</h2>
+                <button type="button" class="modal-cerrar" data-cerrar-perfil aria-label="Cerrar">&times;</button>
+            </div>
+
+            <div class="perfil-identidad">
+                <div class="perfil-identidad-datos">
+                    <h3 class="perfil-nombre">${sessionScope.usuarioLogueado.nombre} ${sessionScope.usuarioLogueado.apellidoPaterno} ${sessionScope.usuarioLogueado.apellidoMaterno}</h3>
+                    <p class="perfil-folio">Folio #${sessionScope.usuarioLogueado.id_usuario}</p>
+                    <p class="perfil-correo-chico">${sessionScope.usuarioLogueado.correo}</p>
+                </div>
+                <button type="button" class="perfil-btn-editar" id="btnEditarPerfil" aria-label="Editar perfil">&#9998;</button>
+            </div>
+
+            <div class="perfil-seccion">
+                <h4>Información personal</h4>
+                <div class="perfil-grid">
+                    <div class="perfil-campo">
+                        <span class="perfil-label">Rol</span>
+                        <span class="perfil-valor">${sessionScope.usuarioLogueado.rol.rol}</span>
+                    </div>
+                    <div class="perfil-campo">
+                        <span class="perfil-label">Miembro desde</span>
+                        <span class="perfil-valor"><fmt:formatDate value="${sessionScope.usuarioLogueado.fechaRegistro}" pattern="dd/MM/yyyy"/></span>
+                    </div>
+                    <div class="perfil-campo">
+                        <span class="perfil-label">Teléfono</span>
+                        <span class="perfil-valor perfil-valor-telefono">${sessionScope.usuarioLogueado.telefono}</span>
+                    </div>
+                    <div class="perfil-campo">
+                        <span class="perfil-label">RFC</span>
+                        <span class="perfil-valor">${sessionScope.usuarioLogueado.rfc}</span>
+                    </div>
+                    <div class="perfil-campo">
+                        <span class="perfil-label">CURP</span>
+                        <span class="perfil-valor">${sessionScope.usuarioLogueado.curp}</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="perfil-seccion">
+                <h4>Información de contacto</h4>
+                <div class="perfil-grid perfil-grid-1">
+                    <div class="perfil-campo">
+                        <span class="perfil-label">Correo principal</span>
+                        <span class="perfil-valor perfil-valor-correo">${sessionScope.usuarioLogueado.correo}</span>
+                    </div>
+                </div>
+            </div>
+
+            <button type="button" class="btn-atras-perfil" data-cerrar-perfil>
+                &#8592; Atrás
+            </button>
+
+        </div>
+
+        <!-- EDITAR PERFIL -->
+        <div class="perfil-paso oculto" id="perfilEditar">
+
+            <div class="perfil-header">
+                <h2>Editar Perfil</h2>
+                <button type="button" class="modal-cerrar" data-cerrar-perfil aria-label="Cerrar">&times;</button>
+            </div>
+
+            <form id="formEditarPerfil" novalidate>
+
+                <div class="perfil-form-row">
+                    <div class="perfil-campo-edit">
+                        <label class="perfil-form-label" for="perfilNombre">Nombre</label>
+                        <input class="perfil-input" type="text" id="perfilNombre" name="nombre" maxlength="50" value="${sessionScope.usuarioLogueado.nombre}">
+                    </div>
+                    <div class="perfil-campo-edit">
+                        <label class="perfil-form-label" for="perfilApellidoPaterno">Apellido paterno</label>
+                        <input class="perfil-input" type="text" id="perfilApellidoPaterno" name="apellidoPaterno" maxlength="30" value="${sessionScope.usuarioLogueado.apellidoPaterno}">
+                    </div>
+                </div>
+
+                <div class="perfil-campo-edit">
+                    <label class="perfil-form-label" for="perfilApellidoMaterno">Apellido materno</label>
+                    <input class="perfil-input" type="text" id="perfilApellidoMaterno" name="apellidoMaterno" maxlength="30" value="${sessionScope.usuarioLogueado.apellidoMaterno}">
+                </div>
+
+                <div class="perfil-form-row">
+                    <div class="perfil-campo-edit">
+                        <label class="perfil-form-label">RFC</label>
+                        <input class="perfil-input perfil-input-bloqueado" type="text" value="${sessionScope.usuarioLogueado.rfc}" disabled>
+                    </div>
+                    <div class="perfil-campo-edit">
+                        <label class="perfil-form-label">CURP</label>
+                        <input class="perfil-input perfil-input-bloqueado" type="text" value="${sessionScope.usuarioLogueado.curp}" disabled>
+                    </div>
+                </div>
+                <p class="perfil-nota">El RFC y la CURP no se pueden modificar una vez registrados.</p>
+
+                <div class="perfil-campo-edit">
+                    <label class="perfil-form-label" for="perfilTelefono">Número de contacto</label>
+                    <input class="perfil-input" type="tel" id="perfilTelefono" name="telefono" maxlength="10" value="${sessionScope.usuarioLogueado.telefono}">
+                </div>
+
+                <div class="perfil-campo-edit">
+                    <label class="perfil-form-label" for="perfilCorreo">Correo electrónico</label>
+                    <input class="perfil-input" type="email" id="perfilCorreo" name="correo" maxlength="100" value="${sessionScope.usuarioLogueado.correo}">
+                </div>
+
+                <hr class="perfil-divisor">
+
+                <p class="perfil-subtitulo">Cambiar contraseña (opcional)</p>
+
+                <div class="perfil-campo-edit">
+                    <label class="perfil-form-label" for="perfilPasswordActual">Contraseña actual</label>
+                    <input class="perfil-input" type="password" id="perfilPasswordActual" name="passwordActual" autocomplete="current-password">
+                </div>
+
+                <div class="perfil-form-row">
+                    <div class="perfil-campo-edit">
+                        <label class="perfil-form-label" for="perfilNuevaPassword">Nueva contraseña</label>
+                        <input class="perfil-input" type="password" id="perfilNuevaPassword" name="nuevaPassword" autocomplete="new-password">
+                    </div>
+                    <div class="perfil-campo-edit">
+                        <label class="perfil-form-label" for="perfilConfirmarPassword">Confirmar contraseña</label>
+                        <input class="perfil-input" type="password" id="perfilConfirmarPassword" name="confirmarPassword" autocomplete="new-password">
+                    </div>
+                </div>
+
+                <p class="perfil-error" id="errorPerfil"></p>
+                <p class="perfil-exito" id="exitoPerfil"></p>
+
+                <div class="perfil-acciones">
+                    <button type="button" class="btn-perfil-cancelar" id="btnCancelarEdicion">Cancelar</button>
+                    <button type="submit" class="btn-perfil-guardar">Guardar cambios</button>
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
 
 <!-- CONTENIDO PRINCIPAL-->
 <main class="dash-main">
@@ -567,5 +717,10 @@
         }
     });
 </script>
+
+<script>
+    window.PERFIL_CONTEXT_PATH = "${pageContext.request.contextPath}";
+</script>
+<script src="${pageContext.request.contextPath}/js/clienteJS/perfilModal.js"></script>
 </body>
 </html>

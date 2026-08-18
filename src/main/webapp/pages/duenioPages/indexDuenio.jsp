@@ -505,6 +505,7 @@
         }
     });
 </script>
+<script src="${pageContext.request.contextPath}/js/duenioJS/carrusel.js"></script>
 
 </body>
 </html>
