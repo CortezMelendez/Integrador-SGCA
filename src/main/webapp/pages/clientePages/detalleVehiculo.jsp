@@ -151,7 +151,7 @@
 
 </div>
 
-<!-- MODAL DESCRIPCIÓN GENERAL (contenido pendiente) -->
+<!-- MODAL DESCRIPCIÓN GENERAL -->
 <div class="modal-overlay" id="modalDescripcion">
 
     <div class="modal-box modal-box-descripcion">
@@ -162,6 +162,14 @@
         </div>
 
         <div class="modal-descripcion-body">
+            <c:choose>
+                <c:when test="${not empty vehiculo.descripcion}">
+                    <p>${vehiculo.descripcion}</p>
+                </c:when>
+                <c:otherwise>
+                    <p class="servicios-vacio">Este vehículo todavía no tiene una descripción general capturada.</p>
+                </c:otherwise>
+            </c:choose>
         </div>
 
     </div>

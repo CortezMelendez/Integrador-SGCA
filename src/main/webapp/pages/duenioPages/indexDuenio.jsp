@@ -89,19 +89,19 @@
 
     </section>
 
-    <!-- Carrusel de autos disponibles (mismo carrusel que ven Cliente y Asesor) -->
-    <section class="carrusel-section" id="carrusel">
+    <!-- Carrusel "Lo más nuevo" -->
+    <section class="carrusel-section">
 
         <div class="carrusel-header">
-            <h2>Autos disponibles</h2>
+            <h2>Lo más nuevo</h2>
             <div class="carrusel-controls">
-                <button type="button" class="carrusel-btn" id="btnPrev" aria-label="Anterior">&#8249;</button>
-                <button type="button" class="carrusel-btn" id="btnNext" aria-label="Siguiente">&#8250;</button>
+                <button type="button" class="carrusel-btn carrusel-prev" aria-label="Anterior">&#8249;</button>
+                <button type="button" class="carrusel-btn carrusel-next" aria-label="Siguiente">&#8250;</button>
             </div>
         </div>
 
-        <div class="carrusel-track" id="carruselTrack">
-            <c:forEach var="v" items="${vehiculos}">
+        <div class="carrusel-track">
+            <c:forEach var="v" items="${vehiculosNuevos}">
                 <a class="auto-card" href="${pageContext.request.contextPath}/detalleVehiculo?id=${v.id_Vehiculo}">
                     <c:choose>
                         <c:when test="${not empty v.foto_Portada}">
@@ -118,13 +118,13 @@
                     </div>
                 </a>
             </c:forEach>
-            <c:if test="${empty vehiculos}">
+            <c:if test="${empty vehiculosNuevos}">
                 <p>No hay vehículos disponibles por el momento.</p>
             </c:if>
         </div>
 
         <div class="carrusel-scrollbar">
-            <div class="carrusel-scrollbar-thumb" id="scrollThumb"></div>
+            <div class="carrusel-scrollbar-thumb"></div>
         </div>
 
     </section>
@@ -132,51 +132,124 @@
 </main>
 
 
-<!-- Catálogo de vehículos disponibles -->
+<!-- Carrusel "Lo más accesible" -->
+<section class="carrusel-section">
 
-<section class="catalogo">
-
-    <div class="catalogo-header">
-
-        <h2 class="catalogo-titulo">
-            Vehículos recién agregados
-        </h2>
-
+    <div class="carrusel-header">
+        <h2>Lo más accesible</h2>
+        <div class="carrusel-controls">
+            <button type="button" class="carrusel-btn carrusel-prev" aria-label="Anterior">&#8249;</button>
+            <button type="button" class="carrusel-btn carrusel-next" aria-label="Siguiente">&#8250;</button>
+        </div>
     </div>
 
-
-    <div class="cards-container">
-
-        <c:forEach var="v" items="${vehiculos}">
-
-            <div class="card-auto">
-
-                <img class="card-imagen"
-                     src="${pageContext.request.contextPath}/Images/imagesAutos/${v.foto_Portada}"
-                     alt="Vehículo">
-
-                <h3>
-                        ${v.marca.nombre}
-                        ${v.modelos.nombre}
-                </h3>
-
-                <p>
-                    Año: ${v.anio}
-                </p>
-
-                <h2>
-                    $${v.precio}
-                </h2>
-
-                <a class="btn-detalles"
-                   href="${pageContext.request.contextPath}/detalleVehiculo?id=${v.id_Vehiculo}">
-                    Ver detalles
-                </a>
-
-            </div>
-
+    <div class="carrusel-track">
+        <c:forEach var="v" items="${vehiculosAccesibles}">
+            <a class="auto-card" href="${pageContext.request.contextPath}/detalleVehiculo?id=${v.id_Vehiculo}">
+                <c:choose>
+                    <c:when test="${not empty v.foto_Portada}">
+                        <img class="auto-card-img" src="${pageContext.request.contextPath}/Images/imagesAutos/${v.foto_Portada}" alt="${v.marca.nombre} ${v.modelos.nombre}" />
+                    </c:when>
+                    <c:otherwise>
+                        <div class="auto-card-img"></div>
+                    </c:otherwise>
+                </c:choose>
+                <div class="auto-card-info">
+                    <span class="auto-card-marca">${v.marca.nombre} ${v.modelos.nombre}</span>
+                    <span class="auto-card-modelo">Año ${v.anio}</span>
+                    <span class="auto-card-precio">$<fmt:formatNumber value="${v.precio}" type="number" minFractionDigits="2" maxFractionDigits="2"/></span>
+                </div>
+            </a>
         </c:forEach>
+        <c:if test="${empty vehiculosAccesibles}">
+            <p>No hay vehículos por debajo de este rango de precio por el momento.</p>
+        </c:if>
+    </div>
 
+    <div class="carrusel-scrollbar">
+        <div class="carrusel-scrollbar-thumb"></div>
+    </div>
+
+</section>
+
+
+<!-- Carrusel "Recién agregado" -->
+<section class="carrusel-section">
+
+    <div class="carrusel-header">
+        <h2>Recién agregado</h2>
+        <div class="carrusel-controls">
+            <button type="button" class="carrusel-btn carrusel-prev" aria-label="Anterior">&#8249;</button>
+            <button type="button" class="carrusel-btn carrusel-next" aria-label="Siguiente">&#8250;</button>
+        </div>
+    </div>
+
+    <div class="carrusel-track">
+        <c:forEach var="v" items="${vehiculosRecientes}">
+            <a class="auto-card" href="${pageContext.request.contextPath}/detalleVehiculo?id=${v.id_Vehiculo}">
+                <c:choose>
+                    <c:when test="${not empty v.foto_Portada}">
+                        <img class="auto-card-img" src="${pageContext.request.contextPath}/Images/imagesAutos/${v.foto_Portada}" alt="${v.marca.nombre} ${v.modelos.nombre}" />
+                    </c:when>
+                    <c:otherwise>
+                        <div class="auto-card-img"></div>
+                    </c:otherwise>
+                </c:choose>
+                <div class="auto-card-info">
+                    <span class="auto-card-marca">${v.marca.nombre} ${v.modelos.nombre}</span>
+                    <span class="auto-card-modelo">Año ${v.anio}</span>
+                    <span class="auto-card-precio">$<fmt:formatNumber value="${v.precio}" type="number" minFractionDigits="2" maxFractionDigits="2"/></span>
+                </div>
+            </a>
+        </c:forEach>
+        <c:if test="${empty vehiculosRecientes}">
+            <p>No hay vehículos disponibles por el momento.</p>
+        </c:if>
+    </div>
+
+    <div class="carrusel-scrollbar">
+        <div class="carrusel-scrollbar-thumb"></div>
+    </div>
+
+</section>
+
+
+<!-- Carrusel "Destacado" -->
+<section class="carrusel-section">
+
+    <div class="carrusel-header">
+        <h2>Destacado</h2>
+        <div class="carrusel-controls">
+            <button type="button" class="carrusel-btn carrusel-prev" aria-label="Anterior">&#8249;</button>
+            <button type="button" class="carrusel-btn carrusel-next" aria-label="Siguiente">&#8250;</button>
+        </div>
+    </div>
+
+    <div class="carrusel-track">
+        <c:forEach var="v" items="${vehiculosDestacados}">
+            <a class="auto-card" href="${pageContext.request.contextPath}/detalleVehiculo?id=${v.id_Vehiculo}">
+                <c:choose>
+                    <c:when test="${not empty v.foto_Portada}">
+                        <img class="auto-card-img" src="${pageContext.request.contextPath}/Images/imagesAutos/${v.foto_Portada}" alt="${v.marca.nombre} ${v.modelos.nombre}" />
+                    </c:when>
+                    <c:otherwise>
+                        <div class="auto-card-img"></div>
+                    </c:otherwise>
+                </c:choose>
+                <div class="auto-card-info">
+                    <span class="auto-card-marca">${v.marca.nombre} ${v.modelos.nombre}</span>
+                    <span class="auto-card-modelo">Año ${v.anio}</span>
+                    <span class="auto-card-precio">$<fmt:formatNumber value="${v.precio}" type="number" minFractionDigits="2" maxFractionDigits="2"/></span>
+                </div>
+            </a>
+        </c:forEach>
+        <c:if test="${empty vehiculosDestacados}">
+            <p>No hay vehículos disponibles por el momento.</p>
+        </c:if>
+    </div>
+
+    <div class="carrusel-scrollbar">
+        <div class="carrusel-scrollbar-thumb"></div>
     </div>
 
 </section>

@@ -41,7 +41,7 @@ import java.util.regex.Pattern;
 @WebServlet(name = "GestionAutosServlet", value = "/gestionAutos")
 @MultipartConfig(
         maxFileSize = 5 * 1024 * 1024,        // 5 MB por imagen
-        maxRequestSize = 40 * 1024 * 1024,    // hasta 6 imágenes (portada + 5 extra) por request
+        maxRequestSize = 60 * 1024 * 1024,    // hasta 11 imágenes (portada + 10 extra) por request
         fileSizeThreshold = 1024 * 1024
 )
 public class GestionAutosServlet extends HttpServlet {
@@ -56,7 +56,7 @@ public class GestionAutosServlet extends HttpServlet {
     // Carpeta dentro de webapp donde se guardan las fotos (ya existe en el proyecto: /Images/imagesAutos)
     private static final String CARPETA_IMAGENES = "Images/imagesAutos";
     private static final String CAMPO_FOTOS_EXTRA = "fotosExtra";
-    private static final int MAX_IMAGENES_EXTRA = 5;
+    private static final int MAX_IMAGENES_EXTRA = 10;
 
     // Placa: 3 letras mayúsculas + guión + 3 o 4 dígitos (regla de negocio del DFR, módulo 2).
     private static final Pattern PATRON_PLACA = Pattern.compile("^[A-Z]{3}-\\d{3,4}$");

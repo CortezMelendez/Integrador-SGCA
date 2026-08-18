@@ -17,6 +17,8 @@ public class IndexServlet extends HttpServlet {
 
     private final VehiculosDao dao = new VehiculosDao();
 
+    private static final int LIMITE_CARRUSEL = 12;
+
     @Override
     protected void doGet(HttpServletRequest request,
                          HttpServletResponse response)
@@ -38,6 +40,10 @@ public class IndexServlet extends HttpServlet {
         }
 
         request.setAttribute("vehiculos", lista);
+        request.setAttribute("vehiculosNuevos", dao.listarMasNuevos(LIMITE_CARRUSEL));
+        request.setAttribute("vehiculosAccesibles", dao.listarMasAccesibles(LIMITE_CARRUSEL));
+        request.setAttribute("vehiculosRecientes", dao.listarRecienAgregados(LIMITE_CARRUSEL));
+        request.setAttribute("vehiculosDestacados", dao.listarDestacados(LIMITE_CARRUSEL));
 
         request.getRequestDispatcher("/index.jsp")
                 .forward(request, response);

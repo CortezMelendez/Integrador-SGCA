@@ -46,7 +46,7 @@ import java.util.UUID;
 @WebServlet(name = "AsesorGestionAutoServlet", value = "/gestionAutoAsesor")
 @MultipartConfig(
         maxFileSize = 5 * 1024 * 1024,
-        maxRequestSize = 40 * 1024 * 1024,
+        maxRequestSize = 60 * 1024 * 1024,
         fileSizeThreshold = 1024 * 1024
 )
 public class AsesorGestionAutoServlet extends HttpServlet {
@@ -61,7 +61,7 @@ public class AsesorGestionAutoServlet extends HttpServlet {
     private static final String RUTA_LISTA = "/gestionAutoAsesor";
     private static final String CARPETA_IMAGENES = "Images/imagesAutos";
     private static final String CAMPO_FOTOS_EXTRA = "fotosExtra";
-    private static final int MAX_IMAGENES_EXTRA = 5;
+    private static final int MAX_IMAGENES_EXTRA = 10;
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {

@@ -16,11 +16,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 @WebServlet("/cliente")
-public class clienteServlet extends HttpServlet {
+public class ClienteServlet extends HttpServlet {
 
     private final VehiculosDao dao = new VehiculosDao();
     private final ServiciosDao serviciosDao = new ServiciosDao();
     private final TiposVehiculoDao tiposVehiculoDao = new TiposVehiculoDao();
+
+    private static final int LIMITE_CARRUSEL = 12;
 
 @Override
     protected void doGet(HttpServletRequest request,
@@ -31,6 +33,10 @@ public class clienteServlet extends HttpServlet {
         List<VehiculosBean> lista = dao.listarDisponibles();
 
         request.setAttribute("vehiculos", lista);
+        request.setAttribute("vehiculosNuevos", dao.listarMasNuevos(LIMITE_CARRUSEL));
+        request.setAttribute("vehiculosAccesibles", dao.listarMasAccesibles(LIMITE_CARRUSEL));
+        request.setAttribute("vehiculosRecientes", dao.listarRecienAgregados(LIMITE_CARRUSEL));
+        request.setAttribute("vehiculosDestacados", dao.listarDestacados(LIMITE_CARRUSEL));
         request.setAttribute("listaTipos", tiposVehiculoDao.listar());
 
         try {

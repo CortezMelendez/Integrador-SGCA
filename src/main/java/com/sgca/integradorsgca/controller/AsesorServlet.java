@@ -29,6 +29,8 @@ public class AsesorServlet extends HttpServlet {
     private final ServiciosDao serviciosDao = new ServiciosDao();
     private final AgentesDao agentesDao = new AgentesDao();
 
+    private static final int LIMITE_CARRUSEL = 12;
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -36,6 +38,10 @@ public class AsesorServlet extends HttpServlet {
         List<VehiculosBean> vehiculos = vehiculosDao.listarDisponibles();
 
         request.setAttribute("vehiculos", vehiculos);
+        request.setAttribute("vehiculosNuevos", vehiculosDao.listarMasNuevos(LIMITE_CARRUSEL));
+        request.setAttribute("vehiculosAccesibles", vehiculosDao.listarMasAccesibles(LIMITE_CARRUSEL));
+        request.setAttribute("vehiculosRecientes", vehiculosDao.listarRecienAgregados(LIMITE_CARRUSEL));
+        request.setAttribute("vehiculosDestacados", vehiculosDao.listarDestacados(LIMITE_CARRUSEL));
         request.setAttribute("listaTipos", tiposVehiculoDao.listar());
 
         HttpSession session = request.getSession(false);

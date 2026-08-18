@@ -109,9 +109,9 @@ function resetearModalAgregar() {
 }
 
 // =========================================================
-// IMÁGENES ADICIONALES (hasta 5 por vehículo, además de la portada)
+// IMÁGENES ADICIONALES (hasta 10 por vehículo, además de la portada)
 // =========================================================
-const MAX_IMAGENES_EXTRA = 5;
+const MAX_IMAGENES_EXTRA = 10;
 
 // IDs (ID_IMAGEN) de la galería existente que el dueño marcó para quitar (solo modal Editar)
 let idsImagenesAEliminar = [];

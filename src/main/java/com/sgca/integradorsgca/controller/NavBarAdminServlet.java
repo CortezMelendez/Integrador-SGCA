@@ -30,6 +30,7 @@ public class NavBarAdminServlet extends HttpServlet {
 
     private static final String BASE_DUENIO = "/pages/duenioPages/";
     private static final int ID_ROL_CLIENTE = 3;
+    private static final int LIMITE_CARRUSEL = 12;
     private static final String[] MESES_ES = {"Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"};
 
     private final VehiculosDao vehiculosDao = new VehiculosDao();
@@ -63,7 +64,7 @@ public class NavBarAdminServlet extends HttpServlet {
 
         switch (action) {
             case "inicio":
-                request.setAttribute("vehiculos", vehiculosDao.listarDisponibles());
+                cargarCarruseles(request);
                 request.getRequestDispatcher(BASE_DUENIO + "indexDuenio.jsp").forward(request, response);
                 break;
 
@@ -79,7 +80,7 @@ public class NavBarAdminServlet extends HttpServlet {
 
             case "perfil":
                 request.setAttribute("mensaje", "Sección de Perfil en construcción");
-                request.setAttribute("vehiculos", vehiculosDao.listarDisponibles());
+                cargarCarruseles(request);
                 request.getRequestDispatcher(BASE_DUENIO + "indexDuenio.jsp").forward(request, response);
                 break;
 
@@ -97,6 +98,15 @@ public class NavBarAdminServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         doGet(request, response);
+    }
+
+    // Datos de los 4 carruseles del index del dueño (indexDuenio.jsp).
+    private void cargarCarruseles(HttpServletRequest request) {
+        request.setAttribute("vehiculos", vehiculosDao.listarDisponibles());
+        request.setAttribute("vehiculosNuevos", vehiculosDao.listarMasNuevos(LIMITE_CARRUSEL));
+        request.setAttribute("vehiculosAccesibles", vehiculosDao.listarMasAccesibles(LIMITE_CARRUSEL));
+        request.setAttribute("vehiculosRecientes", vehiculosDao.listarRecienAgregados(LIMITE_CARRUSEL));
+        request.setAttribute("vehiculosDestacados", vehiculosDao.listarDestacados(LIMITE_CARRUSEL));
     }
 
     /**

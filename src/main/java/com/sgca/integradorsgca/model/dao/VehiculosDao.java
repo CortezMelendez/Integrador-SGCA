@@ -269,6 +269,69 @@ public class VehiculosDao {
 
     }
 
+    private static final String SELECT_DISPONIBLES =
+            "SELECT "
+                    + "V.ID_VEHICULO, V.ID_MODELO, V.ID_TIPO, V.ID_AGENTE,"
+                    + "V.PLACA, V.COLOR, V.ANIO, V.PRECIO,"
+                    + "V.DISPONIBLE, V.FECHA_REGISTRO,"
+                    + "V.FOTO_PORTADA, V.DESCRIPCION_GENERAL,"
+                    + "M.NOMBRE NOMBRE_MODELO,"
+                    + "M.ESTADO ESTADO_MODELO,"
+                    + "MA.ID_MARCA,"
+                    + "MA.NOMBRE NOMBRE_MARCA,"
+                    + "MA.ESTADO ESTADO_MARCA,"
+                    + "TV.NOMBRE NOMBRE_TIPO "
+                    + "FROM ADMIN.VEHICULOS V "
+                    + "INNER JOIN ADMIN.MODELOS M ON V.ID_MODELO=M.ID_MODELO "
+                    + "INNER JOIN ADMIN.MARCAS MA ON M.ID_MARCA=MA.ID_MARCA "
+                    + "INNER JOIN ADMIN.TIPOS_VEHICULO TV ON V.ID_TIPO=TV.ID_TIPO "
+                    + "WHERE V.DISPONIBLE=1 ";
+
+    private List<VehiculosBean> listarConLimite(String sql, int limite) {
+        List<VehiculosBean> lista = new ArrayList<>();
+
+        try (Connection con = Conexion.getConexion();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+
+            ps.setInt(1, limite);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    lista.add(mapearVehiculo(rs));
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Error al listar vehículos con límite: " + e.getMessage());
+        }
+
+        return lista;
+    }
+
+    // Carrusel "Lo más nuevo": los años-modelo más recientes primero.
+    public List<VehiculosBean> listarMasNuevos(int limite) {
+        return listarConLimite(SELECT_DISPONIBLES + "ORDER BY V.ANIO DESC, V.ID_VEHICULO DESC "
+                + "FETCH FIRST ? ROWS ONLY", limite);
+    }
+
+    // Carrusel "Lo más accesible": disponibles por debajo de $350,000, del más barato al más caro.
+    public List<VehiculosBean> listarMasAccesibles(int limite) {
+        return listarConLimite(SELECT_DISPONIBLES + "AND V.PRECIO < 350000 "
+                + "ORDER BY V.PRECIO ASC "
+                + "FETCH FIRST ? ROWS ONLY", limite);
+    }
+
+    // Carrusel "Recién agregado": los últimos vehículos dados de alta.
+    public List<VehiculosBean> listarRecienAgregados(int limite) {
+        return listarConLimite(SELECT_DISPONIBLES + "ORDER BY V.FECHA_REGISTRO DESC, V.ID_VEHICULO DESC "
+                + "FETCH FIRST ? ROWS ONLY", limite);
+    }
+
+    // Carrusel "Destacado": los más caros primero.
+    public List<VehiculosBean> listarDestacados(int limite) {
+        return listarConLimite(SELECT_DISPONIBLES + "ORDER BY V.PRECIO DESC "
+                + "FETCH FIRST ? ROWS ONLY", limite);
+    }
+
     // Catálogo del cliente: trae los vehículos disponibles, permite filtrar por tipo
     // y por un texto de búsqueda libre (marca, modelo, año o precio), y ordena según
     // lo que pida el cliente. Tanto el tipo como el texto de búsqueda van siempre

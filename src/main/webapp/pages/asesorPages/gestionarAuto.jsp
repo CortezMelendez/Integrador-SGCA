@@ -270,7 +270,7 @@
             </div>
 
             <div class="modal-field">
-                <label class="modal-label">Imágenes adicionales (máx. 5)</label>
+                <label class="modal-label">Imágenes adicionales (máx. 10)</label>
                 <div class="galeria-extra" id="mod-galeria-extra"></div>
                 <input type="file" id="mod-fotos-extra-input" name="fotosExtra" accept="image/*" multiple hidden
                        onchange="manejarFotosExtra(this, 'mod')" />
@@ -394,7 +394,7 @@
             </div>
 
             <div class="modal-field">
-                <label class="modal-label">Imágenes adicionales (máx. 5)</label>
+                <label class="modal-label">Imágenes adicionales (máx. 10)</label>
                 <div class="galeria-extra" id="edit-galeria-extra"></div>
                 <input type="file" id="edit-fotos-extra-input" name="fotosExtra" accept="image/*" multiple hidden
                        onchange="manejarFotosExtra(this, 'edit')" />
