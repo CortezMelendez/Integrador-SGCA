@@ -14,9 +14,9 @@
 
    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/duenioStyles/styles.css">
   <link rel="stylesheet" href="${pageContext.request.contextPath}/css/duenioStyles/gestiones.css" />
-  <link rel="stylesheet" href="${pageContext.request.contextPath}/css/responsive.css" />
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/vendor/bootstrap-scoped.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/clientePages/perfilModal.css">
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/css/responsive.css" />
 </head>
 <body class="bs">
 
@@ -299,8 +299,8 @@
 
   <!-- FOOTER -->
   <footer class="footer">
-      <span style="color: rgb(8, 8, 8); font-size: 0.85rem;">© 2026 SGCA · Todos los derechos reservados</span>
-      <a href="javascript:history.back()" class="btn-back">
+      <span>© 2026 SGCA · Todos los derechos reservados</span>
+      <a href="${pageContext.request.contextPath}/nav?action=dashboard" class="btn-back">
           <img src="${pageContext.request.contextPath}/Images/back.svg" alt="atras" />
           Atras
       </a>
@@ -524,6 +524,7 @@
           duplicado_telefono: 'Ya existe un usuario registrado con ese teléfono.',
           password_invalido: 'La contraseña debe tener al menos 8 caracteres.',
           no_se_pudo_eliminar: 'No se pudo eliminar: el cliente tiene compras o servicios contratados en su historial.',
+          error_vinculo_cliente: 'El usuario se creó, pero no se pudo vincular como cliente. Intenta de nuevo.',
           error_servidor: 'Ocurrió un error en el servidor. Intenta de nuevo.'
         };
         const codigo = '${param.error}';

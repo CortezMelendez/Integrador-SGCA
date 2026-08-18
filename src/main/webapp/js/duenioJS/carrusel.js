@@ -1,6 +1,20 @@
 
 document.addEventListener('DOMContentLoaded', () => {
-  const DISTANCIA_SCROLL = 260;
+  // Distancia de respaldo si el track todavía no tiene tarjetas (evita
+  // dividir por cero / no mover nada cuando el carrusel está vacío).
+  const DISTANCIA_SCROLL_RESPALDO = 260;
+
+  // Calcula cuánto avanzar en cada click: el ancho real de una tarjeta más
+  // el gap entre tarjetas (leído del propio track), en vez de un valor fijo
+  // que no coincide con el ancho real de las tarjetas en cada breakpoint y
+  // hacía que el scroll-snap del carrusel "se trabara" o pareciera no hacer nada.
+  function distanciaScroll(track) {
+    const primeraTarjeta = track.firstElementChild;
+    if (!primeraTarjeta) return DISTANCIA_SCROLL_RESPALDO;
+
+    const gap = parseFloat(getComputedStyle(track).columnGap) || 0;
+    return primeraTarjeta.getBoundingClientRect().width + gap;
+  }
 
   document.querySelectorAll('.carrusel-section').forEach((seccion) => {
     const track = seccion.querySelector('.carrusel-track');
@@ -12,13 +26,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (btnPrev) {
       btnPrev.addEventListener('click', () => {
-        track.scrollBy({ left: -DISTANCIA_SCROLL, behavior: 'smooth' });
+        track.scrollBy({ left: -distanciaScroll(track), behavior: 'smooth' });
       });
     }
 
     if (btnNext) {
       btnNext.addEventListener('click', () => {
-        track.scrollBy({ left: DISTANCIA_SCROLL, behavior: 'smooth' });
+        track.scrollBy({ left: distanciaScroll(track), behavior: 'smooth' });
       });
     }
 

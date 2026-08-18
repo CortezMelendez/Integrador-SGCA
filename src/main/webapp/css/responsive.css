@@ -71,7 +71,13 @@ img {
     }
 
     .gest-search-inline {
-        width: 100%;
+        /* auto (no 100%): .gest-search-inline ya tiene sus propios
+           margin left/right (gestiones.css); width:100% ignora esos
+           márgenes y hace que la barra se desborde exactamente su ancho,
+           cortando las esquinas redondeadas contra overflow-x:hidden. */
+        width: auto;
+        margin-left: 16px;
+        margin-right: 16px;
     }
 
     .gest-search-inline .gest-input {

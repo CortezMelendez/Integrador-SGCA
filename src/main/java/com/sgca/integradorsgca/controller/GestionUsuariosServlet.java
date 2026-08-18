@@ -1,6 +1,7 @@
 package com.sgca.integradorsgca.controller;
 
 import com.sgca.integradorsgca.model.bean.AgentesBean;
+import com.sgca.integradorsgca.model.bean.ClientesBean;
 import com.sgca.integradorsgca.model.bean.UsuarioBean;
 import com.sgca.integradorsgca.model.bean.rolBean;
 import com.sgca.integradorsgca.model.dao.AgentesDao;
@@ -35,6 +36,7 @@ public class GestionUsuariosServlet extends HttpServlet {
     private final ClientesDao clientesDao = new ClientesDao();
 
     private static final int ID_ROL_AGENTE = 2;
+    private static final int ID_ROL_CLIENTE = 3;
     private static final SecureRandom RANDOM = new SecureRandom();
 
     @Override
@@ -227,6 +229,24 @@ public class GestionUsuariosServlet extends HttpServlet {
                 // La cuenta ya quedó creada y operativa; solo falló el aviso por
                 // correo, así que se informa al dueño en vez de deshacer el alta.
                 return "error_envio_correo";
+            }
+        } else if (usuario.getRol().getId_Rol() == ID_ROL_CLIENTE) {
+            // Igual que con los agentes: VENTAS y la columna "Asesor" referencian
+            // ADMIN.CLIENTES, no USUARIOS directamente. Sin esta fila el cliente
+            // agregado desde este modal no puede recibir un asesor ni comprar.
+            UsuarioBean creado = usuarioDao.obtenerPorCorreo(usuario.getCorreo());
+            if (creado == null) return "error_vinculo_cliente";
+
+            ClientesBean cliente = new ClientesBean();
+            cliente.setIdUsuario(creado.getId_usuario());
+            cliente.setIdAgente(null);
+
+            try {
+                boolean clienteOk = clientesDao.registrar(cliente);
+                if (!clienteOk) return "error_vinculo_cliente";
+            } catch (SQLException e) {
+                e.printStackTrace();
+                return "error_vinculo_cliente";
             }
         }
 

@@ -3,6 +3,12 @@
     display: grid;
     grid-template-columns: 1fr 1fr;
     min-height: 100vh;
+    /* body es un flex column (ver duenioStyles/styles.css); sin esto, el
+       navegador encoge .page a exactamente 100vh cuando el contenido es más
+       alto (ej. el formulario de 8 campos de registro en móvil), y el
+       centrado vertical del form-panel termina recortando el título por
+       arriba en vez de simplemente dejar hacer scroll a la página. */
+    flex-shrink: 0;
 }
 
 /* --- Columna izquierda: imagen showroom --- */

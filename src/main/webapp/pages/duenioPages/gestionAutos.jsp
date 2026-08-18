@@ -14,9 +14,9 @@
 
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/duenioStyles/styles.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/duenioStyles/gestiones.css" />
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/responsive.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/vendor/bootstrap-scoped.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/clientePages/perfilModal.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/responsive.css">
 </head>
 <body class="bs">
 
@@ -303,9 +303,9 @@
 
 <!-- FOOTER -->
 <footer class="footer">
-    <span style="color: rgb(8, 8, 8); font-size: 0.85rem;">© 2026 SGCA · Todos los derechos reservados</span>
+    <span>© 2026 SGCA · Todos los derechos reservados</span>
 
-    <a href="javascript:history.back()" class="btn-back">
+    <a href="${pageContext.request.contextPath}/nav?action=dashboard" class="btn-back">
         <img src="${pageContext.request.contextPath}/Images/back.svg" alt="atras" />
         Atras
     </a>

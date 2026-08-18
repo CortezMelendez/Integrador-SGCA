@@ -10,11 +10,13 @@
 
     <%-- Se usa contextPath para que funcione aunque cambie el nombre del proyecto --%>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/duenioStyles/styles.css" />
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/responsive.css" />
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/vendor/bootstrap-scoped.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/login.css" />
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/auth.css" />
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/recuperarPassword.css" />
+    <%-- responsive.css debe ir al final: sus media queries anulan los estilos
+         de escritorio de arriba (mismo orden de carga que ya usa register.jsp) --%>
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/responsive.css" />
 </head>
 <body class="bs">
 

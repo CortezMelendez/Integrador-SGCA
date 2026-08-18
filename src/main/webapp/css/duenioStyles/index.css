@@ -622,9 +622,11 @@ main{
     }
 
 
+    /* .dash-nav-link vive en el navbar oscuro (fondo negro): no se debe
+       repintar de negro aquí, o el texto queda invisible a 480px, que es
+       justo lo que pasaba. Se deja solo lo que sí es específico de este
+       breakpoint; el color ya lo define correctamente styles.css. */
     .dash-nav-link{
-
-        color: #000000;
 
         text-decoration:none;
 
