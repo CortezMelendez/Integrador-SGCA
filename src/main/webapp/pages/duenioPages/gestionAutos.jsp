@@ -14,9 +14,10 @@
 
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/duenioStyles/styles.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/duenioStyles/gestiones.css" />
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/duenioStyles/responsive.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/responsive.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/vendor/bootstrap-scoped.css">
 </head>
-<body>
+<body class="bs">
 
 <!-- BARRA DE NAVEGACIÓN -->
 <header class="dash-navbar">
@@ -27,16 +28,14 @@
         <span class="dash-brand">Concesionaria Automotriz</span>
     </div>
     <nav class="dash-nav-center">
+<<<<<<< HEAD
+        <a href="${pageContext.request.contextPath}/nav?action=inicio" class="dash-nav-link">Inicio</a>
+=======
         <a href="${pageContext.request.contextPath}/nav?action=indexDuenio" class="dash-nav-link">Inicio</a>
+>>>>>>> 1de4e4e3d579c831347d1965cbcc927e18d286e4
         <a href="${pageContext.request.contextPath}/nav?action=dashboard" class="dash-nav-link">Dashboard</a>
         <a href="${pageContext.request.contextPath}/nav?action=historial" class="dash-nav-link">Historial</a>
-        <div class="dropdown">
-            <button type="button" class="dash-nav-link dropdown-btn">Configuración ▾</button>
-            <div class="dropdown-menu">
-                <a href="${pageContext.request.contextPath}/nav?action=perfil">Perfil</a>
-                <a href="${pageContext.request.contextPath}/btn?action=cerrarSesionTodos">Cerrar sesión</a>
-            </div>
-        </div>
+        <a href="${pageContext.request.contextPath}/nav?action=perfil" class="dash-nav-link">Configuración</a>
     </nav>
     <div class="dash-navbar-right">
         <div class="dash-user">
@@ -57,10 +56,7 @@
             <p>Administra el inventario de autos registrados.</p>
         </div>
 
-        <div class="gest-header-acciones">
-            <button class="btn-agregar btn-agregar-secundario" onclick="abrirModal('modalMarcaModelo')">+ Marca / Modelo</button>
-            <button class="btn-agregar" onclick="abrirModal('modalAgregar')">+ Agregar auto</button>
-        </div>
+        <button class="btn-agregar" onclick="abrirModal('modalAgregar')">+ Agregar auto</button>
     </div>
     <div class="gest-search-inline">
         <input class="gest-input" type="text" placeholder="Buscar auto..." oninput="filtrar(this.value)" />
@@ -125,7 +121,7 @@
                         <td class="acciones-cell">
                             <div class="action-group">
                                 <button type="button" class="btn-icon btn-edit" title="Editar"
-                                        onclick="abrirEditar(${v.id_Vehiculo}, ${v.marca.id_Marca}, ${v.modelos.id_Modelo}, '${v.tipoVehiculo.nombre}', ${v.precio}, '${v.color}', '${v.placa}', ${v.anio}, ${v.id_Agente}, '${v.disponible == 1 ? 'Activo' : 'Inactivo'}', '${v.foto_Portada}', '<fmt:formatDate value="${v.fecha_registro}" pattern="dd/MM/yyyy"/>')">
+                                        onclick="abrirEditar(${v.id_Vehiculo}, '${v.marca.nombre}', '${v.modelos.nombre}', '${v.tipoVehiculo.nombre}', ${v.precio}, '${v.color}', '${v.placa}', ${v.anio}, ${v.id_Agente}, '${v.disponible == 1 ? 'Activo' : 'Inactivo'}', '${v.foto_Portada}', '<fmt:formatDate value="${v.fecha_registro}" pattern="dd/MM/yyyy"/>')">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
                                 </button>
                                 <button type="button" class="btn-icon btn-delete" title="Eliminar"
@@ -186,20 +182,12 @@
                 <div class="modal-photo-fields">
                     <div class="modal-field">
                         <label class="modal-label">Marca *</label>
-                        <select class="modal-select" id="mod-marca" name="idMarca" onchange="actualizarModelos('mod')">
-                            <option value="">Selecciona...</option>
-                            <c:forEach var="m" items="${listaMarcas}">
-                                <option value="${m.id_Marca}">${m.nombre}</option>
-                            </c:forEach>
-                        </select>
+                        <input class="modal-input" id="mod-marca" name="marca" type="text" placeholder="Ej. Mazda" />
                         <span class="modal-error" id="err-marca"></span>
-                        <p class="modal-nota">¿No está la marca? Usa "+ Marca / Modelo" arriba para darla de alta.</p>
                     </div>
                     <div class="modal-field">
                         <label class="modal-label">Modelo *</label>
-                        <select class="modal-select" id="mod-modelo" name="idModelo">
-                            <option value="">Selecciona una marca primero...</option>
-                        </select>
+                        <input class="modal-input" id="mod-modelo" name="modelo" type="text" placeholder="Ej. CX-5" />
                         <span class="modal-error" id="err-modelo"></span>
                     </div>
                 </div>
@@ -324,19 +312,12 @@
                 <div class="modal-photo-fields">
                     <div class="modal-field">
                         <label class="modal-label">Marca *</label>
-                        <select class="modal-select" id="edit-marca" name="idMarca" onchange="actualizarModelos('edit')">
-                            <option value="">Selecciona...</option>
-                            <c:forEach var="m" items="${listaMarcas}">
-                                <option value="${m.id_Marca}">${m.nombre}</option>
-                            </c:forEach>
-                        </select>
+                        <input class="modal-input" id="edit-marca" name="marca" type="text" />
                         <span class="modal-error" id="edit-err-marca"></span>
                     </div>
                     <div class="modal-field">
                         <label class="modal-label">Modelo *</label>
-                        <select class="modal-select" id="edit-modelo" name="idModelo">
-                            <option value="">Selecciona una marca primero...</option>
-                        </select>
+                        <input class="modal-input" id="edit-modelo" name="modelo" type="text" />
                         <span class="modal-error" id="edit-err-modelo"></span>
                     </div>
                 </div>
@@ -433,47 +414,6 @@
     </div>
 </div>
 
-<!-- Modal: Registrar marca / modelo (solo dueño). Al registrar un vehículo,
-     tanto el dueño como el asesor eligen de esta lista, nunca escriben una
-     marca/modelo libre. -->
-<div class="modal-overlay" id="modalMarcaModelo" onclick="cerrarOverlay(event,'modalMarcaModelo')">
-    <div class="modal-box" onclick="event.stopPropagation()">
-        <div class="modal-header-bar">Registrar marca / modelo</div>
-
-        <div class="modal-field" style="padding:20px 28px 0;">
-            <label class="modal-label">Nueva marca</label>
-            <div class="modal-row-inline">
-                <input class="modal-input" id="mm-nombre-marca" type="text" placeholder="Ej. Mazda" />
-                <button type="button" class="btn-modal-save" onclick="registrarMarcaNueva()">Registrar</button>
-            </div>
-            <span class="modal-error" id="mm-err-marca"></span>
-            <span class="modal-exito" id="mm-exito-marca"></span>
-        </div>
-
-        <hr class="modal-divisor" />
-
-        <div class="modal-field" style="padding:0 28px;">
-            <label class="modal-label">Nuevo modelo</label>
-            <select class="modal-select" id="mm-marca-para-modelo">
-                <option value="">Selecciona una marca...</option>
-                <c:forEach var="m" items="${listaMarcas}">
-                    <option value="${m.id_Marca}">${m.nombre}</option>
-                </c:forEach>
-            </select>
-            <div class="modal-row-inline">
-                <input class="modal-input" id="mm-nombre-modelo" type="text" placeholder="Ej. CX-5" />
-                <button type="button" class="btn-modal-save" onclick="registrarModeloNuevo()">Registrar</button>
-            </div>
-            <span class="modal-error" id="mm-err-modelo"></span>
-            <span class="modal-exito" id="mm-exito-modelo"></span>
-        </div>
-
-        <div class="modal-actions" style="padding:0 28px 28px;">
-            <button type="button" class="btn-modal-cancel" onclick="cerrarModal('modalMarcaModelo')">Cerrar</button>
-        </div>
-    </div>
-</div>
-
 <!-- Modal de confirmación (reemplaza los confirm() del navegador) -->
 <div class="modal-overlay" id="modalConfirmar" onclick="cerrarOverlay(event,'modalConfirmar')">
     <div class="modal-box modal-confirm-box" onclick="event.stopPropagation()">
@@ -506,7 +446,6 @@
                 duplicado_placa: 'Ya existe un vehículo registrado con esa placa.',
                 formato_placa: 'El formato de placa no es válido. Debe ser 3 letras mayúsculas, guión y 3 o 4 dígitos (ej. ABC-1234).',
                 precio_invalido: 'El precio debe ser un valor numérico positivo.',
-                marca_modelo_invalido: 'Selecciona una marca y un modelo válidos del catálogo.',
                 vehiculo_no_encontrado: 'El vehículo que intentas editar ya no existe.',
                 error_servidor: 'Ocurrió un error en el servidor. Intenta de nuevo.'
             };
@@ -537,34 +476,7 @@
     // Descripción de cada vehículo (id → texto), aparte del onclick para no romper
     // el JavaScript si el dueño escribió saltos de línea en el textarea.
     const DESCRIPCION_POR_VEHICULO = ${empty descripcionJsonPorVehiculo ? '{}' : descripcionJsonPorVehiculo};
-    // id de marca -> [{idModelo, nombre}], para poblar el <select> de Modelo
-    // sin peticiones extra al elegir una marca.
-    const MODELOS_POR_MARCA = ${empty modelosJsonPorMarca ? '{}' : modelosJsonPorMarca};
 </script>
 <script src="${pageContext.request.contextPath}/js/duenioJS/gestionAutos.js"></script>
-<script>
-    // Dropdown "Configuración"
-    document.querySelectorAll(".dropdown-btn").forEach(function (btn) {
-        btn.addEventListener("click", function (e) {
-            e.stopPropagation();
-            this.nextElementSibling.classList.toggle("show");
-        });
-    });
-    document.addEventListener("click", function () {
-        document.querySelectorAll(".dropdown-menu").forEach(function (menu) {
-            menu.classList.remove("show");
-        });
-    });
-
-    // Si el navegador restaura esta página desde su caché (botón "atrás")
-    // después de haber cerrado sesión, fuerza una recarga real para que
-    // AuthFilter vuelva a validar la sesión en vez de mostrar la versión
-    // guardada en caché.
-    window.addEventListener("pageshow", function (e) {
-        if (e.persisted) {
-            window.location.reload();
-        }
-    });
-</script>
 </body>
 </html>

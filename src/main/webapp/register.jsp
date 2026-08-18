@@ -11,10 +11,11 @@
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/auth.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/register.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/duenioStyles/styles.css">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/duenioStyles/responsive.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/responsive.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/vendor/bootstrap-scoped.css">
 </head>
 
-<body>
+<body class="bs">
 
 <div class="page">
 

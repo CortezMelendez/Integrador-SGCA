@@ -14,9 +14,10 @@
 
    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/duenioStyles/styles.css">
   <link rel="stylesheet" href="${pageContext.request.contextPath}/css/duenioStyles/gestiones.css" />
-  <link rel="stylesheet" href="${pageContext.request.contextPath}/css/duenioStyles/responsive.css" />
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/css/responsive.css" />
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/vendor/bootstrap-scoped.css">
 </head>
-<body>
+<body class="bs">
 
   <!-- NAVBAR -->
   <header class="dash-navbar">
@@ -27,16 +28,10 @@
       <span class="dash-brand">Concesionaria Automotriz</span>
     </div>
     <nav class="dash-nav-center">
-        <a href="${pageContext.request.contextPath}/index.html" class="dash-nav-link">Inicio</a>
+        <a href="${pageContext.request.contextPath}/nav?action=inicio" class="dash-nav-link">Inicio</a>
         <a href="${pageContext.request.contextPath}/nav?action=dashboard" class="dash-nav-link">Dashboard</a>
         <a href="${pageContext.request.contextPath}/nav?action=historial" class="dash-nav-link">Historial</a>
-        <div class="dropdown">
-            <button type="button" class="dash-nav-link dropdown-btn">Configuración ▾</button>
-            <div class="dropdown-menu">
-                <a href="${pageContext.request.contextPath}/nav?action=perfil">Perfil</a>
-                <a href="${pageContext.request.contextPath}/btn?action=cerrarSesionTodos">Cerrar sesión</a>
-            </div>
-        </div>
+        <a href="${pageContext.request.contextPath}/nav?action=perfil" class="dash-nav-link">Configuración</a>
     </nav>
     <div class="dash-navbar-right">
       <div class="dash-user">
@@ -104,7 +99,7 @@
                 <td>${u.correo}</td>
                 <td>
                   <button type="button" class="btn-asesor" title="Asignar asesor"
-                          onclick="abrirModalAsesor(this, ${idClienteRow}, ${empty idAgenteRow ? 0 : idAgenteRow})">
+                          onclick="abrirModalAsesor(this, ${empty idClienteRow ? 0 : idClienteRow}, ${empty idAgenteRow ? 0 : idAgenteRow})">
                     <c:choose>
                       <c:when test="${empty nombreAsesor or nombreAsesor == 'Sin Agente Asignado'}">
                         <span class="asesor-sin-asignar">Sin asesor asignado</span>
@@ -397,29 +392,5 @@
   </c:if>
 
   <script src="${pageContext.request.contextPath}/js/duenioJS/gestionClientes.js"></script>
-<script>
-    // Dropdown "Configuración"
-    document.querySelectorAll(".dropdown-btn").forEach(function (btn) {
-        btn.addEventListener("click", function (e) {
-            e.stopPropagation();
-            this.nextElementSibling.classList.toggle("show");
-        });
-    });
-    document.addEventListener("click", function () {
-        document.querySelectorAll(".dropdown-menu").forEach(function (menu) {
-            menu.classList.remove("show");
-        });
-    });
-
-    // Si el navegador restaura esta página desde su caché (botón "atrás")
-    // después de haber cerrado sesión, fuerza una recarga real para que
-    // AuthFilter vuelva a validar la sesión en vez de mostrar la versión
-    // guardada en caché.
-    window.addEventListener("pageshow", function (e) {
-        if (e.persisted) {
-            window.location.reload();
-        }
-    });
-</script>
 </body>
 </html>

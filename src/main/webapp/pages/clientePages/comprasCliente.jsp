@@ -25,7 +25,8 @@
 
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/duenioStyles/index.css">
 
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/duenioStyles/responsive.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/responsive.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/vendor/bootstrap-scoped.css">
 
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/clientePages/serviciosModal.css">
 
@@ -35,7 +36,7 @@
 </head>
 
 
-<body>
+<body class="bs">
 
 
 <!-- NAVBAR -->
@@ -44,9 +45,11 @@
 
     <div class="dash-navbar-left">
 
-
+        <div class="dash-logo-placeholder" aria-hidden="true">
+            <img src="${pageContext.request.contextPath}/Images/logo2-SGCA.svg" class="logo-img" width="108" />
+        </div>
         <a href="${pageContext.request.contextPath}/cliente" class="dash-brand">
-            Gestionaria Automotriz
+            Concesionaria Automotriz
         </a>
 
 

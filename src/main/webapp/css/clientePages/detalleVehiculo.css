@@ -246,6 +246,17 @@ a.dash-brand {
     min-height: 80px;
 }
 
+.descripcion-texto {
+    white-space: pre-line;
+    line-height: 1.5;
+    color: var(--color-navy-dark, #1a2433);
+}
+
+.descripcion-vacia {
+    color: var(--color-gray-400, #9aa3af);
+    font-style: italic;
+}
+
 
 
 /* =============================================
