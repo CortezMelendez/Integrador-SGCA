@@ -13,6 +13,7 @@ import com.sgca.integradorsgca.model.dao.ModelosDao;
 import com.sgca.integradorsgca.model.dao.TiposVehiculoDao;
 import com.sgca.integradorsgca.model.dao.VehImgDao;
 import com.sgca.integradorsgca.model.dao.VehiculosDao;
+import com.sgca.integradorsgca.utils.AlmacenImagenesAutos;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
@@ -59,7 +60,6 @@ public class AsesorGestionAutoServlet extends HttpServlet {
     private final AgentesDao agentesDao = new AgentesDao();
 
     private static final String RUTA_LISTA = "/gestionAutoAsesor";
-    private static final String CARPETA_IMAGENES = "Images/imagesAutos";
     private static final String CAMPO_FOTOS_EXTRA = "fotosExtra";
     private static final int MAX_IMAGENES_EXTRA = 10;
 
@@ -282,9 +282,9 @@ public class AsesorGestionAutoServlet extends HttpServlet {
 
         String nombreNuevo = UUID.randomUUID() + extension;
 
-        String rutaAbsoluta = getServletContext().getRealPath("/" + CARPETA_IMAGENES);
-        File carpeta = new File(rutaAbsoluta);
-        if (!carpeta.exists()) carpeta.mkdirs();
+        // Carpeta persistente fuera del despliegue (sobrevive a un redeploy del .war);
+        // ImagenesAutosServlet es quien la sirve de vuelta al navegador.
+        File carpeta = AlmacenImagenesAutos.carpeta();
 
         try (InputStream is = parte.getInputStream()) {
             Files.copy(is, new File(carpeta, nombreNuevo).toPath(), StandardCopyOption.REPLACE_EXISTING);
