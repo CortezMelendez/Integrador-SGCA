@@ -292,7 +292,13 @@ function abrirModalAsesor(boton, idCliente, idAgenteActual) {
   const sel = document.getElementById('asesor-select');
   sel.value = idAgenteActual ? String(idAgenteActual) : '';
 
-  document.getElementById('err-asesor').textContent = '';
+  const error = document.getElementById('err-asesor');
+  // idCliente 0/vacío significa que este usuario no tiene un registro en
+  // ADMIN.CLIENTES (dato inconsistente): se avisa en vez de dejar guardar
+  // una asignación que el servidor rechazaría en silencio.
+  error.textContent = idCliente
+    ? ''
+    : 'Este cliente no tiene un registro válido; no se le puede asignar un asesor.';
   abrirModal('modalAsesor');
 }
 

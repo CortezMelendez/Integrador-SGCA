@@ -18,7 +18,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:wght@100..900&family=Google+Sans+Code:wght@300..800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/duenioStyles/styles.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/duenioStyles/index.css">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/duenioStyles/responsive.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/responsive.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/vendor/bootstrap-scoped.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/clientePages/serviciosModal.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/clientePages/automovilesCliente.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/clientePages/perfilModal.css">
@@ -27,17 +28,25 @@
 </head>
 
 
-<body>
+<body class="bs">
 
 <c:set var="esAsesor" value="${fn:toUpperCase(sessionScope.usuarioLogueado.rol.rol) == 'AGENTE'}" />
-<c:set var="inicioHref" value="${esAsesor ? '/asesor' : '/cliente'}" />
+<c:set var="esDueno" value="${fn:toUpperCase(sessionScope.usuarioLogueado.rol.rol) == 'ADMIN'}" />
+<c:choose>
+    <c:when test="${esDueno}"><c:set var="inicioHref" value="/nav?action=inicio" /></c:when>
+    <c:when test="${esAsesor}"><c:set var="inicioHref" value="/asesor" /></c:when>
+    <c:otherwise><c:set var="inicioHref" value="/cliente" /></c:otherwise>
+</c:choose>
 
 <!-- NAVBAR -->
 <header class="dash-navbar">
 
     <div class="dash-navbar-left">
+        <div class="dash-logo-placeholder" aria-hidden="true">
+            <img src="${pageContext.request.contextPath}/Images/logo2-SGCA.svg" class="logo-img" width="108" />
+        </div>
         <a href="${pageContext.request.contextPath}${inicioHref}" class="dash-brand">
-            Gestionaria Automotriz
+            Concesionaria Automotriz
         </a>
     </div>
 
@@ -50,7 +59,7 @@
         <div class="dropdown">
 
             <button class="dash-nav-link dropdown-btn">
-                ${esAsesor ? 'Vehículos' : 'Automóviles'} ▾
+                ${esAsesor or esDueno ? 'Vehículos' : 'Automóviles'} ▾
             </button>
 
             <div class="dropdown-menu">
@@ -71,6 +80,17 @@
         </button>
 
         <c:choose>
+            <c:when test="${esDueno}">
+
+                <a href="${pageContext.request.contextPath}/nav?action=dashboard" class="dash-nav-link">
+                    Dashboard
+                </a>
+
+                <a href="${pageContext.request.contextPath}/nav?action=historial" class="dash-nav-link">
+                    Historial
+                </a>
+
+            </c:when>
             <c:when test="${esAsesor}">
 
                 <button type="button" class="dash-nav-link" id="btnAbrirRegistrarCliente">
@@ -528,7 +548,7 @@
             <div class="card-auto">
                 <img
                         class="card-imagen"
-                        src="${pageContext.request.contextPath}/Images/imagesAutos/${v.foto_Portada}"
+                        src="${not empty v.foto_Portada ? pageContext.request.contextPath.concat('/Images/imagesAutos/').concat(v.foto_Portada) : pageContext.request.contextPath.concat('/Images/car.svg')}"
                         alt="Vehículo">
 
                 <h3>

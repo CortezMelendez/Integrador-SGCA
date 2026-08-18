@@ -22,12 +22,13 @@
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/duenioStyles/styles.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/duenioStyles/index.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/duenioStyles/carruselIndex.css">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/duenioStyles/responsive.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/responsive.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/vendor/bootstrap-scoped.css">
 
 </head>
 
 
-<body>
+<body class="bs">
 
 
 <!-- NAVBAR -->

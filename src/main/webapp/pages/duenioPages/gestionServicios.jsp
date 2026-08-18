@@ -14,9 +14,10 @@
 
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/duenioStyles/styles.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/duenioStyles/gestiones.css" />
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/duenioStyles/responsive.css" />
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/responsive.css" />
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/vendor/bootstrap-scoped.css">
 </head>
-<body>
+<body class="bs">
 
 <!-- BARRA DE NAVEGACIÓN -->
 <header class="dash-navbar">
@@ -30,7 +31,7 @@
         <a href="${pageContext.request.contextPath}/nav?action=inicio" class="dash-nav-link">Inicio</a>
         <a href="${pageContext.request.contextPath}/nav?action=dashboard" class="dash-nav-link">Dashboard</a>
         <a href="${pageContext.request.contextPath}/nav?action=historial" class="dash-nav-link">Historial</a>
-        <a href="${pageContext.request.contextPath}/nav?action=perfil" class="dash-nav-link">Perfil</a>
+        <a href="${pageContext.request.contextPath}/nav?action=perfil" class="dash-nav-link">Configuración</a>
     </nav>
     <div class="dash-navbar-right">
         <div class="dash-user">

@@ -10,7 +10,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <title>Gestionaria Automotriz</title>
+    <title>Inicio · Concesionaria Automotriz</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -18,13 +18,14 @@
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/duenioStyles/styles.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/duenioStyles/index.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/duenioStyles/carruselIndex.css">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/duenioStyles/responsive.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/responsive.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/vendor/bootstrap-scoped.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/clientePages/serviciosModal.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/clientePages/perfilModal.css">
 </head>
 
 
-<body>
+<body class="bs">
 
 
 <!-- NAVBAR -->
@@ -32,11 +33,11 @@
 
     <div class="dash-navbar-left">
         <span class="dash-brand">
-            Gestionaria Automotriz
+            Concesionaria Automotriz
         </span>
     </div>
 
-    <nav class="dash-nav-center">>
+    <nav class="dash-nav-center">
 
         <div class="dropdown">
 
@@ -74,7 +75,6 @@
                     Cerrar sesión
                 </a>
             </div>
-        </div>
         </div>
     </nav>
 

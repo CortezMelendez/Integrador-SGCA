@@ -18,7 +18,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:wght@100..900&family=Google+Sans+Code:wght@300..800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/duenioStyles/styles.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/duenioStyles/index.css">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/duenioStyles/responsive.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/responsive.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/vendor/bootstrap-scoped.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/clientePages/serviciosModal.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/clientePages/detalleVehiculo.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/clientePages/perfilModal.css">
@@ -27,17 +28,25 @@
 </head>
 
 
-<body>
+<body class="bs">
 
 <c:set var="esAsesor" value="${fn:toUpperCase(sessionScope.usuarioLogueado.rol.rol) == 'AGENTE'}" />
-<c:set var="inicioHref" value="${esAsesor ? '/asesor' : '/cliente'}" />
+<c:set var="esDueno" value="${fn:toUpperCase(sessionScope.usuarioLogueado.rol.rol) == 'ADMIN'}" />
+<c:choose>
+    <c:when test="${esDueno}"><c:set var="inicioHref" value="/nav?action=inicio" /></c:when>
+    <c:when test="${esAsesor}"><c:set var="inicioHref" value="/asesor" /></c:when>
+    <c:otherwise><c:set var="inicioHref" value="/cliente" /></c:otherwise>
+</c:choose>
 
 <!-- NAVBAR -->
 <header class="dash-navbar">
 
     <div class="dash-navbar-left">
+        <div class="dash-logo-placeholder" aria-hidden="true">
+            <img src="${pageContext.request.contextPath}/Images/logo2-SGCA.svg" class="logo-img" width="108" />
+        </div>
         <a href="${pageContext.request.contextPath}${inicioHref}" class="dash-brand">
-            Gestionaria Automotriz
+            Concesionaria Automotriz
         </a>
     </div>
 
@@ -50,7 +59,7 @@
         <div class="dropdown">
 
             <button class="dash-nav-link dropdown-btn">
-                ${esAsesor ? 'Vehículos' : 'Automóviles'} ▾
+                ${esAsesor or esDueno ? 'Vehículos' : 'Automóviles'} ▾
             </button>
 
             <div class="dropdown-menu">
@@ -69,6 +78,17 @@
         </button>
 
         <c:choose>
+            <c:when test="${esDueno}">
+
+                <a href="${pageContext.request.contextPath}/nav?action=dashboard" class="dash-nav-link">
+                    Dashboard
+                </a>
+
+                <a href="${pageContext.request.contextPath}/nav?action=historial" class="dash-nav-link">
+                    Historial
+                </a>
+
+            </c:when>
             <c:when test="${esAsesor}">
 
                 <button type="button" class="dash-nav-link" id="btnAbrirRegistrarCliente">
@@ -164,10 +184,10 @@
         <div class="modal-descripcion-body">
             <c:choose>
                 <c:when test="${not empty vehiculo.descripcion}">
-                    <p>${vehiculo.descripcion}</p>
+                    <p class="descripcion-texto"><c:out value="${vehiculo.descripcion}"/></p>
                 </c:when>
                 <c:otherwise>
-                    <p class="servicios-vacio">Este vehículo todavía no tiene una descripción general capturada.</p>
+                    <p class="descripcion-texto descripcion-vacia">Este vehículo todavía no tiene una descripción registrada.</p>
                 </c:otherwise>
             </c:choose>
         </div>
@@ -475,7 +495,7 @@
 <main class="detalle-page">
 
     <p class="detalle-breadcrumb">
-        <a href="${pageContext.request.contextPath}/automoviles?tipo=${vehiculo.tipoVehiculo.nombre}">${esAsesor ? 'Vehículos' : 'Automóviles'}</a>
+        <a href="${pageContext.request.contextPath}/automoviles?tipo=${vehiculo.tipoVehiculo.nombre}">${esAsesor or esDueno ? 'Vehículos' : 'Automóviles'}</a>
         › ${vehiculo.marca.nombre} ${vehiculo.modelos.nombre} ${vehiculo.anio} · ${vehiculo.tipoVehiculo.nombre}
     </p>
 
@@ -491,7 +511,7 @@
                 </c:if>
 
                 <img id="imagenPrincipal"
-                     src="${pageContext.request.contextPath}/Images/imagesAutos/${vehiculo.foto_Portada}"
+                     src="${not empty vehiculo.foto_Portada ? pageContext.request.contextPath.concat('/Images/imagesAutos/').concat(vehiculo.foto_Portada) : pageContext.request.contextPath.concat('/Images/car.svg')}"
                      alt="${vehiculo.marca.nombre} ${vehiculo.modelos.nombre}">
 
                 <c:if test="${not empty galeria}">
@@ -504,8 +524,8 @@
                 <div class="galeria-miniaturas" id="galeriaMiniaturas">
 
                     <img class="miniatura activa"
-                         src="${pageContext.request.contextPath}/Images/imagesAutos/${vehiculo.foto_Portada}"
-                         data-src="${pageContext.request.contextPath}/Images/imagesAutos/${vehiculo.foto_Portada}"
+                         src="${not empty vehiculo.foto_Portada ? pageContext.request.contextPath.concat('/Images/imagesAutos/').concat(vehiculo.foto_Portada) : pageContext.request.contextPath.concat('/Images/car.svg')}"
+                         data-src="${not empty vehiculo.foto_Portada ? pageContext.request.contextPath.concat('/Images/imagesAutos/').concat(vehiculo.foto_Portada) : pageContext.request.contextPath.concat('/Images/car.svg')}"
                          alt="Miniatura">
 
                     <c:forEach var="img" items="${galeria}">
@@ -594,7 +614,7 @@
                     <div class="card-auto">
                         <img
                                 class="card-imagen"
-                                src="${pageContext.request.contextPath}/Images/imagesAutos/${r.foto_Portada}"
+                                src="${not empty r.foto_Portada ? pageContext.request.contextPath.concat('/Images/imagesAutos/').concat(r.foto_Portada) : pageContext.request.contextPath.concat('/Images/car.svg')}"
                                 alt="Vehículo">
 
                         <h3>

@@ -14,16 +14,20 @@
 
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/duenioStyles/styles.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/duenioStyles/gestiones.css" />
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/duenioStyles/responsive.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/responsive.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/vendor/bootstrap-scoped.css">
 </head>
-<body>
+<body class="bs">
 
 <!-- NAVBAR -->
 <header class="dash-navbar">
 
     <div class="dash-navbar-left">
+        <div class="dash-logo-placeholder" aria-hidden="true">
+            <img src="${pageContext.request.contextPath}/Images/logo2-SGCA.svg" class="logo-img" width="108" />
+        </div>
         <a href="${pageContext.request.contextPath}/asesor" class="dash-brand">
-            Gestionaria Automotriz
+            Concesionaria Automotriz
         </a>
     </div>
 
@@ -45,6 +49,10 @@
 
         <a href="${pageContext.request.contextPath}/gestionClienteAsesor" class="dash-nav-link">
             Clientes
+        </a>
+
+        <a href="${pageContext.request.contextPath}/cotizacionesAsesor" class="dash-nav-link">
+            Cotizaciones
         </a>
 
         <a href="${pageContext.request.contextPath}/historialAsesor" class="dash-nav-link">

@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @WebServlet("/cliente")
-public class ClienteServlet extends HttpServlet {
+public class clienteServlet extends HttpServlet {
 
     private final VehiculosDao dao = new VehiculosDao();
     private final ServiciosDao serviciosDao = new ServiciosDao();

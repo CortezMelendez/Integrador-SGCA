@@ -79,7 +79,10 @@ public class NavBarAdminServlet extends HttpServlet {
                 break;
 
             case "perfil":
-                request.setAttribute("mensaje", "Sección de Perfil en construcción");
+                // El modal de perfil vive en indexDuenio.jsp; "Configuración" desde
+                // cualquier otra pantalla del dueño reenvía aquí y esta bandera hace
+                // que la vista lo abra automáticamente al cargar.
+                request.setAttribute("abrirPerfil", true);
                 cargarCarruseles(request);
                 request.getRequestDispatcher(BASE_DUENIO + "indexDuenio.jsp").forward(request, response);
                 break;

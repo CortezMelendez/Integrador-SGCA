@@ -19,22 +19,26 @@
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/duenioStyles/styles.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/duenioStyles/index.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/duenioStyles/gestiones.css">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/duenioStyles/responsive.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/responsive.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/vendor/bootstrap-scoped.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/clientePages/serviciosModal.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/clientePages/perfilModal.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/asesorStyles/cotizacionModal.css">
 </head>
 
 
-<body>
+<body class="bs">
 
 
 <!-- NAVBAR -->
 <header class="dash-navbar">
 
     <div class="dash-navbar-left">
+        <div class="dash-logo-placeholder" aria-hidden="true">
+            <img src="${pageContext.request.contextPath}/Images/logo2-SGCA.svg" class="logo-img" width="108" />
+        </div>
         <a href="${pageContext.request.contextPath}/asesor" class="dash-brand">
-            Gestionaria Automotriz
+            Concesionaria Automotriz
         </a>
     </div>
 

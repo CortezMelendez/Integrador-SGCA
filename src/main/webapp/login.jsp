@@ -10,12 +10,13 @@
 
     <%-- Se usa contextPath para que funcione aunque cambie el nombre del proyecto --%>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/duenioStyles/styles.css" />
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/duenioStyles/responsive.css" />
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/responsive.css" />
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/vendor/bootstrap-scoped.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/login.css" />
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/auth.css" />
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/recuperarPassword.css" />
 </head>
-<body>
+<body class="bs">
 
 
 <div class="page">
