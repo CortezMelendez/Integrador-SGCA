@@ -8,6 +8,7 @@ import com.sgca.integradorsgca.model.bean.VehiculosBean;
 import com.sgca.integradorsgca.model.bean.VentasBean;
 import com.sgca.integradorsgca.model.dao.AgentesDao;
 import com.sgca.integradorsgca.model.dao.ServiciosDao;
+import com.sgca.integradorsgca.model.dao.TiposVehiculoDao;
 import com.sgca.integradorsgca.model.dao.UsuarioDao;
 import com.sgca.integradorsgca.model.dao.VehiculosDao;
 import com.sgca.integradorsgca.model.dao.VentasDao;
@@ -38,6 +39,7 @@ public class NavBarAdminServlet extends HttpServlet {
     private final AgentesDao agentesDao = new AgentesDao();
     private final UsuarioDao usuarioDao = new UsuarioDao();
     private final VentasDao ventasDao = new VentasDao();
+    private final TiposVehiculoDao tiposVehiculoDao = new TiposVehiculoDao();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -61,6 +63,10 @@ public class NavBarAdminServlet extends HttpServlet {
 
         String action = request.getParameter("action");
         if (action == null) action = "inicio";
+
+        // Catálogo de tipos de vehículo para el dropdown "Vehículos" del navbar
+        // (mismo dropdown que ya tiene el asesor, apuntando a /automoviles).
+        request.setAttribute("listaTiposVehiculo", tiposVehiculoDao.listar());
 
         switch (action) {
             case "inicio":

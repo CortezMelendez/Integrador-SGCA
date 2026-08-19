@@ -27,6 +27,15 @@
     </div>
     <nav class="dash-nav-center">
         <a href="${pageContext.request.contextPath}/nav?action=inicio" class="dash-nav-link">Inicio</a>
+        <div class="dropdown">
+            <button type="button" class="dash-nav-link dropdown-btn">Vehículos ▾</button>
+            <div class="dropdown-menu">
+                <a href="${pageContext.request.contextPath}/automoviles">Ver todos</a>
+                <c:forEach var="t" items="${listaTiposVehiculo}">
+                    <a href="${pageContext.request.contextPath}/automoviles?tipo=${t.nombre}">${t.nombre}</a>
+                </c:forEach>
+            </div>
+        </div>
         <a href="${pageContext.request.contextPath}/nav?action=dashboard" class="dash-nav-link">Dashboard</a>
         <a href="${pageContext.request.contextPath}/nav?action=historial" class="dash-nav-link active">Historial</a>
         <div class="dropdown">

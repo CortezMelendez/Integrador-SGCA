@@ -1,318 +1,245 @@
-<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
-<%@ taglib prefix="c" uri="jakarta.tags.core" %>
-<%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib prefix="c" uri="jakarta.tags.core" %> <%-- necesario para usar c:if --%>
 
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
-
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Concesionaria Automotriz — Inicio de Sesión</title>
 
-    <title>Gestionaria Automotriz</title>
-
-
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
-    <link href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:wght@100..900&family=Google+Sans+Code:wght@300..800&display=swap" rel="stylesheet">
-
-
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/duenioStyles/styles.css">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/duenioStyles/index.css">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/duenioStyles/carruselIndex.css">
+    <%-- Se usa contextPath para que funcione aunque cambie el nombre del proyecto --%>
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/duenioStyles/styles.css" />
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/vendor/bootstrap-scoped.css">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/responsive.css">
-
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/login.css" />
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/auth.css" />
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/recuperarPassword.css" />
+    <%-- responsive.css debe ir al final: sus media queries anulan los estilos
+         de escritorio de arriba (mismo orden de carga que ya usa register.jsp) --%>
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/responsive.css" />
 </head>
-
-
 <body class="bs">
 
 
-<!-- NAVBAR -->
-<header class="navbar">
+<div class="page">
 
-    <span class="navbar-brand">
-        Gestionaria Automotriz
-    </span>
-
-</header>
-
-
-
-
-<!-- HERO -->
-
-<main>
-
-    <section class="hero">
-
-
-        <div class="hero-content">
-
-
-            <h1 class="hero-heading">
-
-                El auto<br>
-                que
-                <em class="hero-accent">
-                    mereces
-                </em>
-                <br>
-                está aquí.
-
-            </h1>
-
-
-
-            <p class="hero-description">
-
-                Accede al catálogo más completo, gestiona tus servicios y encuentra el vehículo ideal con la asesoría de nuestros expertos.
-
-            </p>
-
-
-
-
-            <div class="hero-actions">
-
-
-                <a href="${pageContext.request.contextPath}/login.jsp"
-                   class="btn-outline">
-
-
-                    <img
-                            src="${pageContext.request.contextPath}/Images/user.svg"
-                            class="hero-btn-icon">
-
-
-                    Iniciar Sesión
-
-
-                </a>
-
-
-
-
-                <a href="${pageContext.request.contextPath}/register.jsp"
-                   class="btn-register">
-
-                    Registrarse
-
-                </a>
-
-
-
-            </div>
-
-
-        </div>
-
-
-
-
-        <div class="hero-logo">
-
-
-            <div class="logo-placeholder">
-
-
-                <img
-                        src="${pageContext.request.contextPath}/Images/logo-SGCA.svg"
-                        class="logo-img"
-                        width="350">
-
-
-            </div>
-
-
-        </div>
-
-
-
+    <section class="hero-image" aria-hidden="true">
+        <img src="${pageContext.request.contextPath}/Images/login.png" alt="Showroom" />
     </section>
 
+    <main class="form-panel">
 
+        <h1 class="brand-title">
+            Concesionaria Automotriz
+        </h1>
+        <h2 class="form-title">Inicio de Sesión</h2>
 
+        <%-- CAMBIO: el form ahora sí envía al servlet y por POST --%>
+        <form class="login-form"
+              id="loginForm"
+              method="post"
+              action="${pageContext.request.contextPath}/login"
+              novalidate>
 
-    <!-- Carrusel "Lo más nuevo" -->
-    <section class="carrusel-section">
-
-        <div class="carrusel-header">
-            <h2>Lo más nuevo</h2>
-            <div class="carrusel-controls">
-                <button type="button" class="carrusel-btn carrusel-prev" aria-label="Anterior">&#8249;</button>
-                <button type="button" class="carrusel-btn carrusel-next" aria-label="Siguiente">&#8250;</button>
-            </div>
-        </div>
-
-        <div class="carrusel-track">
-            <c:forEach var="v" items="${vehiculosNuevos}">
-                <a class="auto-card" href="${pageContext.request.contextPath}/login.jsp">
+            <%-- CAMBIO: mensaje dinámico según el error que mande LoginServlet --%>
+            <c:if test="${not empty param.error}">
+                <div class="error-message" role="alert">
                     <c:choose>
-                        <c:when test="${not empty v.foto_Portada}">
-                            <img class="auto-card-img" src="${pageContext.request.contextPath}/Images/imagesAutos/${v.foto_Portada}" alt="${v.marca.nombre} ${v.modelos.nombre}" />
+                        <c:when test="${param.error == 'credenciales_invalidas'}">
+                            Usuario o contraseña incorrectos. Intente de nuevo.
+                        </c:when>
+                        <c:when test="${param.error == 'sesion_requerida'}">
+                            Debes iniciar sesión para acceder a esa página.
+                        </c:when>
+                        <c:when test="${param.error == 'server_error'}">
+                            Ocurrió un error en el servidor. Intenta más tarde.
                         </c:when>
                         <c:otherwise>
-                            <div class="auto-card-img"></div>
+                            Ocurrió un error inesperado.
                         </c:otherwise>
                     </c:choose>
-                    <div class="auto-card-info">
-                        <span class="auto-card-marca">${v.marca.nombre} ${v.modelos.nombre}</span>
-                        <span class="auto-card-modelo">Año ${v.anio}</span>
-                        <span class="auto-card-precio">$<fmt:formatNumber value="${v.precio}" type="number" minFractionDigits="2" maxFractionDigits="2"/></span>
-                    </div>
-                </a>
-            </c:forEach>
-            <c:if test="${empty vehiculosNuevos}">
-                <p>No hay vehículos disponibles por el momento.</p>
+                </div>
             </c:if>
-        </div>
 
-        <div class="carrusel-scrollbar">
-            <div class="carrusel-scrollbar-thumb"></div>
-        </div>
-
-    </section>
-
-
-
-</main>
-
-
-
-
-
-<!-- Carrusel "Lo más accesible" -->
-<section class="carrusel-section">
-
-    <div class="carrusel-header">
-        <h2>Lo más accesible</h2>
-        <div class="carrusel-controls">
-            <button type="button" class="carrusel-btn carrusel-prev" aria-label="Anterior">&#8249;</button>
-            <button type="button" class="carrusel-btn carrusel-next" aria-label="Siguiente">&#8250;</button>
-        </div>
-    </div>
-
-    <div class="carrusel-track">
-        <c:forEach var="v" items="${vehiculosAccesibles}">
-            <a class="auto-card" href="${pageContext.request.contextPath}/login.jsp">
-                <c:choose>
-                    <c:when test="${not empty v.foto_Portada}">
-                        <img class="auto-card-img" src="${pageContext.request.contextPath}/Images/imagesAutos/${v.foto_Portada}" alt="${v.marca.nombre} ${v.modelos.nombre}" />
-                    </c:when>
-                    <c:otherwise>
-                        <div class="auto-card-img"></div>
-                    </c:otherwise>
-                </c:choose>
-                <div class="auto-card-info">
-                    <span class="auto-card-marca">${v.marca.nombre} ${v.modelos.nombre}</span>
-                    <span class="auto-card-modelo">Año ${v.anio}</span>
-                    <span class="auto-card-precio">$<fmt:formatNumber value="${v.precio}" type="number" minFractionDigits="2" maxFractionDigits="2"/></span>
+            <div class="field-group">
+                <label class="field-label" for="correo">Correo Electrónico</label>
+                <div class="input-wrapper">
+                    <img class="input-icon" src="${pageContext.request.contextPath}/Images/email.svg" alt="" />
+                    <%-- CAMBIO: name="correo" porque LoginServlet lee req.getParameter("correo") --%>
+                    <input class="input-field"
+                           type="email"
+                           id="correo"
+                           name="correo"
+                           placeholder="Ingresa tu correo"
+                           autocomplete="email"
+                           required />
                 </div>
+            </div>
+
+            <div class="field-group">
+                <label class="field-label" for="password">Contraseña</label>
+                <div class="input-wrapper">
+                    <img class="input-icon" src="${pageContext.request.contextPath}/Images/llave-pass.svg" alt="" />
+                    <input class="input-field"
+                           type="password"
+                           id="password"
+                           name="password"
+                           placeholder="Ingresa tu contraseña"
+                           autocomplete="current-password"
+                           required />
+                </div>
+            </div>
+
+            <a href="#" id="btnAbrirRecuperar" class="forgot-link">¿Olvidaste tu contraseña? | Click Aqui</a>
+
+            <button type="submit" class="btn-primary">Iniciar Sesión</button>
+
+            <hr class="divider" />
+
+            <p class="register-text">
+                ¿No tienes una cuenta?
+                <a href="${pageContext.request.contextPath}/register.jsp" class="forgot-link">Regístrate aquí</a>
+            </p>
+        </form>
+
+        <footer class="footer login-footer">
+            <a href="${pageContext.request.contextPath}/index" class="btn-back">
+                <img src="${pageContext.request.contextPath}/Images/back.svg" alt="atras" />
+                Atrás
             </a>
-        </c:forEach>
-        <c:if test="${empty vehiculosAccesibles}">
-            <p>No hay vehículos por debajo de este rango de precio por el momento.</p>
-        </c:if>
-    </div>
+        </footer>
 
-    <div class="carrusel-scrollbar">
-        <div class="carrusel-scrollbar-thumb"></div>
-    </div>
-
-</section>
+    </main>
+</div>
 
 
-<!-- Carrusel "Recién agregado" -->
-<section class="carrusel-section">
+<!-- MODAL RECUPERAR CONTRASEÑA -->
+<div class="recuperar-overlay" id="recuperarOverlay">
 
-    <div class="carrusel-header">
-        <h2>Recién agregado</h2>
-        <div class="carrusel-controls">
-            <button type="button" class="carrusel-btn carrusel-prev" aria-label="Anterior">&#8249;</button>
-            <button type="button" class="carrusel-btn carrusel-next" aria-label="Siguiente">&#8250;</button>
+    <!-- PASO 1: RECUPERAR CONTRASEÑA -->
+    <div class="recuperar-modal" id="paso1">
+        <div class="recuperar-card">
+
+            <button type="button" class="recuperar-cerrar" data-cerrar aria-label="Cerrar">&times;</button>
+
+            <h2 class="recuperar-titulo">Recuperar Contraseña</h2>
+            <p class="recuperar-texto">
+                Ingresa tu correo electrónico registrado. Te enviaremos un código para restablecer tu contraseña.
+            </p>
+
+            <form id="formPaso1" novalidate>
+
+                <label class="recuperar-label" for="correoRecuperacion">Correo electrónico</label>
+                <div class="recuperar-input-wrap">
+                    <img class="recuperar-input-icono" src="${pageContext.request.contextPath}/Images/email.svg" alt="" />
+                    <input
+                            class="recuperar-input"
+                            type="email"
+                            id="correoRecuperacion"
+                            name="correo"
+                            placeholder="Ingresa tu correo"
+                            autocomplete="email" />
+                </div>
+
+                <p class="recuperar-error" id="errorPaso1"></p>
+
+                <button type="submit" class="recuperar-btn" id="btnEnviarCodigo">ENVIAR CÓDIGO</button>
+
+            </form>
+
+            <button type="button" class="recuperar-volver" data-cerrar>
+                &#8592; Volver al inicio de sesión
+            </button>
+
         </div>
     </div>
 
-    <div class="carrusel-track">
-        <c:forEach var="v" items="${vehiculosRecientes}">
-            <a class="auto-card" href="${pageContext.request.contextPath}/login.jsp">
-                <c:choose>
-                    <c:when test="${not empty v.foto_Portada}">
-                        <img class="auto-card-img" src="${pageContext.request.contextPath}/Images/imagesAutos/${v.foto_Portada}" alt="${v.marca.nombre} ${v.modelos.nombre}" />
-                    </c:when>
-                    <c:otherwise>
-                        <div class="auto-card-img"></div>
-                    </c:otherwise>
-                </c:choose>
-                <div class="auto-card-info">
-                    <span class="auto-card-marca">${v.marca.nombre} ${v.modelos.nombre}</span>
-                    <span class="auto-card-modelo">Año ${v.anio}</span>
-                    <span class="auto-card-precio">$<fmt:formatNumber value="${v.precio}" type="number" minFractionDigits="2" maxFractionDigits="2"/></span>
+    <!-- PASO 2: VERIFICAR CÓDIGO -->
+    <div class="recuperar-modal recuperar-oculto" id="paso2">
+        <div class="recuperar-card">
+
+            <button type="button" class="recuperar-cerrar" data-cerrar aria-label="Cerrar">&times;</button>
+
+            <h2 class="recuperar-titulo">Verificar Código</h2>
+            <p class="recuperar-texto">
+                Enviamos un código de 6 dígitos a tu correo. Ingrésalo a continuación.
+            </p>
+
+            <form id="formPaso2" novalidate>
+
+                <div class="recuperar-codigo" id="grupoCodigo">
+                    <input class="recuperar-digito" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" data-index="0" autocomplete="one-time-code">
+                    <input class="recuperar-digito" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" data-index="1">
+                    <input class="recuperar-digito" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" data-index="2">
+                    <input class="recuperar-digito" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" data-index="3">
+                    <input class="recuperar-digito" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" data-index="4">
+                    <input class="recuperar-digito" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" data-index="5">
                 </div>
-            </a>
-        </c:forEach>
-        <c:if test="${empty vehiculosRecientes}">
-            <p>No hay vehículos disponibles por el momento.</p>
-        </c:if>
-    </div>
 
-    <div class="carrusel-scrollbar">
-        <div class="carrusel-scrollbar-thumb"></div>
-    </div>
+                <p class="recuperar-error" id="errorPaso2"></p>
 
-</section>
+                <button type="submit" class="recuperar-btn">VERIFICAR</button>
 
+            </form>
 
-<!-- Carrusel "Destacado" -->
-<section class="carrusel-section">
+            <button type="button" class="recuperar-reenviar" id="btnReenviar">Reenviar código</button>
 
-    <div class="carrusel-header">
-        <h2>Destacado</h2>
-        <div class="carrusel-controls">
-            <button type="button" class="carrusel-btn carrusel-prev" aria-label="Anterior">&#8249;</button>
-            <button type="button" class="carrusel-btn carrusel-next" aria-label="Siguiente">&#8250;</button>
         </div>
     </div>
 
-    <div class="carrusel-track">
-        <c:forEach var="v" items="${vehiculosDestacados}">
-            <a class="auto-card" href="${pageContext.request.contextPath}/login.jsp">
-                <c:choose>
-                    <c:when test="${not empty v.foto_Portada}">
-                        <img class="auto-card-img" src="${pageContext.request.contextPath}/Images/imagesAutos/${v.foto_Portada}" alt="${v.marca.nombre} ${v.modelos.nombre}" />
-                    </c:when>
-                    <c:otherwise>
-                        <div class="auto-card-img"></div>
-                    </c:otherwise>
-                </c:choose>
-                <div class="auto-card-info">
-                    <span class="auto-card-marca">${v.marca.nombre} ${v.modelos.nombre}</span>
-                    <span class="auto-card-modelo">Año ${v.anio}</span>
-                    <span class="auto-card-precio">$<fmt:formatNumber value="${v.precio}" type="number" minFractionDigits="2" maxFractionDigits="2"/></span>
+    <!-- PASO 3: NUEVA CONTRASEÑA -->
+    <div class="recuperar-modal recuperar-oculto" id="paso3">
+        <div class="recuperar-card">
+
+            <button type="button" class="recuperar-cerrar" data-cerrar aria-label="Cerrar">&times;</button>
+
+            <h2 class="recuperar-titulo">Nueva Contraseña</h2>
+            <p class="recuperar-texto">
+                Al cambiar tu contraseña, todas las sesiones activas serán cerradas automáticamente.
+            </p>
+
+            <form id="formPaso3" novalidate>
+
+                <label class="recuperar-label" for="nuevaPassword">Nueva Contraseña</label>
+                <div class="recuperar-input-wrap">
+                    <img class="recuperar-input-icono" src="${pageContext.request.contextPath}/Images/llave-pass.svg" alt="" />
+                    <input
+                            class="recuperar-input"
+                            type="password"
+                            id="nuevaPassword"
+                            name="nuevaPassword"
+                            placeholder="Mínimo 8 caracteres"
+                            autocomplete="new-password" />
                 </div>
-            </a>
-        </c:forEach>
-        <c:if test="${empty vehiculosDestacados}">
-            <p>No hay vehículos disponibles por el momento.</p>
-        </c:if>
+
+                <label class="recuperar-label" for="confirmarPassword">Confirmar Contraseña</label>
+                <div class="recuperar-input-wrap">
+                    <img class="recuperar-input-icono" src="${pageContext.request.contextPath}/Images/llave-pass.svg" alt="" />
+                    <input
+                            class="recuperar-input"
+                            type="password"
+                            id="confirmarPassword"
+                            name="confirmarPassword"
+                            placeholder="Repite tu contraseña"
+                            autocomplete="new-password" />
+                </div>
+
+                <p class="recuperar-error" id="errorPaso3"></p>
+
+                <button type="submit" class="recuperar-btn">GUARDAR CONTRASEÑA</button>
+
+            </form>
+
+        </div>
     </div>
 
-    <div class="carrusel-scrollbar">
-        <div class="carrusel-scrollbar-thumb"></div>
-    </div>
+</div>
 
-</section>
 
-<footer class="footer">
-    <p>
-        © 2026 SGCA · Todos los derechos reservados
-    </p>
-</footer>
-
-<script src="${pageContext.request.contextPath}/js/duenioJS/carrusel.js"></script>
+<script src="${pageContext.request.contextPath}/js/login.js"></script>
+<script>
+    window.RECUPERAR_CONTEXT_PATH = "${pageContext.request.contextPath}";
+</script>
+<script src="${pageContext.request.contextPath}/js/recuperarPassword.js"></script>
 </body>
 </html>

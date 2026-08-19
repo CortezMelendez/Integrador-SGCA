@@ -30,8 +30,11 @@
 
 <body class="bs">
 
-<c:set var="esAsesor" value="${fn:toUpperCase(sessionScope.usuarioLogueado.rol.rol) == 'AGENTE'}" />
-<c:set var="esDueno" value="${fn:toUpperCase(sessionScope.usuarioLogueado.rol.rol) == 'ADMIN'}" />
+<%-- Respaldo por id_Rol (1=ADMIN, 2=AGENTE), igual que AuthFilter: comparar
+     solo el texto de ADMIN.ROLES falla si ese texto no es exactamente
+     "ADMIN"/"AGENTE", y esta pantalla caía al navbar de cliente por defecto. --%>
+<c:set var="esAsesor" value="${fn:toUpperCase(sessionScope.usuarioLogueado.rol.rol) == 'AGENTE' or sessionScope.usuarioLogueado.rol.id_Rol == 2}" />
+<c:set var="esDueno" value="${fn:toUpperCase(sessionScope.usuarioLogueado.rol.rol) == 'ADMIN' or sessionScope.usuarioLogueado.rol.id_Rol == 1}" />
 <c:choose>
     <c:when test="${esDueno}"><c:set var="inicioHref" value="/nav?action=inicio" /></c:when>
     <c:when test="${esAsesor}"><c:set var="inicioHref" value="/asesor" /></c:when>
@@ -75,9 +78,13 @@
 
         </div>
 
-        <button type="button" class="dash-nav-link" id="btnAbrirServicios">
-            Servicios
-        </button>
+        <%-- El dueño gestiona servicios desde "Gestión > Gestionar servicios",
+             no con este modal rápido (que sí usan asesor y cliente). --%>
+        <c:if test="${!esDueno}">
+            <button type="button" class="dash-nav-link" id="btnAbrirServicios">
+                Servicios
+            </button>
+        </c:if>
 
         <c:choose>
             <c:when test="${esDueno}">
@@ -552,16 +559,19 @@
     });
 
 
-    // MODAL SERVICIOS
+    // MODAL SERVICIOS (el dueño no tiene el botón "Servicios" en el navbar,
+    // así que btnAbrirServicios no existe en su caso)
 
     const modalServicios = document.getElementById("modalServicios");
     const btnAbrirServicios = document.getElementById("btnAbrirServicios");
     const btnCerrarServicios = document.getElementById("btnCerrarServicios");
 
-    btnAbrirServicios.addEventListener("click", function(e){
-        e.stopPropagation();
-        modalServicios.classList.add("active");
-    });
+    if (btnAbrirServicios) {
+        btnAbrirServicios.addEventListener("click", function(e){
+            e.stopPropagation();
+            modalServicios.classList.add("active");
+        });
+    }
 
     btnCerrarServicios.addEventListener("click", function(){
         modalServicios.classList.remove("active");

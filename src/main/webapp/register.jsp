@@ -28,12 +28,11 @@
     <!-- Formulario -->
     <main class="form-panel form-panel--compact">
 
-        <a href="${pageContext.request.contextPath}/catalogo" class="brand-link">
-            <h1 class="brand-title">
-                Concesionaria Automotriz
-            </h1>
-        </a>
+        <h1 class="brand-title">
+            Concesionaria Automotriz
+        </h1>
         <h2 class="form-title">Crear cuenta</h2>
+
 
         <!-- Mensaje enviado por el servlet -->
         <c:if test="${not empty error}">

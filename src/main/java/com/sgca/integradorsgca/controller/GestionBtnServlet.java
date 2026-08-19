@@ -76,6 +76,12 @@ public class GestionBtnServlet extends HttpServlet {
         String action = request.getParameter("action");
         if (action == null) action = "inicio";
 
+        // Catálogo de tipos de vehículo para el dropdown "Vehículos" del navbar
+        // (mismo dropdown que ya tiene el asesor, apuntando a /automoviles). Se
+        // usa un atributo aparte de "listaTipos" porque en gestionServicio esa
+        // clave ya la ocupan los tipos de SERVICIO, no de vehículo.
+        request.setAttribute("listaTiposVehiculo", tiposVehiculoDao.listar());
+
         try {
             switch (action) {
 
