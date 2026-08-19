@@ -149,7 +149,7 @@
 
             </div>
 
-            <!-- Password y teléfono -->
+            <!-- Password y confirmar contraseña -->
 
             <div class="field-row">
 
@@ -160,7 +160,7 @@
                         Contraseña
                     </label>
 
-                    <div class="input-wrapper">
+                    <div class="input-wrapper input-wrapper--password">
 
                         <img class="input-icon"
                              src="${pageContext.request.contextPath}/Images/llave-pass.svg"
@@ -171,13 +171,67 @@
                                 type="password"
                                 id="password"
                                 name="password"
-                                placeholder="Contraseña"
+                                placeholder="Mínimo 8 caracteres"
                                 required
                                 maxlength="255">
 
+                        <button type="button" class="password-toggle" data-toggle-password="password" aria-label="Mostrar contraseña">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <g class="eye-open">
+                                    <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7Z"></path>
+                                    <circle cx="12" cy="12" r="3"></circle>
+                                </g>
+                                <path class="eye-closed" d="M3 3l18 18M10.6 10.6a3 3 0 0 0 4.24 4.24M6.1 6.1C3.5 7.9 1 12 1 12s4 7 11 7c1.9 0 3.6-.5 5.1-1.3M17.9 17.9C20.5 16.1 23 12 23 12s-1.2-2.1-3.2-4"></path>
+                            </svg>
+                        </button>
+
                     </div>
+                    <span class="field-error" id="passwordError"></span>
 
                 </div>
+
+                <div class="field-group">
+
+                    <label class="field-label"
+                           for="confirmarPassword">
+                        Confirmar contraseña
+                    </label>
+
+                    <div class="input-wrapper input-wrapper--password">
+
+                        <img class="input-icon"
+                             src="${pageContext.request.contextPath}/Images/llave-pass.svg"
+                             alt="">
+
+                        <input
+                                class="input-field"
+                                type="password"
+                                id="confirmarPassword"
+                                name="confirmarPassword"
+                                placeholder="Repite tu contraseña"
+                                required
+                                maxlength="255">
+
+                        <button type="button" class="password-toggle" data-toggle-password="confirmarPassword" aria-label="Mostrar contraseña">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <g class="eye-open">
+                                    <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7Z"></path>
+                                    <circle cx="12" cy="12" r="3"></circle>
+                                </g>
+                                <path class="eye-closed" d="M3 3l18 18M10.6 10.6a3 3 0 0 0 4.24 4.24M6.1 6.1C3.5 7.9 1 12 1 12s4 7 11 7c1.9 0 3.6-.5 5.1-1.3M17.9 17.9C20.5 16.1 23 12 23 12s-1.2-2.1-3.2-4"></path>
+                            </svg>
+                        </button>
+
+                    </div>
+                    <span class="field-error" id="confirmarPasswordError"></span>
+
+                </div>
+
+            </div>
+
+            <!-- Teléfono y CURP -->
+
+            <div class="field-row">
 
                 <div class="field-group">
 
@@ -205,12 +259,6 @@
 
                 </div>
 
-            </div>
-
-            <!-- CURP y RFC -->
-
-            <div class="field-row">
-
                 <div class="field-group">
 
                     <label class="field-label"
@@ -237,28 +285,30 @@
 
                 </div>
 
-                <div class="field-group">
+            </div>
 
-                    <label class="field-label"
-                           for="rfc">
-                        AAAA580812AA7
-                    </label>
+            <!-- RFC -->
 
-                    <div class="input-wrapper">
+            <div class="field-group">
 
-                        <img class="input-icon"
-                             src="${pageContext.request.contextPath}/Images/infoUser.svg"
-                             alt="">
+                <label class="field-label"
+                       for="rfc">
+                    AAAA580812AA7
+                </label>
 
-                        <input
-                                class="input-field"
-                                type="text"
-                                id="rfc"
-                                name="rfc"
-                                placeholder="RFC"
-                                maxlength="13">
+                <div class="input-wrapper">
 
-                    </div>
+                    <img class="input-icon"
+                         src="${pageContext.request.contextPath}/Images/infoUser.svg"
+                         alt="">
+
+                    <input
+                            class="input-field"
+                            type="text"
+                            id="rfc"
+                            name="rfc"
+                            placeholder="RFC"
+                            maxlength="13">
 
                 </div>
 

@@ -73,3 +73,21 @@ document.addEventListener('DOMContentLoaded', () => {
     window.location.href = 'login.html';
   });
 });
+
+/* =============================================
+   Mostrar/ocultar contraseña — mismo comportamiento
+   que en login.js, reutilizable las veces que haga falta.
+============================================= */
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('[data-toggle-password]').forEach((btn) => {
+    const input = document.getElementById(btn.getAttribute('data-toggle-password'));
+    if (!input) return;
+
+    btn.addEventListener('click', () => {
+      const estaOculta = input.type === 'password';
+      input.type = estaOculta ? 'text' : 'password';
+      btn.classList.toggle('is-visible', estaOculta);
+      btn.setAttribute('aria-label', estaOculta ? 'Ocultar contraseña' : 'Mostrar contraseña');
+    });
+  });
+});

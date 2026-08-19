@@ -12,6 +12,7 @@ import jakarta.servlet.http.*;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.regex.Pattern;
 
 @WebServlet(name = "RegisterServlet", urlPatterns = {"/RegisterServlet"})
 public class RegisterServlet extends HttpServlet {
@@ -21,6 +22,19 @@ public class RegisterServlet extends HttpServlet {
 
     // Cambia este ID por el que tenga el rol CLIENTE en tu BD
     private static final int ID_ROL_CLIENTE = 3;
+
+    // Reglas de negocio del DFR (módulo 1.2, registro de cuenta).
+    private static final Pattern PATRON_NOMBRE = Pattern.compile("^[\\p{L}\\s]+$");
+    private static final Pattern PATRON_CORREO = Pattern.compile("^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$");
+    // 10 dígitos, sin espacios/guiones/especiales ni cero inicial.
+    private static final Pattern PATRON_TELEFONO = Pattern.compile("^[1-9]\\d{9}$");
+    // 4 letras + 6 dígitos (fecha de nacimiento) + 3 alfanuméricos de homoclave, solo mayúsculas.
+    private static final Pattern PATRON_RFC = Pattern.compile("^[A-Z]{4}\\d{6}[A-Z0-9]{3}$");
+    // 18 caracteres alfanuméricos, solo mayúsculas.
+    private static final Pattern PATRON_CURP = Pattern.compile("^[A-Z0-9]{18}$");
+    // Mínimo 8 caracteres, con mayúscula, minúscula y carácter especial.
+    private static final Pattern PATRON_PASSWORD =
+            Pattern.compile("^(?=.*[a-z])(?=.*[A-Z])(?=.*[^A-Za-z0-9]).{8,}$");
 
     @Override
     protected void doPost(HttpServletRequest request,
@@ -44,6 +58,7 @@ public class RegisterServlet extends HttpServlet {
             String correo = request.getParameter("correo");
             String telefono = request.getParameter("telefono");
             String passwordPlano = request.getParameter("password");
+            String confirmarPassword = request.getParameter("confirmarPassword");
 
             // Mostrar lo que llegó del formulario
             System.out.println("Datos recibidos:");
@@ -55,6 +70,21 @@ public class RegisterServlet extends HttpServlet {
             System.out.println("Correo: " + correo);
             System.out.println("Telefono: " + telefono);
             System.out.println("Password recibida: SI");
+
+            // RFC y CURP se normalizan a mayúsculas antes de validar y guardar
+            // (regla de negocio del DFR: "solo en mayúsculas").
+            rfc = rfc == null ? "" : rfc.trim().toUpperCase();
+            curp = curp == null ? "" : curp.trim().toUpperCase();
+
+            String errorFormato = validarFormato(
+                    nombre, apellidoPaterno, apellidoMaterno, correo, telefono,
+                    rfc, curp, passwordPlano, confirmarPassword);
+
+            if (errorFormato != null) {
+                request.setAttribute("error", errorFormato);
+                request.getRequestDispatcher("/register.jsp").forward(request, response);
+                return;
+            }
 
             // Encriptar contraseña
             String password = PasswordUtils.hashPassword(passwordPlano);
@@ -198,5 +228,50 @@ public class RegisterServlet extends HttpServlet {
 
     }
 
+    // Reglas de negocio del DFR, módulo 1.2 (registro de cuenta). Devuelve el
+    // mensaje de error a mostrar, o null si todo el formato es válido.
+    private String validarFormato(String nombre, String apellidoPaterno, String apellidoMaterno,
+                                   String correo, String telefono, String rfc, String curp,
+                                   String passwordPlano, String confirmarPassword) {
+
+        if (nombre == null || !PATRON_NOMBRE.matcher(nombre.trim()).matches()
+                || apellidoPaterno == null || !PATRON_NOMBRE.matcher(apellidoPaterno.trim()).matches()
+                || (apellidoMaterno != null && !apellidoMaterno.isBlank()
+                        && !PATRON_NOMBRE.matcher(apellidoMaterno.trim()).matches())) {
+            return "El nombre completo solo puede contener letras y espacios.";
+        }
+
+        int longitudNombreCompleto = nombre.trim().length() + apellidoPaterno.trim().length()
+                + (apellidoMaterno == null ? 0 : apellidoMaterno.trim().length());
+        if (longitudNombreCompleto > 100) {
+            return "El nombre completo no debe exceder los 100 caracteres.";
+        }
+
+        if (correo == null || !PATRON_CORREO.matcher(correo.trim()).matches()) {
+            return "Ingresa un correo electrónico válido.";
+        }
+
+        if (telefono == null || !PATRON_TELEFONO.matcher(telefono.trim()).matches()) {
+            return "El número de teléfono debe contener exactamente 10 dígitos numéricos.";
+        }
+
+        if (!PATRON_RFC.matcher(rfc).matches()) {
+            return "El RFC ingresado no está validado";
+        }
+
+        if (!PATRON_CURP.matcher(curp).matches()) {
+            return "El CURP ingresado no tiene un formato válido";
+        }
+
+        if (passwordPlano == null || !PATRON_PASSWORD.matcher(passwordPlano).matches()) {
+            return "La contraseña debe tener mínimo 8 caracteres, incluyendo mayúsculas, minúsculas y un carácter especial.";
+        }
+
+        if (!passwordPlano.equals(confirmarPassword)) {
+            return "las contraseñas no coinciden";
+        }
+
+        return null;
+    }
 
 }
