@@ -91,3 +91,23 @@ document.addEventListener('DOMContentLoaded', () => {
     window.location.href = '';
   });
 });
+
+/* =============================================
+   Mostrar/ocultar contraseña — funciona en cualquier
+   campo marcado con data-toggle-password="idDelInput",
+   las veces que se necesite (el estado se lee siempre
+   del type actual del input, nunca de una bandera aparte).
+============================================= */
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('[data-toggle-password]').forEach((btn) => {
+    const input = document.getElementById(btn.getAttribute('data-toggle-password'));
+    if (!input) return;
+
+    btn.addEventListener('click', () => {
+      const estaOculta = input.type === 'password';
+      input.type = estaOculta ? 'text' : 'password';
+      btn.classList.toggle('is-visible', estaOculta);
+      btn.setAttribute('aria-label', estaOculta ? 'Ocultar contraseña' : 'Mostrar contraseña');
+    });
+  });
+});
