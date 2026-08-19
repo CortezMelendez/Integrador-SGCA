@@ -27,7 +27,11 @@ public class VentasDao {
             con.setAutoCommit(false); // Iniciar Transacción
 
             // 1. Insertar Cabecera de Venta
-            psVenta = con.prepareStatement(sqlVenta, Statement.RETURN_GENERATED_KEYS);
+            // Se indica el nombre de la columna generada (en vez de
+            // Statement.RETURN_GENERATED_KEYS) porque ID_VENTA la rellena un
+            // trigger BEFORE INSERT, no una IDENTITY: sin el nombre explícito,
+            // el driver de Oracle devuelve el ROWID en vez del valor real.
+            psVenta = con.prepareStatement(sqlVenta, new String[]{"ID_VENTA"});
             psVenta.setInt(1, venta.getCliente().getIdCliente());
             psVenta.setInt(2, venta.getAgente().getIdAgente());
             psVenta.setInt(3, venta.getVehiculo().getId_Vehiculo());
