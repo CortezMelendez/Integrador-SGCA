@@ -132,6 +132,9 @@ body {
     font-weight: 700;
     color: var(--color-white);
     white-space: nowrap;
+    /* Varias páginas envuelven el nombre en un <a> (para volver a Inicio);
+       sin esto, el navegador le pone el subrayado por defecto de enlace. */
+    text-decoration: none;
 }
 
 .dash-nav-center {

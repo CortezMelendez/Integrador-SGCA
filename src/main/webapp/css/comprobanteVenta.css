@@ -1,8 +1,9 @@
-/* Comprobante informativo de venta (Módulo 5 del DFR).
+/* Confirmación de venta/cotización registrada (Módulo 5 del DFR).
    Reutilizable desde cotizaciones.jsp (asesor), detalleVehiculo.jsp y
    automovilesCliente.jsp (cliente): el modal se inyecta por JS
    (comprobanteVenta.js) así que solo se necesita este CSS + el link en el
-   <head> de cada página. */
+   <head> de cada página. Es solo un aviso de éxito, no un documento
+   imprimible: la venta ya quedó guardada en BD antes de mostrarse. */
 
 .comprobante-overlay {
     display: none;
@@ -23,125 +24,87 @@
     background: #fff;
     border-radius: 14px;
     width: 100%;
-    max-width: 420px;
+    max-width: 380px;
     max-height: 90vh;
     overflow-y: auto;
     box-shadow: 0 20px 45px rgba(0, 0, 0, 0.25);
     font-family: "Google Sans Flex", Arial, sans-serif;
-}
-
-.comprobante-header {
-    background: #0b5fff;
-    color: #fff;
-    padding: 18px 20px;
-    border-radius: 14px 14px 0 0;
+    padding: 28px 24px 24px;
     text-align: center;
 }
 
-.comprobante-header h2 {
-    margin: 0;
-    font-size: 1.1rem;
+.comprobante-icono-exito {
+    width: 56px;
+    height: 56px;
+    margin: 0 auto 14px;
+    border-radius: 50%;
+    background: #16a34a;
+    color: #fff;
+    font-size: 1.6rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-.comprobante-header p {
-    margin: 4px 0 0;
-    font-size: 0.8rem;
-    opacity: 0.85;
+.comprobante-titulo {
+    margin: 0 0 6px;
+    font-size: 1.2rem;
+    color: #0f172a;
 }
 
-.comprobante-body {
-    padding: 18px 20px;
+.comprobante-subtitulo {
+    margin: 0 0 18px;
+    font-size: 0.85rem;
+    color: #64748b;
+}
+
+.comprobante-resumen {
+    text-align: left;
+    background: #f8fafc;
+    border-radius: 10px;
+    padding: 4px 14px;
+    margin-bottom: 20px;
 }
 
 .comprobante-fila {
     display: flex;
     justify-content: space-between;
     gap: 12px;
-    padding: 6px 0;
+    padding: 8px 0;
     border-bottom: 1px dashed #e2e8f0;
     font-size: 0.9rem;
+}
+
+.comprobante-fila:last-child {
+    border-bottom: none;
 }
 
 .comprobante-fila span:first-child {
     color: #64748b;
 }
 
-.comprobante-servicios {
-    margin: 10px 0;
-}
-
-.comprobante-servicios h4 {
-    margin: 10px 0 4px;
-    font-size: 0.85rem;
-    color: #334155;
-}
-
-.comprobante-servicio-item {
-    display: flex;
-    justify-content: space-between;
-    font-size: 0.85rem;
-    padding: 3px 0;
-}
-
-.comprobante-total {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 12px;
-    padding-top: 10px;
-    border-top: 2px solid #0b5fff;
-    font-weight: 700;
-    font-size: 1.05rem;
-}
-
-.comprobante-nota {
-    margin-top: 14px;
-    font-size: 0.75rem;
-    color: #94a3b8;
-    text-align: center;
+.comprobante-fila span:last-child {
+    font-weight: 600;
+    color: #0f172a;
+    text-align: right;
 }
 
 .comprobante-acciones {
     display: flex;
     gap: 10px;
-    padding: 0 20px 20px;
 }
 
 .comprobante-acciones button {
     flex: 1;
-    padding: 10px;
+    padding: 12px;
     border-radius: 8px;
     border: none;
     cursor: pointer;
     font-weight: 600;
-}
-
-.comprobante-btn-imprimir {
-    background: #e2e8f0;
-    color: #0f172a;
+    font-size: 0.95rem;
 }
 
 .comprobante-btn-cerrar {
     background: #0b5fff;
     color: #fff;
-}
-
-@media print {
-    body > *:not(.comprobante-overlay) {
-        display: none !important;
-    }
-
-    .comprobante-overlay {
-        position: static;
-        background: none;
-        display: block !important;
-    }
-
-    .comprobante-acciones {
-        display: none !important;
-    }
-
-    .comprobante-box {
-        box-shadow: none;
-        max-width: 100%;
-    }
 }

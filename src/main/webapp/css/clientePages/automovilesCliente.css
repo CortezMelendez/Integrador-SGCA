@@ -189,9 +189,51 @@ a.dash-brand {
 
 @media (max-width: 560px) {
 
+    /* Tarjetas más compactas para que quepan 2 o 3 por fila (según el
+       ancho del teléfono) en vez de una sola gigante por fila. */
     .automoviles-page .cards-container {
 
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+
+    }
+
+    .automoviles-page .card-auto {
+        padding: 8px;
+        gap: 6px;
+    }
+
+    .automoviles-page .card-imagen {
+        height: 80px;
+    }
+
+    .automoviles-page .card-auto h3 {
+        font-size: 0.8rem;
+    }
+
+    .automoviles-page .card-auto h2 {
+        font-size: 0.85rem;
+    }
+
+    .automoviles-page .card-auto p {
+        font-size: 0.7rem;
+    }
+
+    .automoviles-page .btn-detalles {
+        padding: 6px 8px;
+        font-size: 0.72rem;
+    }
+
+}
+
+@media (max-width: 420px) {
+
+    /* En pantallas muy angostas, 3 columnas dejarían el texto ilegible;
+       se baja a 2 pero conservando el mismo tamaño de tarjeta compacto. */
+    .automoviles-page .cards-container {
+
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
 
     }
 

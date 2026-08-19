@@ -1,10 +1,12 @@
 // ==========================================================
-// Comprobante informativo de venta (Módulo 5 del DFR).
+// Confirmación de venta/cotización registrada (Módulo 5 del DFR).
 // Se reutiliza desde cotizacionesAsesor.js, detalleVehiculo.jsp y
 // automovilesCliente.jsp: recibe el JSON que devuelve
-// /registrarVentaAsesor tras registrar la venta y lo muestra en un modal
-// imprimible. No sustituye ningún cobro: el pago se hace fuera de la
-// plataforma, esto solo confirma en pantalla los datos de la operación.
+// /registrarVentaAsesor tras registrar la venta (que ya quedó guardada
+// en ADMIN.VENTAS / ADMIN.DETALLE_VENTA_SERVICIOS en ese momento) y solo
+// avisa en pantalla que la operación se completó, sin imprimir ni generar
+// ningún archivo — el pago se sigue haciendo de forma manual, fuera de
+// la plataforma.
 // ==========================================================
 
 function mostrarComprobanteVenta(datos, onCerrar) {
@@ -17,37 +19,19 @@ function mostrarComprobanteVenta(datos, onCerrar) {
     }
 
     const totalFmt = Number(datos.total || 0).toLocaleString('es-MX', { style: 'currency', currency: 'MXN' });
-    const precioVehiculoFmt = Number(datos.precioVehiculo || 0).toLocaleString('es-MX', { style: 'currency', currency: 'MXN' });
-
-    const serviciosHtml = (datos.servicios || []).map(s => {
-        const precioFmt = Number(s.precio || 0).toLocaleString('es-MX', { style: 'currency', currency: 'MXN' });
-        return `<div class="comprobante-servicio-item"><span>${escapeHtml(s.nombre)}</span><span>${precioFmt}</span></div>`;
-    }).join('');
 
     overlay.innerHTML = `
         <div class="comprobante-box">
-            <div class="comprobante-header">
-                <h2>Comprobante de venta</h2>
-                <p>Folio #${datos.folio} · ${escapeHtml(datos.fecha)}</p>
-            </div>
-            <div class="comprobante-body">
+            <div class="comprobante-icono-exito">&#10003;</div>
+            <h2 class="comprobante-titulo">¡Cotización registrada!</h2>
+            <p class="comprobante-subtitulo">Folio #${datos.folio} · Se guardó correctamente en el sistema.</p>
+            <div class="comprobante-resumen">
                 <div class="comprobante-fila"><span>Cliente</span><span>${escapeHtml(datos.cliente)}</span></div>
-                <div class="comprobante-fila"><span>Asesor</span><span>${escapeHtml(datos.asesor)}</span></div>
                 <div class="comprobante-fila"><span>Vehículo</span><span>${escapeHtml(datos.vehiculo)}</span></div>
-                <div class="comprobante-fila"><span>Placa</span><span>${escapeHtml(datos.placa)}</span></div>
-                <div class="comprobante-fila"><span>Precio vehículo</span><span>${precioVehiculoFmt}</span></div>
-                ${datos.servicios && datos.servicios.length ? `
-                    <div class="comprobante-servicios">
-                        <h4>Servicios contratados</h4>
-                        ${serviciosHtml}
-                    </div>
-                ` : ''}
-                <div class="comprobante-total"><span>Total</span><span>${totalFmt}</span></div>
-                <p class="comprobante-nota">Este comprobante es informativo. El cobro se realiza de forma manual, fuera de la plataforma.</p>
+                <div class="comprobante-fila"><span>Total</span><span>${totalFmt}</span></div>
             </div>
             <div class="comprobante-acciones">
-                <button type="button" class="comprobante-btn-imprimir" onclick="window.print()">Imprimir</button>
-                <button type="button" class="comprobante-btn-cerrar" id="btnCerrarComprobante">Cerrar</button>
+                <button type="button" class="comprobante-btn-cerrar" id="btnCerrarComprobante">Aceptar</button>
             </div>
         </div>
     `;
