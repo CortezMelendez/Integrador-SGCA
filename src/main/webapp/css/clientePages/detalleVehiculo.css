@@ -335,3 +335,67 @@ a.dash-brand {
     }
 
 }
+
+@media (max-width: 600px) {
+
+    .detalle-page {
+        padding: 16px 16px 40px;
+    }
+
+    .galeria-principal img {
+        height: 240px;
+    }
+
+    .galeria-flecha {
+        width: 32px;
+        height: 32px;
+        font-size: 1rem;
+    }
+
+    .miniatura {
+        width: 56px;
+        height: 44px;
+    }
+
+    .detalle-titulo {
+        font-size: 1.2rem;
+    }
+
+    .detalle-precio {
+        font-size: 1.3rem;
+    }
+
+    /* Vehículos relacionados: cuadrícula de 2 en vez de scroll horizontal
+       de una tarjeta gigante a la vez. */
+    .relacionados-wrap {
+        gap: 0;
+    }
+
+    .relacionados-flecha {
+        display: none;
+    }
+
+    .relacionados-scroll {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+        overflow: visible;
+    }
+
+    .relacionados-scroll .card-auto {
+        width: 100%;
+    }
+
+}
+
+@media (max-width: 420px) {
+
+    .detalle-campos {
+        grid-template-columns: 1fr;
+    }
+
+    .galeria-principal img {
+        height: 200px;
+    }
+
+}

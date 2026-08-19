@@ -50,7 +50,6 @@
 
     <div class="dash-navbar-right">
         <div class="dash-user">
-            <div class="dash-user-avatar" id="userAvatar" aria-hidden="true"></div>
             <div class="dash-user-info">
                 <span class="dash-user-name" id="userName"></span>
                 <span class="dash-user-role" id="userRole"></span>
