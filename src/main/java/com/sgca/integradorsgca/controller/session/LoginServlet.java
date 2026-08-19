@@ -2,6 +2,7 @@ package com.sgca.integradorsgca.controller.session;
 
 import com.sgca.integradorsgca.model.bean.UsuarioBean;
 import com.sgca.integradorsgca.model.dao.UsuarioDao;
+import com.sgca.integradorsgca.utils.SessionRegistry;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -58,6 +59,10 @@ public class LoginServlet extends HttpServlet {
 
                 //Guardar el Bean con la clave exacta "usuarioLogueado" para el AuthFilter
                 session.setAttribute("usuarioLogueado", usuario);
+
+                // Registra esta sesión para que "Cerrar sesión" del dueño
+                // (SessionRegistry.invalidarTodas) pueda encontrarla y cerrarla.
+                SessionRegistry.registrar(usuario.getId_usuario(), session);
 
                 //Redirigir según el rol del usuario
                 redirigirSegunRol(req, resp, usuario);
