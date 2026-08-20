@@ -264,6 +264,11 @@
             <span class="metric-value">${metricClientes}</span>
             <span class="metric-delta positive">+${metricClientesNuevosMes} este mes</span>
         </div>
+        <div class="metric-card">
+            <span class="metric-label">Ventas totales</span>
+            <span class="metric-value">${metricVentas}</span>
+            <span class="metric-delta positive">+${metricVentasMes} este mes</span>
+        </div>
     </div>
 
     <!-- Gráficas -->

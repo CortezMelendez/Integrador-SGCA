@@ -144,6 +144,11 @@ public class NavBarAdminServlet extends HttpServlet {
             int totalClientes = clientes.size();
             long clientesNuevosMes = clientes.stream().filter(this::esDeEsteMes).count();
 
+            // DFR módulo 7.1: "Ventas totales" como métrica propia del dashboard,
+            // no solo como gráfica mensual.
+            int totalVentas = ventas.size();
+            long ventasEsteMes = ventas.stream().filter(this::esVentaDeEsteMes).count();
+
             request.setAttribute("metricVehiculos", totalVehiculos);
             request.setAttribute("metricVehiculosDisponibles", vehiculosDisponibles);
             request.setAttribute("metricServicios", serviciosActivos);
@@ -151,6 +156,8 @@ public class NavBarAdminServlet extends HttpServlet {
             request.setAttribute("metricContactos", agentesActivos);
             request.setAttribute("metricClientes", totalClientes);
             request.setAttribute("metricClientesNuevosMes", clientesNuevosMes);
+            request.setAttribute("metricVentas", totalVentas);
+            request.setAttribute("metricVentasMes", ventasEsteMes);
 
             // --- Gráfica de barras: ventas de los últimos 6 meses ---
             Map<String, Long> ventasPorMes = new LinkedHashMap<>();
@@ -216,6 +223,15 @@ public class NavBarAdminServlet extends HttpServlet {
         registro.setTimeInMillis(u.getFechaRegistro().getTime());
         return registro.get(Calendar.MONTH) == hoy.get(Calendar.MONTH)
                 && registro.get(Calendar.YEAR) == hoy.get(Calendar.YEAR);
+    }
+
+    private boolean esVentaDeEsteMes(VentasBean v) {
+        if (v.getFechaVenta() == null) return false;
+        Calendar hoy = Calendar.getInstance();
+        Calendar venta = Calendar.getInstance();
+        venta.setTimeInMillis(v.getFechaVenta().getTime());
+        return venta.get(Calendar.MONTH) == hoy.get(Calendar.MONTH)
+                && venta.get(Calendar.YEAR) == hoy.get(Calendar.YEAR);
     }
 
     private String claveMes(Calendar c) {
