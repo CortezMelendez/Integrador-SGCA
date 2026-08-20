@@ -12,7 +12,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <title>Mis compras · Gestionaria Automotriz</title>
+    <title>Mis compras · Concesionaria Automotriz</title>
 
 
     <link rel="preconnect" href="https://fonts.googleapis.com">

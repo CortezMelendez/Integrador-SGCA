@@ -10,7 +10,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <title>Historial de ventas · Gestionaria Automotriz</title>
+    <title>Historial de ventas · Concesionaria Automotriz</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -422,7 +422,7 @@
 <footer class="footer">
     <span>© 2026 SGCA · Todos los derechos reservados</span>
     <a href="${pageContext.request.contextPath}/asesor" class="btn-atras">
-        <img src="${pageContext.request.contextPath}/Images/back.svg" alt="atras" />
+        <img src="${pageContext.request.contextPath}/Images/back.svg" alt="Atrás" />
         Atrás
     </a>
 </footer>

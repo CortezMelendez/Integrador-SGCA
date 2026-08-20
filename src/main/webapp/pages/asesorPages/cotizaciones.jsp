@@ -6,7 +6,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Mis cotizaciones · Gestionaria Automotriz</title>
+    <title>Mis cotizaciones · Concesionaria Automotriz</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -346,8 +346,8 @@
 <footer class="footer">
     <span>© 2026 SGCA · Todos los derechos reservados</span>
     <a href="${pageContext.request.contextPath}/asesor" class="btn-back">
-        <img src="${pageContext.request.contextPath}/Images/back.svg" alt="atras" />
-        Atras
+        <img src="${pageContext.request.contextPath}/Images/back.svg" alt="Atrás" />
+        Atrás
     </a>
 </footer>
 

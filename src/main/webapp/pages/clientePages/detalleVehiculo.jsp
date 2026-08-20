@@ -11,7 +11,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <title>${vehiculo.marca.nombre} ${vehiculo.modelos.nombre} · Gestionaria Automotriz</title>
+    <title>${vehiculo.marca.nombre} ${vehiculo.modelos.nombre} · Concesionaria Automotriz</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

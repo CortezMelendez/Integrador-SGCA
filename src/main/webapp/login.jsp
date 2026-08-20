@@ -101,7 +101,7 @@
                 </div>
             </div>
 
-            <a href="#" id="btnAbrirRecuperar" class="forgot-link">¿Olvidaste tu contraseña? | Click Aqui</a>
+            <a href="#" id="btnAbrirRecuperar" class="forgot-link">¿Olvidaste tu contraseña? | Click Aquí</a>
 
             <button type="submit" class="btn-primary">Iniciar Sesión</button>
 
@@ -115,7 +115,7 @@
 
         <footer class="footer login-footer">
             <a href="${pageContext.request.contextPath}/index" class="btn-back">
-                <img src="${pageContext.request.contextPath}/Images/back.svg" alt="atras" />
+                <img src="${pageContext.request.contextPath}/Images/back.svg" alt="Atrás" />
                 Atrás
             </a>
         </footer>

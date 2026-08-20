@@ -338,8 +338,8 @@
 <footer class="footer">
     <span>© 2026 SGCA · Todos los derechos reservados</span>
     <a href="${pageContext.request.contextPath}/nav?action=inicio" class="btn-back">
-        <img src="${pageContext.request.contextPath}/Images/back.svg" alt="atras" />
-        Atras
+        <img src="${pageContext.request.contextPath}/Images/back.svg" alt="Atrás" />
+        Atrás
     </a>
 </footer>
 

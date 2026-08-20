@@ -10,7 +10,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <title>Gestionaria Automotriz</title>
+    <title>Concesionaria Automotriz</title>
 
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -35,7 +35,7 @@
 <header class="navbar">
 
     <span class="navbar-brand">
-        Gestionaria Automotriz
+        Concesionaria Automotriz
     </span>
 
 </header>
