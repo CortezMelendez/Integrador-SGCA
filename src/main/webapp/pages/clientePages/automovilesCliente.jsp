@@ -432,8 +432,8 @@
                     type="text"
                     name="buscar"
                     value="${buscarValor}"
-                    placeholder="Buscar por marca o modelo..."
-                    aria-label="Buscar por marca o modelo">
+                    placeholder="Buscar por marca, modelo, color, placa, año o precio..."
+                    aria-label="Buscar por marca, modelo, color, placa, año o precio">
 
             <button type="submit" aria-label="Buscar">
                 <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">

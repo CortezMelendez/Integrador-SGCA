@@ -359,17 +359,21 @@ public class VehiculosDao {
             parametros.add(tipo);
         }
 
-        // El mismo texto se busca a la vez en marca, modelo, el nombre combinado, año y precio
+        // El mismo texto se busca a la vez en marca, modelo, el nombre combinado,
+        // año, precio, color y placa (DFR módulo 2.3: búsqueda por marca, modelo,
+        // tipo, precio, color, año y placa).
         if (buscar != null && !buscar.isBlank()) {
             sql.append(
                     "AND (UPPER(MA.NOMBRE) LIKE UPPER(?) ESCAPE '\\' "
                             + "OR UPPER(M.NOMBRE) LIKE UPPER(?) ESCAPE '\\' "
                             + "OR UPPER(MA.NOMBRE || ' ' || M.NOMBRE) LIKE UPPER(?) ESCAPE '\\' "
                             + "OR TO_CHAR(V.ANIO) LIKE ? ESCAPE '\\' "
-                            + "OR TO_CHAR(V.PRECIO) LIKE ? ESCAPE '\\') "
+                            + "OR TO_CHAR(V.PRECIO) LIKE ? ESCAPE '\\' "
+                            + "OR UPPER(V.COLOR) LIKE UPPER(?) ESCAPE '\\' "
+                            + "OR UPPER(V.PLACA) LIKE UPPER(?) ESCAPE '\\') "
             );
             String comodin = "%" + escaparComodinesLike(buscar.trim()) + "%";
-            for (int i = 0; i < 5; i++) {
+            for (int i = 0; i < 7; i++) {
                 parametros.add(comodin);
             }
         }

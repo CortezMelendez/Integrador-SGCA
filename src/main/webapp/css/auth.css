@@ -1,4 +1,13 @@
 
+/* Algunos navegadores (Edge/Chromium) agregan su propio ícono nativo de
+   "mostrar contraseña" dentro de los inputs type="password", que se
+   encima del botón de ojo propio del formulario. Se desactiva para que
+   solo quede el control personalizado. */
+input[type="password"]::-ms-reveal,
+input[type="password"]::-ms-clear {
+    display: none;
+}
+
 .page {
     display: grid;
     grid-template-columns: 1fr 1fr;
