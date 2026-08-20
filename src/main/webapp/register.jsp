@@ -229,7 +229,7 @@
 
             </div>
 
-            <!-- Teléfono y CURP -->
+            <!-- Teléfono y RFC -->
 
             <div class="field-row">
 
@@ -262,8 +262,8 @@
                 <div class="field-group">
 
                     <label class="field-label"
-                           for="curp">
-                        AAAA800101HDFXXXX01
+                           for="rfc">
+                        RFC
                     </label>
 
                     <div class="input-wrapper">
@@ -276,10 +276,10 @@
                         <input
                                 class="input-field"
                                 type="text"
-                                id="curp"
-                                name="curp"
-                                placeholder="CURP"
-                                maxlength="18">
+                                id="rfc"
+                                name="rfc"
+                                placeholder="AAAA580812AA7"
+                                maxlength="13">
 
                     </div>
 
@@ -287,13 +287,13 @@
 
             </div>
 
-            <!-- RFC -->
+            <!-- CURP -->
 
             <div class="field-group">
 
                 <label class="field-label"
-                       for="rfc">
-                    AAAA580812AA7
+                       for="curp">
+                    CURP
                 </label>
 
                 <div class="input-wrapper">
@@ -305,10 +305,10 @@
                     <input
                             class="input-field"
                             type="text"
-                            id="rfc"
-                            name="rfc"
-                            placeholder="RFC"
-                            maxlength="13">
+                            id="curp"
+                            name="curp"
+                            placeholder="AAAA800101HDFXXXX01"
+                            maxlength="18">
 
                 </div>
 

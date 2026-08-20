@@ -91,3 +91,22 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 });
+
+/* =============================================
+   RFC y CURP siempre en mayúsculas mientras se escriben
+   (el servidor los normaliza igual, esto es solo para que
+   el usuario vea de una vez el formato correcto).
+============================================= */
+document.addEventListener('DOMContentLoaded', () => {
+  ['rfc', 'curp'].forEach((id) => {
+    const input = document.getElementById(id);
+    if (!input) return;
+
+    input.addEventListener('input', () => {
+      const inicio = input.selectionStart;
+      const fin = input.selectionEnd;
+      input.value = input.value.toUpperCase();
+      input.setSelectionRange(inicio, fin);
+    });
+  });
+});

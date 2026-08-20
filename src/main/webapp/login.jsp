@@ -29,7 +29,7 @@
 
     <main class="form-panel">
 
-        <a href="${pageContext.request.contextPath}/catalogo" class="brand-link">
+        <a href="${pageContext.request.contextPath}/index" class="brand-link">
             <h1 class="brand-title">
                 Concesionaria Automotriz
             </h1>
@@ -114,7 +114,7 @@
         </form>
 
         <footer class="footer login-footer">
-            <a href="${pageContext.request.contextPath}/index.jsp" class="btn-back">
+            <a href="${pageContext.request.contextPath}/index" class="btn-back">
                 <img src="${pageContext.request.contextPath}/Images/back.svg" alt="atras" />
                 Atrás
             </a>
