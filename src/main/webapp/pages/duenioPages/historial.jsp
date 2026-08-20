@@ -205,6 +205,65 @@
 
 </div>
 
+<!-- MODAL DETALLE DE VENTA -->
+<div class="modal-overlay" id="modalDetalleVenta">
+
+    <div class="modal-box modal-box-perfil">
+
+        <div class="perfil-header">
+            <h2>Detalle de la venta</h2>
+            <button type="button" class="modal-cerrar" id="btnCerrarDetalleVenta" aria-label="Cerrar">&times;</button>
+        </div>
+
+        <div class="perfil-seccion">
+            <div class="perfil-grid perfil-grid-1">
+                <div class="perfil-campo">
+                    <span class="perfil-label">Folio</span>
+                    <span class="perfil-valor" id="detalleVentaFolio"></span>
+                </div>
+                <div class="perfil-campo">
+                    <span class="perfil-label">Placa</span>
+                    <span class="perfil-valor" id="detalleVentaPlaca"></span>
+                </div>
+                <div class="perfil-campo">
+                    <span class="perfil-label">Vehículo</span>
+                    <span class="perfil-valor" id="detalleVentaVehiculo"></span>
+                </div>
+                <div class="perfil-campo">
+                    <span class="perfil-label">Color</span>
+                    <span class="perfil-valor" id="detalleVentaColor"></span>
+                </div>
+                <div class="perfil-campo">
+                    <span class="perfil-label">Cliente</span>
+                    <span class="perfil-valor" id="detalleVentaCliente"></span>
+                </div>
+                <div class="perfil-campo">
+                    <span class="perfil-label">Correo</span>
+                    <span class="perfil-valor" id="detalleVentaCorreo"></span>
+                </div>
+                <div class="perfil-campo">
+                    <span class="perfil-label">Agente</span>
+                    <span class="perfil-valor" id="detalleVentaAgente"></span>
+                </div>
+                <div class="perfil-campo">
+                    <span class="perfil-label">Fecha</span>
+                    <span class="perfil-valor" id="detalleVentaFecha"></span>
+                </div>
+                <div class="perfil-campo">
+                    <span class="perfil-label">Servicios contratados</span>
+                    <span class="perfil-valor" id="detalleVentaServicios"></span>
+                </div>
+                <div class="perfil-campo">
+                    <span class="perfil-label">Total</span>
+                    <span class="perfil-valor" id="detalleVentaTotal"></span>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
 <!-- CONTENIDO PRINCIPAL -->
 <main class="dash-main">
 
@@ -236,21 +295,48 @@
                     <th>Agente</th>
                     <th>Servicios contratados</th>
                     <th>Total</th>
+                    <th>Acciones</th>
                 </tr>
                 </thead>
                 <tbody>
                 <c:forEach var="v" items="${listaVentas}" varStatus="fila">
+                    <fmt:formatDate value="${v.fechaVenta}" pattern="dd/MM/yyyy" var="fechaVentaFmt"/>
+                    <fmt:formatNumber value="${v.total}" type="number" minFractionDigits="2" maxFractionDigits="2" var="totalVentaFmt"/>
+                    <c:choose>
+                        <c:when test="${empty v.detalles}">
+                            <c:set var="serviciosVentaTexto" value="—"/>
+                        </c:when>
+                        <c:otherwise>
+                            <c:set var="serviciosVentaTexto"><c:forEach var="d" items="${v.detalles}" varStatus="detFila">${d.servicio.nombre} ($<fmt:formatNumber value="${d.precio}" type="number" minFractionDigits="2" maxFractionDigits="2"/>)<c:if test="${!detFila.last}">, </c:if></c:forEach></c:set>
+                        </c:otherwise>
+                    </c:choose>
                     <tr data-placa="${fn:toUpperCase(v.vehiculo.placa)}">
                         <td>${fila.count}</td>
                         <td>${v.vehiculo.placa}</td>
-                        <td><fmt:formatDate value="${v.fechaVenta}" pattern="dd/MM/yyyy"/></td>
+                        <td>${fechaVentaFmt}</td>
                         <td>${v.cliente.nombreCliente}</td>
                         <td>${v.agente.nombreCompletoUsuario}</td>
                         <td>
                             <c:if test="${empty v.detalles}">—</c:if>
                             <c:forEach var="d" items="${v.detalles}" varStatus="detFila">${d.servicio.nombre}<c:if test="${!detFila.last}">, </c:if></c:forEach>
                         </td>
-                        <td class="precio">$<fmt:formatNumber value="${v.total}" type="number" minFractionDigits="2" maxFractionDigits="2"/></td>
+                        <td class="precio">$${totalVentaFmt}</td>
+                        <td class="acciones-cell">
+                            <button type="button" class="btn-icon btn-info" title="Ver detalles"
+                                    data-folio="${v.id_venta}"
+                                    data-placa="${v.vehiculo.placa}"
+                                    data-vehiculo="${v.vehiculo.marca.nombre} ${v.vehiculo.modelos.nombre} ${v.vehiculo.anio}"
+                                    data-color="${v.vehiculo.color}"
+                                    data-cliente="${v.cliente.nombreCliente}"
+                                    data-correo="${v.cliente.correoCliente}"
+                                    data-agente="${v.agente.nombreCompletoUsuario}"
+                                    data-fecha="${fechaVentaFmt}"
+                                    data-servicios="${serviciosVentaTexto}"
+                                    data-total="$${totalVentaFmt}"
+                                    onclick="abrirDetalleVenta(this)">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M8 0a8 8 0 100 16A8 8 0 008 0zm.9 12.1H7.1V7h1.8v5.1zm0-6.4H7.1V4h1.8v1.7z" fill="currentColor"/></svg>
+                            </button>
+                        </td>
                     </tr>
                 </c:forEach>
                 </tbody>
@@ -290,6 +376,36 @@
         document.getElementById('sinResultados').style.display =
             (filtro !== '' && visibles === 0) ? '' : 'none';
     }
+</script>
+
+<script>
+    // MODAL DETALLE DE VENTA
+    const modalDetalleVenta = document.getElementById("modalDetalleVenta");
+    const btnCerrarDetalleVenta = document.getElementById("btnCerrarDetalleVenta");
+
+    function abrirDetalleVenta(btn){
+        document.getElementById("detalleVentaFolio").textContent = btn.dataset.folio;
+        document.getElementById("detalleVentaPlaca").textContent = btn.dataset.placa;
+        document.getElementById("detalleVentaVehiculo").textContent = btn.dataset.vehiculo;
+        document.getElementById("detalleVentaColor").textContent = btn.dataset.color;
+        document.getElementById("detalleVentaCliente").textContent = btn.dataset.cliente;
+        document.getElementById("detalleVentaCorreo").textContent = btn.dataset.correo;
+        document.getElementById("detalleVentaAgente").textContent = btn.dataset.agente;
+        document.getElementById("detalleVentaFecha").textContent = btn.dataset.fecha;
+        document.getElementById("detalleVentaServicios").textContent = btn.dataset.servicios;
+        document.getElementById("detalleVentaTotal").textContent = btn.dataset.total;
+        modalDetalleVenta.classList.add("active");
+    }
+
+    btnCerrarDetalleVenta.addEventListener("click", function(){
+        modalDetalleVenta.classList.remove("active");
+    });
+
+    modalDetalleVenta.addEventListener("click", function(e){
+        if(e.target === modalDetalleVenta){
+            modalDetalleVenta.classList.remove("active");
+        }
+    });
 </script>
 
 <script>

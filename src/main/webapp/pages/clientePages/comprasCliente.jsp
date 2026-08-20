@@ -31,6 +31,8 @@
 
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/clientePages/comprasCliente.css">
 
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/asesorStyles/cotizacionModal.css">
+
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/clientePages/perfilModal.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/responsive.css">
 </head>
@@ -151,6 +153,49 @@
                 <p class="servicios-vacio">Por el momento no hay servicios disponibles.</p>
             </c:if>
 
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- MODAL CONTRATAR SERVICIO ADICIONAL (DFR módulo 5.2): agrega un servicio
+     del catálogo a un vehículo que el cliente ya compró, sin tocar la venta
+     original. -->
+<div class="modal-overlay" id="modalContratarServicio">
+
+    <div class="modal-box modal-box-servicios">
+
+        <div class="modal-header-bar">
+            <span>Contratar servicio adicional</span>
+            <button type="button" class="modal-cerrar" id="btnCerrarContratarServicio" aria-label="Cerrar">&times;</button>
+        </div>
+
+        <p class="modal-subtitle" id="contratarServicioVehiculo"></p>
+
+        <div class="cotizacion-servicios-lista" id="contratarServiciosLista">
+
+            <c:forEach var="s" items="${servicios}">
+                <label class="cotizacion-servicio-item">
+                    <input type="checkbox" class="cotizacion-servicio-checkbox" value="${s.id_servicio}">
+                    <span class="cotizacion-servicio-nombre">${s.nombre}</span>
+                    <span class="cotizacion-servicio-tipo">${s.tipoServicio.nombre}</span>
+                    <span class="cotizacion-servicio-precio">$${s.precio}</span>
+                </label>
+            </c:forEach>
+
+            <c:if test="${empty servicios}">
+                <p class="servicios-vacio">No hay servicios disponibles por el momento.</p>
+            </c:if>
+
+        </div>
+
+        <p class="perfil-error" id="errorContratarServicio"></p>
+        <p class="perfil-exito" id="exitoContratarServicio"></p>
+
+        <div class="perfil-acciones">
+            <button type="button" class="btn-perfil-guardar" id="btnConfirmarContratarServicio">Contratar</button>
         </div>
 
     </div>
@@ -380,6 +425,7 @@
                     <th>Precio</th>
                     <th>Servicios adicionales</th>
                     <th>Estado</th>
+                    <th>Acciones</th>
                 </tr>
                 </thead>
 
@@ -413,6 +459,13 @@
                         </td>
 
                         <td><span class="badge badge-completada">✓ Completada</span></td>
+
+                        <td>
+                            <button type="button" class="btn-contratar-servicio"
+                                    onclick="abrirContratarServicio(${v.id_venta}, '${v.vehiculo.marca.nombre} ${v.vehiculo.modelos.nombre} — ${v.vehiculo.placa}')">
+                                + Contratar servicio
+                            </button>
+                        </td>
 
                     </tr>
 
@@ -448,6 +501,9 @@
     </p>
 </footer>
 
+<script>
+    window.COMPRAS_CONTEXT_PATH = "${pageContext.request.contextPath}";
+</script>
 <script src="${pageContext.request.contextPath}/js/clienteJS/comprasCliente.js"></script>
 
 <script>

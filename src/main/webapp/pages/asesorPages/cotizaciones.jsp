@@ -300,6 +300,7 @@
                     <th>Servicios</th>
                     <th>Total</th>
                     <th>Fecha</th>
+                    <th>Acciones</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -320,11 +321,17 @@
                         <td>${serviciosVentaTexto}</td>
                         <td>$<fmt:formatNumber value="${venta.total}" type="number" minFractionDigits="2" maxFractionDigits="2"/></td>
                         <td><fmt:formatDate value="${venta.fechaVenta}" pattern="dd/MM/yyyy"/></td>
+                        <td>
+                            <button type="button" class="btn-contratar-servicio"
+                                    onclick="abrirContratarServicio(${venta.id_venta}, '${venta.vehiculo.marca.nombre} ${venta.vehiculo.modelos.nombre} — ${venta.vehiculo.placa}')">
+                                + Contratar servicio
+                            </button>
+                        </td>
                     </tr>
                 </c:forEach>
                 <c:if test="${empty cotizaciones}">
                     <tr class="fila-vacia">
-                        <td colspan="7" style="text-align:center; padding: 24px;">Todavía no has registrado ninguna cotización.</td>
+                        <td colspan="8" style="text-align:center; padding: 24px;">Todavía no has registrado ninguna cotización.</td>
                     </tr>
                 </c:if>
                 </tbody>
@@ -399,6 +406,48 @@
         </div>
 
     </div>
+</div>
+
+<!-- MODAL CONTRATAR SERVICIO ADICIONAL (DFR módulo 5.2): agrega un servicio
+     del catálogo a un vehículo que uno de tus clientes ya compró, sin tocar
+     la venta original. -->
+<div class="modal-overlay" id="modalContratarServicio" onclick="cerrarOverlay(event,'modalContratarServicio')">
+
+    <div class="modal-box modal-box-servicios" onclick="event.stopPropagation()">
+
+        <div class="modal-header-bar">
+            <span>Contratar servicio adicional</span>
+            <button type="button" class="modal-cerrar" id="btnCerrarContratarServicio" aria-label="Cerrar">&times;</button>
+        </div>
+
+        <p class="modal-subtitle" id="contratarServicioVehiculo"></p>
+
+        <div class="cotizacion-servicios-lista" id="contratarServiciosLista">
+
+            <c:forEach var="s" items="${servicios}">
+                <label class="cotizacion-servicio-item">
+                    <input type="checkbox" class="cotizacion-servicio-checkbox" value="${s.id_servicio}">
+                    <span class="cotizacion-servicio-nombre">${s.nombre}</span>
+                    <span class="cotizacion-servicio-tipo">${s.tipoServicio.nombre}</span>
+                    <span class="cotizacion-servicio-precio">$${s.precio}</span>
+                </label>
+            </c:forEach>
+
+            <c:if test="${empty servicios}">
+                <p class="servicios-vacio">No hay servicios disponibles por el momento.</p>
+            </c:if>
+
+        </div>
+
+        <p class="perfil-error" id="errorContratarServicio"></p>
+        <p class="perfil-exito" id="exitoContratarServicio"></p>
+
+        <div class="perfil-acciones">
+            <button type="button" class="btn-perfil-guardar" id="btnConfirmarContratarServicio">Contratar</button>
+        </div>
+
+    </div>
+
 </div>
 
 <script>

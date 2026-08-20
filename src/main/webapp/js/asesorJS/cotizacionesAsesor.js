@@ -316,3 +316,70 @@ function filtrarTabla(texto) {
 }
 
 document.addEventListener('DOMContentLoaded', () => mostrarPagina(1));
+
+// -------------------------------
+// Contratar servicio adicional para un vehículo ya adquirido
+// (DFR módulo 5.2). abrirContratarServicio se llama desde el onclick
+// de cada fila de la tabla, por eso queda como función global.
+// -------------------------------
+let _idVentaContratarServicio = null;
+
+function abrirContratarServicio(idVenta, nombreVehiculo) {
+    _idVentaContratarServicio = idVenta;
+
+    document.getElementById('contratarServicioVehiculo').textContent = nombreVehiculo;
+    document.getElementById('errorContratarServicio').textContent = '';
+    document.getElementById('exitoContratarServicio').textContent = '';
+
+    document.querySelectorAll('#contratarServiciosLista .cotizacion-servicio-checkbox')
+        .forEach(cb => cb.checked = false);
+
+    document.getElementById('modalContratarServicio').classList.add('active');
+    document.body.style.overflow = 'hidden';
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    const btnCerrar = document.getElementById('btnCerrarContratarServicio');
+    const btnConfirmar = document.getElementById('btnConfirmarContratarServicio');
+    if (!btnConfirmar) return;
+
+    btnCerrar.addEventListener('click', () => cerrarModal('modalContratarServicio'));
+
+    btnConfirmar.addEventListener('click', async () => {
+        const error = document.getElementById('errorContratarServicio');
+        const exito = document.getElementById('exitoContratarServicio');
+        error.textContent = '';
+        exito.textContent = '';
+
+        const idsSeleccionados = Array.from(
+            document.querySelectorAll('#contratarServiciosLista .cotizacion-servicio-checkbox:checked')
+        ).map(cb => cb.value);
+
+        if (idsSeleccionados.length === 0) {
+            error.textContent = 'Selecciona al menos un servicio.';
+            return;
+        }
+
+        const cuerpo = new URLSearchParams();
+        cuerpo.set('idVenta', _idVentaContratarServicio);
+        idsSeleccionados.forEach(id => cuerpo.append('idsServicios', id));
+
+        try {
+            const respuesta = await fetch(`${CONTEXT_PATH}/contratarServicio`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: cuerpo.toString()
+            });
+            const texto = (await respuesta.text()).trim();
+
+            if (respuesta.ok) {
+                exito.textContent = texto;
+                setTimeout(() => window.location.reload(), 900);
+            } else {
+                error.textContent = texto;
+            }
+        } catch (err) {
+            error.textContent = 'No se pudo contactar al servidor. Intenta de nuevo.';
+        }
+    });
+});

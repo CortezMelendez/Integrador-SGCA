@@ -10,6 +10,47 @@ public class VentasDao {
 
     private final DetalleVentaServiciosDao detalleDao = new DetalleVentaServiciosDao();
 
+    // Trae una venta puntual con su cliente, agente y vehículo (solo los IDs
+    // necesarios para validar propiedad), usada por "contratar servicio
+    // adicional" (DFR módulo 5.2) para confirmar que el vehículo ya fue
+    // vendido antes de agregarle un servicio nuevo.
+    public VentasBean buscarPorId(int idVenta) throws Exception {
+        String sql = "SELECT v.id_venta, v.id_cliente, v.id_agente, v.total, v.fecha_venta, " +
+                "veh.id_vehiculo, veh.placa " +
+                "FROM ADMIN.VENTAS v " +
+                "INNER JOIN ADMIN.VEHICULOS veh ON v.id_vehiculo = veh.id_vehiculo " +
+                "WHERE v.id_venta = ?";
+
+        try (Connection con = Conexion.getConexion();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+
+            ps.setInt(1, idVenta);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (!rs.next()) return null;
+
+                ClientesBean cliente = new ClientesBean();
+                cliente.setIdCliente(rs.getInt("id_cliente"));
+
+                AgentesBean agente = new AgentesBean();
+                agente.setIdAgente(rs.getInt("id_agente"));
+
+                VehiculosBean vehiculo = new VehiculosBean();
+                vehiculo.setId_Vehiculo(rs.getInt("id_vehiculo"));
+                vehiculo.setPlaca(rs.getString("placa"));
+
+                return new VentasBean(
+                        rs.getInt("id_venta"),
+                        cliente,
+                        agente,
+                        vehiculo,
+                        rs.getTimestamp("fecha_venta"),
+                        rs.getDouble("total")
+                );
+            }
+        }
+    }
+
     // Devuelve el ID_VENTA generado (folio del comprobante), o -1 si la
     // cabecera de venta no se pudo insertar.
     public int registrarVentaCompleta(VentasBean venta) throws Exception {
@@ -84,15 +125,19 @@ public class VentasDao {
     public List<VentasBean> listar() throws Exception {
         List<VentasBean> lista = new ArrayList<>();
         String sql = "SELECT v.id_venta, v.fecha_venta, v.total, " +
-                "c.id_cliente, u_c.nombre AS nombre_cliente, u_c.apellido_paterno AS ap_cliente, " +
+                "c.id_cliente, u_c.nombre AS nombre_cliente, u_c.apellido_paterno AS ap_cliente, u_c.correo AS correo_cliente, " +
                 "a.id_agente, u_a.nombre AS nombre_agente, u_a.apellido_paterno AS ap_agente, " +
-                "veh.id_vehiculo, veh.placa " +
+                "veh.id_vehiculo, veh.placa, veh.color, veh.anio, " +
+                "mo.nombre AS nombre_modelo, ma.nombre AS nombre_marca, tv.nombre AS nombre_tipo " +
                 "FROM ADMIN.VENTAS v " +
                 "INNER JOIN ADMIN.CLIENTES c ON v.id_cliente = c.id_cliente " +
                 "INNER JOIN ADMIN.USUARIOS u_c ON c.id_usuario = u_c.id_usuario " +
                 "INNER JOIN ADMIN.AGENTES a ON v.id_agente = a.id_agente " +
                 "INNER JOIN ADMIN.USUARIOS u_a ON a.id_usuario = u_a.id_usuario " +
                 "INNER JOIN ADMIN.VEHICULOS veh ON v.id_vehiculo = veh.id_vehiculo " +
+                "INNER JOIN ADMIN.MODELOS mo ON veh.id_modelo = mo.id_modelo " +
+                "INNER JOIN ADMIN.MARCAS ma ON mo.id_marca = ma.id_marca " +
+                "INNER JOIN ADMIN.TIPOS_VEHICULO tv ON veh.id_tipo = tv.id_tipo " +
                 "ORDER BY v.id_venta DESC";
 
         try (Connection con = Conexion.getConexion();
@@ -104,16 +149,33 @@ public class VentasDao {
                 ClientesBean cliente = new ClientesBean();
                 cliente.setIdCliente(rs.getInt("id_cliente"));
                 cliente.setNombreCliente((rs.getString("nombre_cliente") + " " + rs.getString("ap_cliente")).trim());
+                cliente.setCorreoCliente(rs.getString("correo_cliente"));
 
                 // Agente
                 AgentesBean agente = new AgentesBean();
                 agente.setIdAgente(rs.getInt("id_agente"));
                 agente.setNombreCompletoUsuario((rs.getString("nombre_agente") + " " + rs.getString("ap_agente")).trim());
 
+                // Marca / modelo / tipo
+                MarcaBean marca = new MarcaBean();
+                marca.setNombre(rs.getString("nombre_marca"));
+
+                ModelosBean modelo = new ModelosBean();
+                modelo.setNombre(rs.getString("nombre_modelo"));
+                modelo.setMarca(marca);
+
+                TiposVehiculoBean tipo = new TiposVehiculoBean();
+                tipo.setNombre(rs.getString("nombre_tipo"));
+
                 // Vehículo
                 VehiculosBean vehiculo = new VehiculosBean();
                 vehiculo.setId_Vehiculo(rs.getInt("id_vehiculo"));
                 vehiculo.setPlaca(rs.getString("placa"));
+                vehiculo.setColor(rs.getString("color"));
+                vehiculo.setAnio(rs.getInt("anio"));
+                vehiculo.setMarca(marca);
+                vehiculo.setModelos(modelo);
+                vehiculo.setTipoVehiculo(tipo);
 
                 VentasBean venta = new VentasBean(
                         rs.getInt("id_venta"),

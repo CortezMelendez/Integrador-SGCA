@@ -26,6 +26,23 @@ public class DetalleVentaServiciosDao {
     }
 
     /**
+     * Inserta un detalle abriendo su propia conexión. A diferencia de
+     * insertarConTransaccion, esto es para agregar un servicio adicional a
+     * una venta que ya existe (DFR módulo 5.2), sin tocar VENTAS ni
+     * VEHICULOS, así que no necesita participar en una transacción más grande.
+     */
+    public boolean insertar(int idVenta, DetalleVentaServiciosBean detalle) throws Exception {
+        String sql = "INSERT INTO ADMIN.DETALLE_VENTA_SERVICIOS (id_venta, id_servicio, precio) VALUES (?, ?, ?)";
+        try (Connection con = Conexion.getConexion();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, idVenta);
+            ps.setInt(2, detalle.getServicio().getId_servicio());
+            ps.setDouble(3, detalle.getPrecio());
+            return ps.executeUpdate() > 0;
+        }
+    }
+
+    /**
      * Obtiene los servicios contratados asociados a una venta específica.
      */
     public List<DetalleVentaServiciosBean> obtenerPorVenta(int idVenta) throws Exception {

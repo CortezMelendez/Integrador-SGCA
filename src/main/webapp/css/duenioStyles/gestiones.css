@@ -776,6 +776,23 @@ p {
     background: var(--color-danger-dark-hover);
 }
 
+.btn-contratar-servicio {
+    background: var(--btn-active);
+    color: var(--color-white);
+    border: none;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: .82rem;
+    font-weight: 600;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: opacity .2s ease;
+}
+
+.btn-contratar-servicio:hover {
+    opacity: .85;
+}
+
 .btn-modal-save {
     background: var(--btn-active);
     color: var(--color-white);
