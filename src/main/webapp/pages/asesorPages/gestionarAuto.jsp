@@ -292,12 +292,12 @@
                 <thead>
                 <tr>
                     <th>#</th>
+                    <th>Placa</th>
                     <th>Foto</th>
                     <th>Marca</th>
                     <th>Modelo</th>
                     <th>Categoria</th>
                     <th>Precio</th>
-                    <th>Placa</th>
                     <th>Año</th>
                     <th>Descripción</th>
                     <th>Estado</th>
@@ -309,6 +309,7 @@
                 <c:forEach var="v" items="${listaVehiculos}" varStatus="fila">
                     <tr>
                         <td>${fila.count}</td>
+                        <td>${v.placa}</td>
                         <td>
                             <c:choose>
                                 <c:when test="${not empty v.foto_Portada}">
@@ -323,7 +324,6 @@
                         <td>${v.modelos.nombre}</td>
                         <td>${v.tipoVehiculo.nombre}</td>
                         <td>$<fmt:formatNumber value="${v.precio}" type="number" minFractionDigits="2" maxFractionDigits="2"/></td>
-                        <td>${v.placa}</td>
                         <td>${v.anio}</td>
                         <td class="celda-descripcion">
                             <c:choose>
