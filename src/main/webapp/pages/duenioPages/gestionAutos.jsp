@@ -675,6 +675,8 @@
                 marca_modelo_invalido: 'Selecciona una marca y un modelo válidos del catálogo.',
                 vehiculo_no_encontrado: 'El vehículo que intentas editar ya no existe.',
                 formato_imagen_invalido: 'El archivo subido no es una imagen válida. Solo se permiten imágenes (jpg, png, gif, webp, etc.).',
+                vehiculo_con_ventas: 'No se puede eliminar: este vehículo ya tiene una venta registrada.',
+                no_se_pudo_eliminar: 'No se pudo eliminar el vehículo. Intenta de nuevo.',
                 error_servidor: 'Ocurrió un error en el servidor. Intenta de nuevo.'
             };
             const codigo = '${param.error}';

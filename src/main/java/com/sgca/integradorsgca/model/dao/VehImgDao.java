@@ -66,4 +66,29 @@ public class VehImgDao {
             System.err.println("Error al eliminar imagen: " + e.getMessage());
         }
     }
+
+    // Borra todas las imágenes de la galería de un vehículo (necesario antes
+    // de poder eliminar el vehículo: ADMIN.VEHICULO_IMAGENES tiene una llave
+    // foránea a ADMIN.VEHICULOS y si quedan filas, el DELETE del vehículo
+    // se rechaza). Regresa los nombres de archivo borrados de la BD para que
+    // el llamador también pueda borrar los archivos físicos.
+    public List<String> eliminarPorVehiculo(int idVehiculo) {
+        List<String> rutas = new ArrayList<>();
+        for (VehImgBean img : listarPorVehiculo(idVehiculo)) {
+            rutas.add(img.getRutaImagen());
+        }
+
+        String sql = "DELETE FROM ADMIN.VEHICULO_IMAGENES WHERE ID_VEHICULO = ?";
+        try (Connection con = Conexion.getConexion();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+
+            ps.setInt(1, idVehiculo);
+            ps.executeUpdate();
+
+        } catch (SQLException e) {
+            System.err.println("Error al eliminar imágenes del vehículo: " + e.getMessage());
+        }
+
+        return rutas;
+    }
 }

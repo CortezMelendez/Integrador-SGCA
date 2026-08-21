@@ -76,12 +76,6 @@ document.getElementById('confirmBtnAceptar') && (document.getElementById('confir
     if (typeof callback === 'function') callback();
 });
 
-function confirmarEliminarAuto(id) {
-    pedirConfirmacion('¿Deseas eliminar este auto? Esta acción no se puede deshacer.', () => {
-        window.location.href = `${CONTEXT_PATH}/gestionAutoAsesor?accion=eliminar&id=${id}`;
-    }, 'peligro');
-}
-
 function confirmarGuardarEdicion() {
     if (!validarYPrepararEnvio('edit')) return;
     pedirConfirmacion('¿Deseas guardar los cambios de este auto?', () => {

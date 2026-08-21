@@ -171,17 +171,40 @@ public class VehiculosDao {
         }
     }
 
-    public void eliminar(int id) {
+    // Devuelve false (en vez de fallar en silencio) si el vehículo no se pudo
+    // borrar, típicamente porque ya tiene una venta registrada y la BD
+    // rechaza el DELETE por llave foránea (ADMIN.VENTAS.ID_VEHICULO).
+    public boolean eliminar(int id) {
         String sql = "DELETE FROM ADMIN.VEHICULOS WHERE ID_VEHICULO = ?";
 
         try (Connection conn = Conexion.getConexion();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setInt(1, id);
-            ps.executeUpdate();
+            return ps.executeUpdate() > 0;
 
         } catch (SQLException e) {
             System.err.println("Error al eliminar vehículo: " + e.getMessage());
+            return false;
+        }
+    }
+
+    // El vehículo ya tiene al menos una venta registrada: no se debe poder
+    // eliminar (rompería la trazabilidad del historial, Módulo 6 del DFR).
+    public boolean tieneVentasRegistradas(int idVehiculo) {
+        String sql = "SELECT COUNT(*) FROM ADMIN.VENTAS WHERE ID_VEHICULO = ?";
+
+        try (Connection con = Conexion.getConexion();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+
+            ps.setInt(1, idVehiculo);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next() && rs.getInt(1) > 0;
+            }
+
+        } catch (SQLException e) {
+            System.err.println("Error al verificar ventas del vehículo: " + e.getMessage());
+            return true; // ante la duda, no dejar borrar
         }
     }
 

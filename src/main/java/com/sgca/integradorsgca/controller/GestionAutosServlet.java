@@ -68,18 +68,40 @@ public class GestionAutosServlet extends HttpServlet {
 
         String accion = req.getParameter("accion");
         String exito = null;
+        String error = null;
 
         if ("eliminar".equals(accion)) {
             int id = Integer.parseInt(req.getParameter("id"));
-            vehiculosDao.eliminar(id);
-            exito = "eliminado";
+
+            if (vehiculosDao.tieneVentasRegistradas(id)) {
+                error = "vehiculo_con_ventas";
+            } else {
+                // ADMIN.VEHICULO_IMAGENES tiene FK a ADMIN.VEHICULOS: hay que
+                // borrar la galería (filas + archivos físicos) antes de poder
+                // borrar el vehículo, o el DELETE se rechaza igual que con ventas.
+                VehiculosBean vehiculo = vehiculosDao.buscarPorID(id);
+                for (String rutaImagen : vehImgDao.eliminarPorVehiculo(id)) {
+                    borrarArchivoImagen(rutaImagen);
+                }
+                if (vehiculo != null) {
+                    borrarArchivoImagen(vehiculo.getFoto_Portada());
+                }
+
+                if (vehiculosDao.eliminar(id)) {
+                    exito = "eliminado";
+                } else {
+                    error = "no_se_pudo_eliminar";
+                }
+            }
         } else if ("cambiarEstado".equals(accion)) {
             int id = Integer.parseInt(req.getParameter("id"));
             int disponible = Integer.parseInt(req.getParameter("disponible"));
             vehiculosDao.cambiarEstado(id, disponible);
         }
 
-        String destino = REDIRECT_LISTA + (exito != null ? "&exito=" + exito : "");
+        String destino = REDIRECT_LISTA
+                + (exito != null ? "&exito=" + exito : "")
+                + (error != null ? "&error=" + error : "");
         resp.sendRedirect(req.getContextPath() + destino);
     }
 
@@ -281,6 +303,17 @@ public class GestionAutosServlet extends HttpServlet {
         }
 
         return nombreNuevo;
+    }
+
+    // Borra el archivo físico de una imagen de la carpeta persistente. No
+    // pasa nada si el nombre viene vacío o si el archivo no existe ahí (ej.
+    // era una de las imágenes "semilla" que vienen empacadas en el .war).
+    private void borrarArchivoImagen(String nombreArchivo) {
+        if (nombreArchivo == null || nombreArchivo.isBlank()) return;
+        File archivo = new File(AlmacenImagenesAutos.carpeta(), nombreArchivo);
+        if (archivo.exists() && !archivo.delete()) {
+            System.err.println("No se pudo borrar el archivo de imagen: " + archivo.getPath());
+        }
     }
 
     private String obtenerNombreArchivo(Part part) {

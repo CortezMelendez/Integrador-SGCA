@@ -72,10 +72,12 @@ public class AsesorGestionAutoServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String accion = req.getParameter("accion");
 
+        // Eliminar autos es exclusivo del dueño (GestionAutosServlet); el
+        // asesor solo puede activar/desactivar un vehículo con cambiarEstado.
+        // El botón ya no existe en gestionarAuto.jsp, pero se bloquea aquí
+        // también por si alguien intenta la URL directamente.
         if ("eliminar".equals(accion)) {
-            int id = Integer.parseInt(req.getParameter("id"));
-            vehiculosDao.eliminar(id);
-            resp.sendRedirect(req.getContextPath() + RUTA_LISTA + "?exito=eliminado");
+            resp.sendRedirect(req.getContextPath() + RUTA_LISTA + "?error=no_autorizado");
             return;
         }
 
