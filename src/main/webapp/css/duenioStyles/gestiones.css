@@ -556,6 +556,17 @@ p {
     align-items: stretch;
 }
 
+.modal-photo-col {
+    flex: 0 0 140px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.modal-photo-col .modal-error {
+    width: 140px;
+}
+
 .modal-photo-upload {
     flex: 0 0 140px;
     width: 140px;

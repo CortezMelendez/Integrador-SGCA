@@ -163,12 +163,26 @@ function manejarFotosExtra(input, prefijo) {
     const errorEl = document.getElementById(prefijo === 'mod' ? 'err-fotosExtra' : 'edit-err-fotosExtra');
     errorEl.textContent = '';
 
+    const seleccionados = Array.from(input.files || []);
+    const noImagenes = seleccionados.filter(f => !esArchivoImagen(f));
+
+    // Los archivos que no son imagen se descartan del propio input (con
+    // DataTransfer, porque FileList es de solo lectura) para que no viajen
+    // en el formulario aunque el usuario los haya seleccionado.
+    if (noImagenes.length > 0) {
+        const dt = new DataTransfer();
+        seleccionados.filter(esArchivoImagen).forEach(f => dt.items.add(f));
+        input.files = dt.files;
+    }
+
     const archivos = Array.from(input.files || []);
     const limiteRestante = prefijo === 'edit'
         ? Math.max(0, MAX_IMAGENES_EXTRA - contarImagenesExistentes())
         : MAX_IMAGENES_EXTRA;
 
-    if (archivos.length > limiteRestante) {
+    if (noImagenes.length > 0) {
+        errorEl.textContent = `${noImagenes.map(f => `"${f.name}"`).join(', ')} no ${noImagenes.length === 1 ? 'es una imagen válida' : 'son imágenes válidas'} y no se subirá${noImagenes.length === 1 ? '' : 'n'}.`;
+    } else if (archivos.length > limiteRestante) {
         errorEl.textContent = `Solo puedes agregar ${limiteRestante} imagen(es) más (máximo ${MAX_IMAGENES_EXTRA} en total).`;
     }
 
@@ -367,12 +381,34 @@ function toggleEstado(elemento, idVehiculo) {
 }
 
 // Vista previa de la imagen elegida en el <input type="file"> (Agregar / Editar)
-function previsualizarFoto(input, boxId) {
+// Un archivo cuenta como imagen si el navegador lo reconoce como tal por su
+// contenido (input type="file" ya filtra por accept="image/*", pero el
+// usuario puede forzar "Todos los archivos" en el selector del SO).
+function esArchivoImagen(file) {
+    return !!file && !!file.type && file.type.toLowerCase().startsWith('image/');
+}
+
+// Vista previa de la imagen elegida en el <input type="file"> (Agregar / Editar).
+// Si el archivo no es una imagen, se marca el error en rojo y NO se sube:
+// se limpia el input para que el form no lo envíe.
+function previsualizarFoto(input, boxId, errId) {
     const box = document.getElementById(boxId);
     const preview = box.querySelector('.modal-photo-preview');
     const placeholder = box.querySelector('.upload-placeholder');
+    const errorEl = errId ? document.getElementById(errId) : null;
     const file = input.files && input.files[0];
     if (!file) return;
+
+    if (!esArchivoImagen(file)) {
+        if (errorEl) errorEl.textContent = `"${file.name}" no es un archivo de imagen válido.`;
+        input.value = '';
+        preview.removeAttribute('src');
+        preview.style.display = 'none';
+        placeholder.style.display = 'flex';
+        return;
+    }
+
+    if (errorEl) errorEl.textContent = '';
 
     const lector = new FileReader();
     lector.onload = e => {

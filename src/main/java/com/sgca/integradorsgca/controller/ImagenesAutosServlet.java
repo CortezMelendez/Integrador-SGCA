@@ -67,6 +67,8 @@ public class ImagenesAutosServlet extends HttpServlet {
         if (nombre.endsWith(".gif")) return "image/gif";
         if (nombre.endsWith(".webp")) return "image/webp";
         if (nombre.endsWith(".svg")) return "image/svg+xml";
+        if (nombre.endsWith(".bmp")) return "image/bmp";
+        if (nombre.endsWith(".avif")) return "image/avif";
         return "image/jpeg";
     }
 }

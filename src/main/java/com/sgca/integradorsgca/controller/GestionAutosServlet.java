@@ -9,6 +9,8 @@ import com.sgca.integradorsgca.model.dao.TiposVehiculoDao;
 import com.sgca.integradorsgca.model.dao.VehImgDao;
 import com.sgca.integradorsgca.model.dao.VehiculosDao;
 import com.sgca.integradorsgca.utils.AlmacenImagenesAutos;
+import com.sgca.integradorsgca.utils.ImagenInvalidaException;
+import com.sgca.integradorsgca.utils.ValidadorImagenAuto;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
@@ -98,6 +100,8 @@ public class GestionAutosServlet extends HttpServlet {
                 error = actualizar(req);
                 if (error == null) exito = "editado";
             }
+        } catch (ImagenInvalidaException e) {
+            error = "formato_imagen_invalido";
         } catch (Exception e) {
             System.err.println("Error al procesar auto: " + e.getMessage());
             e.printStackTrace();
@@ -259,10 +263,12 @@ public class GestionAutosServlet extends HttpServlet {
     // Copia el archivo de un Part a /Images/imagesAutos con un nombre único y
     // devuelve solo el nombre de archivo generado.
     private String guardarArchivoEnCarpeta(Part parte) throws IOException {
+        if (!ValidadorImagenAuto.esImagen(parte)) {
+            throw new ImagenInvalidaException("El archivo subido no es una imagen: " + parte.getContentType());
+        }
+
         String nombreOriginal = obtenerNombreArchivo(parte);
-        String extension = "";
-        int punto = nombreOriginal.lastIndexOf('.');
-        if (punto >= 0) extension = nombreOriginal.substring(punto);
+        String extension = ValidadorImagenAuto.extensionParaGuardar(parte, nombreOriginal);
 
         String nombreNuevo = UUID.randomUUID() + extension;
 

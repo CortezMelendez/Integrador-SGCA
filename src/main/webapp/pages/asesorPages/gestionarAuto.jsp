@@ -387,13 +387,16 @@
             <p class="modal-subtitle">Completa la información para registrar un nuevo vehículo</p>
 
             <div class="modal-photo-row">
-                <div class="modal-photo-upload" id="mod-foto-box" onclick="document.getElementById('mod-foto-input').click()">
-                    <input type="file" id="mod-foto-input" name="foto" accept="image/*" hidden onchange="previsualizarFoto(this,'mod-foto-box')" />
-                    <div class="upload-placeholder" id="mod-foto-placeholder">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
-                        <span>Subir Imagen</span>
+                <div class="modal-photo-col">
+                    <div class="modal-photo-upload" id="mod-foto-box" onclick="document.getElementById('mod-foto-input').click()">
+                        <input type="file" id="mod-foto-input" name="foto" accept="image/*" hidden onchange="previsualizarFoto(this,'mod-foto-box','err-foto')" />
+                        <div class="upload-placeholder" id="mod-foto-placeholder">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                            <span>Subir Imagen</span>
+                        </div>
+                        <img class="modal-photo-preview" id="mod-foto-preview" style="display:none" alt="Vista previa" />
                     </div>
-                    <img class="modal-photo-preview" id="mod-foto-preview" style="display:none" alt="Vista previa" />
+                    <span class="modal-error" id="err-foto"></span>
                 </div>
 
                 <div class="modal-photo-fields">
@@ -509,13 +512,16 @@
             <p class="modal-subtitle">Modifica la información del vehículo seleccionado</p>
 
             <div class="modal-photo-row">
-                <div class="modal-photo-upload" id="edit-foto-box" onclick="document.getElementById('edit-foto-input').click()">
-                    <input type="file" id="edit-foto-input" name="foto" accept="image/*" hidden onchange="previsualizarFoto(this,'edit-foto-box')" />
-                    <div class="upload-placeholder" id="edit-foto-placeholder">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
-                        <span>Subir Imagen</span>
+                <div class="modal-photo-col">
+                    <div class="modal-photo-upload" id="edit-foto-box" onclick="document.getElementById('edit-foto-input').click()">
+                        <input type="file" id="edit-foto-input" name="foto" accept="image/*" hidden onchange="previsualizarFoto(this,'edit-foto-box','edit-err-foto')" />
+                        <div class="upload-placeholder" id="edit-foto-placeholder">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                            <span>Subir Imagen</span>
+                        </div>
+                        <img class="modal-photo-preview" id="edit-foto-preview" style="display:none" alt="Vista previa" />
                     </div>
-                    <img class="modal-photo-preview" id="edit-foto-preview" style="display:none" alt="Vista previa" />
+                    <span class="modal-error" id="edit-err-foto"></span>
                 </div>
 
                 <div class="modal-photo-fields">
@@ -649,6 +655,7 @@
                 duplicado_placa: 'Ya existe un vehículo registrado con esa placa.',
                 marca_modelo_invalido: 'Selecciona una marca y un modelo válidos del catálogo.',
                 no_encontrado: 'El vehículo ya no existe.',
+                formato_imagen_invalido: 'El archivo subido no es una imagen válida. Solo se permiten imágenes (jpg, png, gif, webp, etc.).',
                 error_servidor: 'Ocurrió un error en el servidor. Intenta de nuevo.'
             };
             const codigo = '${errorParam}';
